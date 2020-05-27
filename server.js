@@ -4,20 +4,30 @@ const express = require('express');
 const mongoose = require('mongoose');
 const graphqlHTTP = require("express-graphql");
 const bodyParser = require('body-parser');
-const schema = require('./graqhlSchema/AllSchema');
-
+var { buildSchema } = require('graphql');
+const schema = require('./graqhlSchema/UserSchema');
 require('dotenv').config();
+
+
+// Construct a schema, using GraphQL schema languag
+
+let schemaData = {
+    'schema': schema
+}
+
+
 const app = express();
 
 
 class startServer {
-    constructor(app) {
+    constructor(app, schemaData) {
 
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
 
         app.use("/graphql", graphqlHTTP({
-            schema: schema
+            schema: schemaData.schema,
+            graphiql: true
         }))
 
         // mongoose config
@@ -36,4 +46,4 @@ class startServer {
     }
 }
 
-let startSever = new startServer(app);
+let startSever = new startServer(app, schemaData);

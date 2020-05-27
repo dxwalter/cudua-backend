@@ -18,17 +18,28 @@ const UserType = new GraphQLObjectType ({
     })
 })
 
-const RootQuery = new GraphQLObjectType ({
-    type: 'RootQueryType',
+const userQuery = new GraphQLObjectType ({
+    name: 'Query',
     fields : {
         user: {
             type : UserType,
             args: {id: {type: GraphQLString}},
             resolve (parent, args) {
                 // code to get 
+                return ({
+                    "name" : "Daniel Walter"
+                })
+            }
+        },
+        createUser : {
+            type: UserType,
+            args: {},
+            resolve (parent, args) {
+                console.log(args);
+                return args;
             }
         }
     }
 });
 
-module.exports = new GraphQLSchema({ query: RootQuery })
+module.exports = new GraphQLSchema({ query: userQuery })
