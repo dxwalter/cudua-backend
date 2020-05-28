@@ -1,10 +1,30 @@
 "use strict";
 
+const express = require('express');
+const router = express.Router();
+const app = express();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const crypto = require("crypto");
+
+
+const CreateUser = require('../Controllers/user/action/CreateUser');
+const UserModel = require('../Models/UserModel');
+
 const graphql = require("graphql");
-const  { GraphQLObjectType, GraphQLString, GraphQLSchema, buildSchema, GraphQLNonNull, GraphQLID } = graphql;
+const  {
+            GraphQLObjectType, 
+            GraphQLString, 
+            GraphQLSchema, 
+            buildSchema, 
+            GraphQLNonNull, 
+            GraphQLID, 
+            GraphQLInt
+       } = graphql;
 
 const UserType = new GraphQLObjectType({
-    name: 'User',
+    name: 'inputType',
     description: "This is a user definition type",
     fields: {
         id: {type: new GraphQLNonNull(GraphQLID)},
@@ -17,6 +37,22 @@ const UserType = new GraphQLObjectType({
     }
 });
 
+
+const outputType = new GraphQLObjectType({
+    name: 'outputType',
+    description: "This is a user output type",
+    fields: {
+        id: {type: GraphQLID},
+        fullname: {type: GraphQLString},
+        email: {type: GraphQLString},
+        phone: {type: GraphQLString},
+        password: {type: GraphQLString},
+        displaPicture: {type: GraphQLString},
+        businessId: {type: GraphQLString},
+        requestStatus: {type: GraphQLString},
+        requestMessage: {type: GraphQLString}
+    }
+});
 
 
 const userQuery = new GraphQLObjectType ({
@@ -40,15 +76,16 @@ const userMutation = new GraphQLObjectType({
     name: "Mutation",
     fields : {
         createUser : {
-            type: UserType,
+            type: outputType,
             args: {
                 fullname: {type: GraphQLNonNull(GraphQLString)},
                 email: {type: GraphQLNonNull(GraphQLString)},
                 password: {type: GraphQLNonNull(GraphQLString)},
             },
             resolve (parent, args) {
-                console.log(args);
-                return args;
+                let createUser = new CreateUser(UserModel, args);
+                return createUser.validateUserInput();
+
             }
         }
     }
