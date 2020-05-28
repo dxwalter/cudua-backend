@@ -1,25 +1,26 @@
 "use strict";
 
 const graphql = require("graphql");
-const  { GraphQLObjectType, GraphQLString, GraphQLSchema } = graphql;
+const  { GraphQLObjectType, GraphQLString, GraphQLSchema, buildSchema, GraphQLNonNull, GraphQLID } = graphql;
 
-
-const UserType = new GraphQLObjectType ({
+const UserType = new GraphQLObjectType({
     name: 'User',
-    fields: () => ({
-        id: {type: GraphQLString},
-        fullname: {type: GraphQLString},
-        email: {type: GraphQLString},
+    description: "This is a user definition type",
+    fields: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+        fullname: {type: GraphQLNonNull(GraphQLString)},
+        email: {type: GraphQLNonNull(GraphQLString)},
         phone: {type: GraphQLString},
-        password: {type: GraphQLString},
+        password: {type: GraphQLNonNull(GraphQLString)},
         displaPicture: {type: GraphQLString},
         businessId: {type: GraphQLString}
+    }
+});
 
-    })
-})
+
 
 const userQuery = new GraphQLObjectType ({
-    name: 'Query',
+    name: 'userQuery',
     fields : {
         user: {
             type : UserType,
@@ -31,15 +32,26 @@ const userQuery = new GraphQLObjectType ({
                 })
             }
         },
+        
+    }
+});
+
+const userMutation = new GraphQLObjectType({
+    name: "Mutation",
+    fields : {
         createUser : {
             type: UserType,
-            args: {},
+            args: {
+                fullname: {type: GraphQLNonNull(GraphQLString)},
+                email: {type: GraphQLNonNull(GraphQLString)},
+                password: {type: GraphQLNonNull(GraphQLString)},
+            },
             resolve (parent, args) {
                 console.log(args);
                 return args;
             }
         }
     }
-});
+})
 
-module.exports = new GraphQLSchema({ query: userQuery })
+module.exports = new GraphQLSchema({ query: userQuery, mutation: userMutation })
