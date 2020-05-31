@@ -1,0 +1,20 @@
+{
+  loginUser(email: "theceoforlife@gmail.com", password: "walter99") {
+    name
+    height(unit: FOOT)
+  }
+}
+
+mutation {
+  createUser(fullname: "Daniel Walter", email: "theceoforlife@gmail.coma", password:"supermum") {
+      fullname
+  		email
+      phone
+    	displaPicture
+    	id
+    	businessId
+      accessToken
+    	requestStatus
+    	requestMessage
+  }
+}

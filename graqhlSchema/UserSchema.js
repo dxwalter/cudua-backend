@@ -1,15 +1,11 @@
 "use strict";
 
 const express = require('express');
-const router = express.Router();
-const app = express();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const crypto = require("crypto");
+const graphqlHTTP = require("express-graphql");
 
 
 const CreateUser = require('../Controllers/user/action/CreateUser');
+const LoginUser = require('../Controllers/user/action/LoginUser');
 const UserModel = require('../Models/UserModel');
 
 const graphql = require("graphql");
@@ -27,11 +23,10 @@ const UserType = new GraphQLObjectType({
     name: 'inputType',
     description: "This is a user definition type",
     fields: {
-        id: {type: new GraphQLNonNull(GraphQLID)},
-        fullname: {type: GraphQLNonNull(GraphQLString)},
-        email: {type: GraphQLNonNull(GraphQLString)},
+        id: {type: GraphQLID},
+        fullname: {type: GraphQLString},
+        email: {type: GraphQLString},
         phone: {type: GraphQLString},
-        password: {type: GraphQLNonNull(GraphQLString)},
         displaPicture: {type: GraphQLString},
         businessId: {type: GraphQLString}
     }
@@ -42,14 +37,15 @@ const outputType = new GraphQLObjectType({
     name: 'outputType',
     description: "This is a user output type",
     fields: {
-        id: {type: GraphQLID},
+        userId: {type: GraphQLID},
         fullname: {type: GraphQLString},
         email: {type: GraphQLString},
         phone: {type: GraphQLString},
-        password: {type: GraphQLString},
         displaPicture: {type: GraphQLString},
         businessId: {type: GraphQLString},
-        requestStatus: {type: GraphQLString},
+        businessData: {type: GraphQLString},
+        accessToken: {type: GraphQLString},
+        requestStatus: {type: GraphQLInt},
         requestMessage: {type: GraphQLString}
     }
 });
@@ -58,14 +54,16 @@ const outputType = new GraphQLObjectType({
 const userQuery = new GraphQLObjectType ({
     name: 'userQuery',
     fields : {
-        user: {
-            type : UserType,
-            args: {id: {type: GraphQLString}},
-            resolve (parent, args) {
+        loginUser: {
+            type : outputType,
+            args: {
+                email: {type: GraphQLNonNull(GraphQLString)},
+                password: {type: GraphQLNonNull(GraphQLString)}
+            },
+            resolve (parent, args, context) {
                 // code to get 
-                return ({
-                    "name" : "Daniel Walter"
-                })
+                let loginUser = new LoginUser(args);
+                return loginUser.AuthenticateUser();
             }
         },
         
@@ -82,10 +80,9 @@ const userMutation = new GraphQLObjectType({
                 email: {type: GraphQLNonNull(GraphQLString)},
                 password: {type: GraphQLNonNull(GraphQLString)},
             },
-            resolve (parent, args) {
-                let createUser = new CreateUser(UserModel, args);
+            resolve (parent, args, context) {
+                let createUser = new CreateUser(args);
                 return createUser.validateUserInput();
-
             }
         }
     }

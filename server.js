@@ -15,9 +15,7 @@ let schemaData = {
     'schema': schema
 }
 
-
 const app = express();
-
 
 class startServer {
     constructor(app, schemaData) {
@@ -25,10 +23,11 @@ class startServer {
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
 
-        app.use("/graphql", graphqlHTTP({
+        app.use("/graphql", graphqlHTTP(req => ({
             schema: schemaData.schema,
-            graphiql: true
-        }))
+            graphiql: true,
+            context: { req: req }
+        })))
 
         // mongoose config
         mongoose.set('useNewUrlParser', true);

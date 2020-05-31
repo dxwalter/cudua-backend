@@ -8,7 +8,7 @@ const UserSchema = mongoose.Schema({
         type: String, required: true
     },
     phone : {
-        type: String, required : true
+        type: String, required : false
     },
     password : {
         type : String, required : true
@@ -22,4 +22,4 @@ const UserSchema = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('UserModel', UserSchema);
+module.exports = mongoose.model('User', UserSchema);
