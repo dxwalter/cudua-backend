@@ -6,7 +6,8 @@ const graphqlHTTP = require("express-graphql");
 
 const CreateUser = require('../Controllers/user/action/CreateUser');
 const LoginUser = require('../Controllers/user/action/LoginUser');
-const UserModel = require('../Models/UserModel');
+const RecoverPassword = require('../Controllers/user/action/RecoverPassword');
+
 
 const graphql = require("graphql");
 const  {
@@ -52,7 +53,7 @@ const outputType = new GraphQLObjectType({
 
 
 const userQuery = new GraphQLObjectType ({
-    name: 'userQuery',
+    name: 'Query',
     fields : {
         loginUser: {
             type : outputType,
@@ -66,6 +67,14 @@ const userQuery = new GraphQLObjectType ({
                 return loginUser.AuthenticateUser();
             }
         },
+        recoverPassword: {
+            type: outputType,
+            args: {email: {type: GraphQLNonNull(GraphQLString)}},
+            resolve (parent, args) {
+                let recoverPassword = new RecoverPassword();
+                return recoverPassword.recoverPasswordCheck(args);
+            }
+        }
         
     }
 });
@@ -83,6 +92,18 @@ const userMutation = new GraphQLObjectType({
             resolve (parent, args, context) {
                 let createUser = new CreateUser(args);
                 return createUser.validateUserInput();
+            }
+        },
+        createNewPassword : {
+            type: outputType,
+            args: {
+                password: {type: GraphQLNonNull(GraphQLString)},
+                secret: {type: GraphQLNonNull(GraphQLString)},
+                userId: {type: GraphQLNonNull(GraphQLString)}
+            },
+            resolve (parent, args, context) {
+                let newPassword = new RecoverPassword();
+                return newPassword.createNewPassword(args);
             }
         }
     }

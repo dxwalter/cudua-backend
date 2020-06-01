@@ -1,0 +1,42 @@
+{
+  loginUser(email: "theceoforlife@gmail.com", password: "supermum") {
+      fullname
+  		email
+      phone
+    	displaPicture
+    	userId
+    	businessId
+    	businessData
+      accessToken
+    	requestStatus
+    	requestMessage
+  }
+}
+
+{
+  recoverPassword(email: "theceoforlife@gmail.com") {
+    requestStatus
+    requestMessage
+  }
+}
+
+mutation {
+  createUser(fullname: "Daniel Walter", email: "theceoforlife@gmail.coma", password:"supermum") {
+      fullname
+  		email
+      phone
+    	displaPicture
+    	id
+    	businessId
+      accessToken
+    	requestStatus
+    	requestMessage
+  }
+}
+
+mutation {
+  createNewPassword(password: "walter999", secret: "13726", userId:"5ed3f662307ec21d94a4b050") {
+    	requestStatus
+    	requestMessage
+  }
+}

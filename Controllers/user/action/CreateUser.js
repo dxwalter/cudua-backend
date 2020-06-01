@@ -1,13 +1,8 @@
 "use-strict";
 
 const express = require('express');
-const router = express.Router();
-const app = express();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const crypto = require("crypto");
-const mongoose = require('mongoose');
 
 let UserController = require('../UserController')
 let UserModel = require('../../../Models/UserModel')
@@ -47,7 +42,7 @@ module.exports = class CreateUser extends UserController{
 
         if (this.email.length < 5) {
             return this.returnMethod('', '', 0, "Enter a valid email address");
-        } else if (await this.emailExists(this.email) == false) {
+        } else if (await this.emailExists(this.email) == true) {
             return this.returnMethod('', '', 0, `The email address: ${this.email}, already exists`);
         }
 
