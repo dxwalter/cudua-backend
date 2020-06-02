@@ -2,10 +2,11 @@
   "name": "cudua-backend",
   "version": "1.0.0",
   "description": "This is the business logic for cudua",
-  "main": "app.js",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon -r esm server.mjs"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
     "express-jwt": "^5.3.1",

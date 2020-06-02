@@ -1,12 +1,17 @@
 "use-strict";
 
-const express = require('express');
-const mongoose = require('mongoose');
-const graphqlHTTP = require("express-graphql");
-const bodyParser = require('body-parser');
-var { buildSchema } = require('graphql');
-const schema = require('./graqhlSchema/UserSchema');
-require('dotenv').config();
+import {createRequire} from 'module'
+import express from 'express';
+import mongoose from 'mongoose';
+import graphqlHTTP from "express-graphql";
+import bodyParser from 'body-parser';
+import { buildSchema }  from 'graphql';
+import dotenv from 'dotenv';
+dotenv.config
+
+
+import {schemaFiles} from './graqhlSchema/AllSchema.mjs';
+console.log(schema);
 
 
 // Construct a schema, using GraphQL schema languag
@@ -15,10 +20,8 @@ let schemaData = {
     'schema': schema
 }
 
-const app = express();
-
 class startServer {
-    constructor(app, schemaData) {
+    constructor(app) {
 
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
@@ -45,4 +48,4 @@ class startServer {
     }
 }
 
-let startSever = new startServer(app, schemaData);
+let startSever = new startServer(app);

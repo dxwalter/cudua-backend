@@ -1,12 +1,3 @@
-"use strict";
-
-const express = require('express');
-const graphqlHTTP = require("express-graphql");
-
-
-const CreateUser = require('../Controllers/user/action/CreateUser');
-const LoginUser = require('../Controllers/user/action/LoginUser');
-const RecoverPassword = require('../Controllers/user/action/RecoverPassword');
 
 
 const graphql = require("graphql");
