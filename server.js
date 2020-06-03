@@ -1,24 +1,24 @@
 "use-strict";
 
-import {createRequire} from 'module'
-import express from 'express';
-import mongoose from 'mongoose';
-import graphqlHTTP from "express-graphql";
-import bodyParser from 'body-parser';
-import { buildSchema }  from 'graphql';
-import dotenv from 'dotenv';
-dotenv.config
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const { buildSchema }  = require('graphql');
+require('dotenv/config');
 
+const express = require('express');
+const graphqlHTTP = require('express-graphql');
 
-import {schemaFiles} from './graqhlSchema/AllSchema.mjs';
-console.log(schema);
+const typeDefs = require('./graqhlSchema/types');
+const resolvers = require('./graqhlSchema/resolvers');
 
+const { makeExecutableSchema } = require('@graphql-tools/schema');
 
-// Construct a schema, using GraphQL schema languag
+const schema = makeExecutableSchema({
+    typeDefs,
+    resolvers
+});
 
-let schemaData = {
-    'schema': schema
-}
+const app = express();
 
 class startServer {
     constructor(app) {
@@ -27,9 +27,8 @@ class startServer {
         app.use(bodyParser.json());
 
         app.use("/graphql", graphqlHTTP(req => ({
-            schema: schemaData.schema,
+            schema,
             graphiql: true,
-            context: { req: req }
         })))
 
         // mongoose config

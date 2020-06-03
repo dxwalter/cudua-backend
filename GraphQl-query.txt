@@ -21,16 +21,19 @@
 }
 
 mutation {
-  createUser(fullname: "Daniel Walter", email: "theceoforlife@gmail.coma", password:"supermum") {
+  createUser(user:{
+    fullname: "Daniel Walter", email: "theceoforlife@gmail2.coma", password:"supermum"
+  }) {
       fullname
   		email
       phone
+    	userId
     	displaPicture
-    	id
     	businessId
       accessToken
-    	requestStatus
-    	requestMessage
+      code
+      success
+      message
   }
 }
 

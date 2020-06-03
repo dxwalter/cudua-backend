@@ -1,0 +1,56 @@
+    # response type
+    interface responseType {
+        code: String!
+        success: Boolean!
+        message: String!
+    }
+
+    # This "User" type defines the queryable fields for every user in our data source.
+    type User {
+        fullname: String!
+  		email: String!
+        phone: String!
+    	displaPicture: String
+    	businessId: String
+    }
+
+    type createAccountResponse implements responseType {
+        fullname: String!
+  		email: String!
+        phone: String
+    	displaPicture: String
+    	businessId: String
+        userId: String!
+        code: String!
+        success: Boolean!
+        message: String!
+        accessToken: String!
+    }
+
+    # This is the input type for that will for an account to be created
+    input CreateAccountInput {
+        """
+        This is the fullname of the user. The user can choose to give only first or
+        lastname or both first and lastname
+        """
+        fullname: String!
+        # This is the email address of the user and it must be unique
+        email: String!
+        # This is the password of the user. It must be of at least 6 or more character length 
+        password: String!
+    }
+
+    # The "Query" type is special: it lists all of the available queries that
+    # clients can execute, along with the return type for each. In this
+    # case, the "books" query returns an array of zero or more Books (defined above).
+
+    type Query {
+        getUser: User
+        getUsers: [User]
+    }
+
+    #This is the mutation type that will handle create account, forgot and recover pasword
+    type Mutation {
+        createUser(user: CreateAccountInput): createAccountResponse
+    }
+    

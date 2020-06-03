@@ -1,0 +1,42 @@
+
+    # This is the business return type for a registered business
+
+    type BusinessAccount {
+        id: ID!,
+        businessId: String
+        businessname: String
+        address: String
+        contact: String
+        logo: String
+        description: String
+    }
+
+    # response type
+    interface responseType {
+        code: String!
+        success: Boolean!
+        message: String!
+    }
+
+    # response type for CreateBusinessAccount mutation
+    type CreateBusinessAccountResponse implements responseType {
+        businessDetails: BusinessAccount
+        code: String!
+        success: Boolean!
+        message: String!
+    }
+
+    # CreateBusinessAccount input type
+    input CreateBusinessAccountInput {
+        businessName: String!
+        businessUsername: String!
+    }
+
+    type Query {
+        GetSingleBusinessDetails:  BusinessAccount
+    }
+
+
+    type Mutation {
+        CreateBusinessAcount (create: CreateBusinessAccountInput ): CreateBusinessAccountResponse
+    }

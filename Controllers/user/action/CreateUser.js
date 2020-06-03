@@ -10,7 +10,6 @@ let UserModel = require('../../../Models/UserModel')
 module.exports = class CreateUser extends UserController{
 
     constructor (args) {
-        
         super();
         this.fullname = args.fullname;
         this.email = args.email;
@@ -19,31 +18,34 @@ module.exports = class CreateUser extends UserController{
 
     }
 
-    returnMethod (fullname, email, status, statusMessage) {
+    returnMethod (fullname, email, status, statusMessage, statusCode) {
         return {
             fullname: fullname,
             email: email,
-            requestStatus: status,
-            requestMessage: statusMessage
+            userId: '',
+            code: statusCode,
+            success: status,
+            message: statusMessage,
+            accessToken: ""
         };
     }
 
     async validateUserInput() {
         
         if (this.fullname.length < 3) {
-            return this.returnMethod('', '', 0, "Your fullname must be greater than 2 characters");
+            return this.returnMethod('', '', false, "Your fullname must be greater than 2 characters", 200);
         }
 
         if (this.password.length < 6) {
-            return this.returnMethod('', '', 0, "Your password must be greater than 6 characters");
+            return this.returnMethod('', '', false, "Your password must be greater than 6 characters",  200);
         } else {
             this.password = bcrypt.hashSync(this.password, 10)
         }
 
         if (this.email.length < 5) {
-            return this.returnMethod('', '', 0, "Enter a valid email address");
+            return this.returnMethod('', '', false, "Enter a valid email address",  200);
         } else if (await this.emailExists(this.email) == true) {
-            return this.returnMethod('', '', 0, `The email address: ${this.email}, already exists`);
+            return this.returnMethod('', '', false, `The email address: ${this.email}, already exists`,  200);
         }
 
         const createUser = new UserModel ({
@@ -59,13 +61,14 @@ module.exports = class CreateUser extends UserController{
         return {
             userId : data._id,
             fullname: data.fullname,
-            email: data.fullname,
+            email: data.email,
             phone: "",
             displaPicture: "",
             businessId: "",
             accessToken: accessToken,
-            requestStatus: 1,
-            requestMessage: "Your account was created successfully"
+            code: 200,
+            success: true,
+            message: "Your account was created successfully"
         };
     }
 }
