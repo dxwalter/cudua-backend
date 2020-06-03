@@ -13,10 +13,11 @@
   }
 }
 
-{
+mutation{
   recoverPassword(email: "theceoforlife@gmail.com") {
-    requestStatus
-    requestMessage
+      code
+      success
+      message
   }
 }
 
@@ -38,8 +39,11 @@ mutation {
 }
 
 mutation {
-  createNewPassword(password: "walter999", secret: "13726", userId:"5ed3f662307ec21d94a4b050") {
-    	requestStatus
-    	requestMessage
+  resetPassword(input:{
+    password: "walter999", secret: "87016", userId:"5ed81e71a20fe31a10d4e28a"
+  }) {
+    	code
+      success
+      message
   }
 }

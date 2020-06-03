@@ -19,14 +19,21 @@ module.exports = class LoginUser extends UserController{
         this.model = UserModel;
     }
 
+    returnType (code, success, message) {
+        return {
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
     async comparePassword (password) {
         return bcrypt.compare(this.password, password);
     }
 
     async AuthenticateUser () {
-        if (this.email.length && this.password.length) {
 
-        
+        if (this.email.length && this.password.length) {
 
                 let findEmail = await this.findOneEmail(this.email);
     
@@ -48,28 +55,23 @@ module.exports = class LoginUser extends UserController{
                             displaPicture: "",
                             businessId: "",
                             accessToken: accessToken,
-                            requestStatus: 1,
-                            requestMessage: "Hurray! Your sign in was successful"
+                            code: 200,
+                            success: true,
+                            message: "Hurray! Your sign in was successfully"
                         };
                     } else {
-                        return {
-                            requestStatus: 0,
-                            requestMessage: "Your sign in details is incorrect"
-                        };
+                       return this.returnType(200 , false, `Your sign in details is incorrect`)
                     }
                     
                 } else {
-                    return {
-                        requestStatus: 0,
-                        requestMessage: "Your sign in details is incorrect"
-                    }
+                  
+                    return this.returnType(200 , false, `Your sign in details is incorrect`)
+                    
                 }
 
         } else {
-            return {
-                requestStatus: 0,
-                requestMessage: "Your email address and password is required to let you in"
-            }
+            
+            return this.returnType(200 , false, `Your email address and password is required to let you in`)
         }
     }
 

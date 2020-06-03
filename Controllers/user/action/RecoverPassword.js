@@ -17,6 +17,14 @@ module.exports = class RecoverPassword extends UserController{
         super();
     }
 
+    returnType (code, success, message) {
+        return {
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
     async recoverPasswordCheck (args) {
         
         this.email = args.email;
@@ -59,22 +67,13 @@ module.exports = class RecoverPassword extends UserController{
                 // send mail
                 console.log(this.sendEmail(emailObject));
 
-                return {
-                    requestStatus: 1,
-                    requestMessage: `A password recovery message has been sent to you ${this.email}`
-                }
+                return this.returnType(200 , true, `A password recovery message has been sent to you ${this.email}`)
             } else {
-                return {
-                    requestStatus: 0,
-                    requestMessage: "An error occured"
-                }
+                return this.returnType(200 , false, `An error occured`)
             }
 
         } else {
-            return {
-                requestStatus: 0,
-                requestMessage: "Your email address is not recognised"
-            }
+            return this.returnType(200 , false, `Your email address is not recognised`);
         }
     
 
@@ -90,10 +89,9 @@ module.exports = class RecoverPassword extends UserController{
         if (this.secret && await this.checkRecoverySecret(this.secret)) {
             
             if (this.password.length < 6) {
-                return {
-                    requestStatus: 0,
-                    requestMessage: "Your password must be greater than 6 characters"
-                };
+
+                return this.returnType(200 , false, `Your email address is not recognised`);
+
             } else {
                 this.password = bcrypt.hashSync(this.password, 10);
             }
@@ -110,23 +108,15 @@ module.exports = class RecoverPassword extends UserController{
                 // delete from  recoverypasswords collection
                 await this.deleteOneFromPasswordRecovery(this.userId)
 
-                return {
-                    requestStatus: 1,
-                    requestMessage: "Your password reset was successful. Sign in to continue"
-                };
+                return this.returnType(202 , true, `Your password reset was successful. Sign in to continue`);
+
             } else {
-                return {
-                    requestStatus: 0,
-                    requestMessage: "An error occured reseting your password"
-                }; 
+                return this.returnType(200 , false, `An error occured reseting your password`);
             }
 
 
         } else {
-            return {
-                requestStatus: 0,
-                requestMessage: "An error occured. Incomplete details. Click the link in your mailbox to try again"
-            }; 
+            return this.returnType(200 , false, `An error occured. Incomplete details. Click the link in your mailbox to try again`);
         }
 
     }

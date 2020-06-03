@@ -9,13 +9,26 @@ module.exports = {
         },
         getUsers (parent, args, context, info) {
 
+        },
+        userLogin (parent, args, context, info) {
+            let UserLogin = new LoginUser(args.input);
+            return UserLogin.AuthenticateUser();
+
+            // throw new error("this is the problwm")
         }
     },
     Mutation: {
         createUser(parent, args, context, info) {
             let createUser = new CreateUser(args.user)
-            return createUser.validateUserInput();
-            
+            return createUser.validateUserInput();   
+        },
+        recoverPassword (parent, args, context, info) {
+            let recoverPassword = new RecoverPassword();
+            return recoverPassword.recoverPasswordCheck(args)
+        },
+        resetPassword(parent, args, context, info) {
+            let recoverPassword = new RecoverPassword();
+            return recoverPassword.createNewPassword(args.input)
         }
     }
 }

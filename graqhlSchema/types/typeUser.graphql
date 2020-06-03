@@ -5,6 +5,13 @@
         message: String!
     }
 
+    # This is the response type that returns no data
+    type datalessResponse implements responseType {
+        code: String!
+        success: Boolean!
+        message: String!
+    }
+
     # This "User" type defines the queryable fields for every user in our data source.
     type User {
         fullname: String!
@@ -14,17 +21,67 @@
     	businessId: String
     }
 
+    # This method allows a user to reset the password without logging in
+    input resetPassword {
+        # this is the new password the user will provide as input and it must be greater that 5 characters
+        password: String!
+
+        # This secret key will be attached to the url the user will click from their email inbox
+        secret: String!
+
+        # this is the user's user-id. It will be attached to the url the user will click from their email inbox
+        userId: String!
+    }
+
     type createAccountResponse implements responseType {
         fullname: String!
   		email: String!
         phone: String
     	displaPicture: String
+        # Business id represents the unique id of a business that was created by a user
     	businessId: String
+        # This user id represents a human account (personal account)
         userId: String!
+
+        # Api http status code
         code: String!
+        # This boolean value is used to check if an operation ran successfully
         success: Boolean!
+
+        # This is the message sent by the server about an operation
         message: String!
+        """ 
+        this is the jwt access token generated when a user logs in successfully.
+        This is token is used to authenticate every logged in user. Therefore, it is attached 
+        in the header object of every request sent by a logged in user.
+        """
         accessToken: String!
+    }
+
+
+    type loginResponse implements responseType {
+        fullname: String
+  		email: String
+        phone: String
+    	displaPicture: String
+        # Business id represents the unique id of a business that was created by a user
+    	businessId: String
+        # This user id represents a human account (personal account)
+        userId: String
+
+        # Api http status code
+        code: String!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+
+        # This is the message sent by the server about an operation
+        message: String!
+        """ 
+        this is the jwt access token generated when a user logs in successfully.
+        This is token is used to authenticate every logged in user. Therefore, it is attached 
+        in the header object of every request sent by a logged in user.
+        """
+        accessToken: String
     }
 
     # This is the input type for that will for an account to be created
@@ -40,6 +97,14 @@
         password: String!
     }
 
+    input loginInput {
+        # this is the registered email address of the user
+        email: String!
+
+        # This is the user's login password
+        password: String!
+    }
+
     # The "Query" type is special: it lists all of the available queries that
     # clients can execute, along with the return type for each. In this
     # case, the "books" query returns an array of zero or more Books (defined above).
@@ -47,10 +112,15 @@
     type Query {
         getUser: User
         getUsers: [User]
+        userLogin(input: loginInput): loginResponse
     }
 
     #This is the mutation type that will handle create account, forgot and recover pasword
     type Mutation {
         createUser(user: CreateAccountInput): createAccountResponse
+        recoverPassword(email: String): datalessResponse
+        resetPassword(input: resetPassword): datalessResponse
     }
+
+
     
