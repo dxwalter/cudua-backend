@@ -8,23 +8,23 @@ const BusinessSchema = mongoose.Schema({
         type: String, required: false
     },
     address: {
-        number: { type: String, required: false },
-        street: { type: String, required: false },
-        community: { type: String, required: false },
-        lga: { type: String, required: false},
-        state: {type: String, required: false},
-        country: {type: String, required: false}
+        number: { type: String, default: ""},
+        street: { type: String, default: ""},
+        community: { type: String, default: ""},
+        lga: { type: String, default: ""},
+        state: {type: String, default: ""},
+        country: {type: String, default: ""}
     },
     contact: {
-        email: {type: String, required: false},
-        phone: [String],
+        email: {type: String, default: ""},
+        phone: {type: String, default: ""},
         whatsapp: {
             status: {type: Number, default: 0, required: false},
-            number: {type: String, required: false}
+            number: {type: String, default: ""}
         }
     },
-    logo: {type: String, require: false},
-    description: {type: String, require: false},
+    logo: {type: String, default: ""},
+    description: {type: String, default: ""},
     created : {
         type : Date,
         default: Date.now()

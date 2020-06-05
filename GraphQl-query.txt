@@ -1,15 +1,41 @@
 {
-  loginUser(email: "theceoforlife@gmail.com", password: "supermum") {
+  userLogin(input:{email: "thescseoforlife@gmail.com", password: "supermum"}) {
+    
+    userDetails {
       fullname
   		email
       phone
-    	displaPicture
     	userId
-    	businessId
-    	businessData
-      accessToken
-    	requestStatus
-    	requestMessage
+    	displaPicture
+    }
+     
+    businessDetails {
+      id
+      businessname
+      username
+      logo
+      description
+      address {
+        number
+        street
+        community
+        lga
+        state
+        country
+      }
+      contact {
+        email
+        phone
+        whatsapp {
+          status
+          number
+        }
+      }
+    }
+    accessToken
+    code
+    success
+    message
   }
 }
 

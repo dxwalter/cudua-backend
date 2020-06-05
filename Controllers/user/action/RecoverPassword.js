@@ -31,15 +31,27 @@ module.exports = class RecoverPassword extends UserController{
 
         // check if email exists in db
         let checkEmailExist = await this.emailExists(this.email);
+        if (checkEmailExist.error == true) {
+            return this.returnType(200 , false, checkEmailExist.message)
+        }
 
+        checkEmailExist = checkEmailExist.result
         if (checkEmailExist) {
             
             let userDetails = await this.findUserByEmail(this.email);
+            if (userDetails.error == true) {
+                return this.returnType(200 , false, checkEmailExist.message)
+            } else {
+                userDetails = userDetails.result;
+            }
+            
             let userId = userDetails[0]._id;
 
             let checkEmailExistInRecovery = await this.emailExistsInForgotPassword(this.email);
            
-            if (checkEmailExistInRecovery) {
+            if (checkEmailExistInRecovery.error == true) {
+                return this.returnType(200 , false, checkEmailExistInRecovery.message)
+            } else if (checkEmailExistInRecovery.result) {
                 this.deleteOneFromPasswordRecovery(userId);
             }
 
@@ -53,7 +65,12 @@ module.exports = class RecoverPassword extends UserController{
             });
 
             let createForgotPassword = await this.createForgotPassword(insertForgotPassword);
-
+            if (createForgotPassword.error == true) {
+                return this.returnType(200 , false, error.message)
+            } else {
+                createForgotPassword = createForgotPassword.result;
+            }
+            
             if(createForgotPassword._id) {
 
                 let emailObject = {
@@ -86,11 +103,16 @@ module.exports = class RecoverPassword extends UserController{
         this.secret = args.secret;
         this.userId = args.userId;
 
-        if (this.secret && await this.checkRecoverySecret(this.secret)) {
+        let checkSecret = await this.checkRecoverySecret(this.secret);
+        if (checkSecret.error == true) {
+            return this.returnType(200 , false, checkSecret.message)
+        }
+        
+        if (this.secret && checkSecret.result) {
             
             if (this.password.length < 6) {
 
-                return this.returnType(200 , false, `Your email address is not recognised`);
+                return this.returnType(200 , false, "Your password must be greater than 6 characters");
 
             } else {
                 this.password = bcrypt.hashSync(this.password, 10);
@@ -103,7 +125,13 @@ module.exports = class RecoverPassword extends UserController{
 
             let changePassword = await this.findOneAndUpdate(this.userId, newData);
             
-            if (changePassword) {
+            if (changePassword.error == true) {
+                return this.returnType(200 , false, changePassword.message);
+            }
+
+            console.log(changePassword.result)
+
+            if (changePassword.result) {
 
                 // delete from  recoverypasswords collection
                 await this.deleteOneFromPasswordRecovery(this.userId)

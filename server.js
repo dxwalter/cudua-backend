@@ -1,12 +1,19 @@
 "use-strict";
 
-const mongoose = require('mongoose');
+const express = require('express');
 const bodyParser = require('body-parser');
-const { buildSchema }  = require('graphql');
+const mongoose = require('mongoose');
 require('dotenv/config');
 
-const express = require('express');
+const app = express();
+
 const graphqlHTTP = require('express-graphql');
+const { buildSchema }  = require('graphql')
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+const jwtAuthentication = require('./Controllers/jwtAuthController');
 
 const typeDefs = require('./graqhlSchema/types');
 const resolvers = require('./graqhlSchema/resolvers');
@@ -18,17 +25,19 @@ const schema = makeExecutableSchema({
     resolvers
 });
 
-const app = express();
-
 class startServer {
     constructor(app) {
 
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
 
-        app.use("/graphql", graphqlHTTP(req => ({
+        app.use("/graphql", bodyParser.json(), graphqlHTTP((req, res) => ({
             schema,
             graphiql: true,
+            context: {
+                accessToken: req.header("accessToken"),
+                authFunction: jwtAuthentication
+            }
         })))
 
         // mongoose config

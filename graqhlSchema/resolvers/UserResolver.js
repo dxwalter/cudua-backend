@@ -13,8 +13,6 @@ module.exports = {
         userLogin (parent, args, context, info) {
             let UserLogin = new LoginUser(args.input);
             return UserLogin.AuthenticateUser();
-
-            // throw new error("this is the problwm")
         }
     },
     Mutation: {

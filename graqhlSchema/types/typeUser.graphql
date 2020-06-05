@@ -1,24 +1,33 @@
     # response type
     interface responseType {
-        code: String!
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
         success: Boolean!
+        # This is the message sent by the server about an operation
         message: String!
     }
 
     # This is the response type that returns no data
     type datalessResponse implements responseType {
-        code: String!
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
         success: Boolean!
+        # This is the message sent by the server about an operation
         message: String!
     }
 
     # This "User" type defines the queryable fields for every user in our data source.
     type User {
-        fullname: String!
-  		email: String!
-        phone: String!
+        fullname: String
+  		email: String
+        phone: String
     	displaPicture: String
+        # Business id represents the unique id of a business that was created by a user
     	businessId: String
+        # This user id represents a human account (personal account)
+        userId: String
     }
 
     # This method allows a user to reset the password without logging in
@@ -44,7 +53,7 @@
         userId: String!
 
         # Api http status code
-        code: String!
+        code: Int!
         # This boolean value is used to check if an operation ran successfully
         success: Boolean!
 
@@ -58,19 +67,15 @@
         accessToken: String!
     }
 
-
     type loginResponse implements responseType {
-        fullname: String
-  		email: String
-        phone: String
-    	displaPicture: String
-        # Business id represents the unique id of a business that was created by a user
-    	businessId: String
-        # This user id represents a human account (personal account)
-        userId: String
+        userDetails: User!
+
+        businessDetails: BusinessAccount
 
         # Api http status code
-        code: String!
+        code: Int!
+
+
         # This boolean value is used to check if an operation ran successfully
         success: Boolean!
 
@@ -81,7 +86,7 @@
         This is token is used to authenticate every logged in user. Therefore, it is attached 
         in the header object of every request sent by a logged in user.
         """
-        accessToken: String
+        accessToken: String,
     }
 
     # This is the input type for that will for an account to be created

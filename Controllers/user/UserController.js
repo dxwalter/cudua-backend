@@ -12,18 +12,35 @@ module.exports = class UserController extends FunctionRepo{
     async findOneEmail(email) {
         try {
             let findResult = await UserModel.find({email: this.email}).limit(1).exec();   
-            return findResult;
+            return {
+                error: false,
+                result: findResult
+            }
         } catch (error) {
-            console.log(error);
+            return {
+                error: true,
+                message: error.message
+            }
         }
     }
 
     async findUserByEmail (email) {
-        const findResult = await UserModel.find({
-            email: email
-        }).limit(1).exec();  
+        try {
+            const findResult = await UserModel.find({
+                email: email
+            }).limit(1).exec();  
+    
+            return {
+                error: false,
+                result: findResult
+            }
 
-        return findResult;
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
     }
 
     async emailExists (email) {
@@ -34,14 +51,23 @@ module.exports = class UserController extends FunctionRepo{
     
             if (findResult.length > 0) {
                 if (findResult[0]._id) {
-                   return true;
+                   return {
+                       error: false,
+                       result: true   
+                   }
                 }
             } else {
-                return false;
+                return {
+                    error: false,
+                    result: false   
+                }
             }
     
         } catch (error) {
-            console.log(error);
+            return {
+                error: true,
+                message: error.message
+            }
         }
     }
 
@@ -53,14 +79,23 @@ module.exports = class UserController extends FunctionRepo{
     
             if (findResult.length > 0) {
                 if (findResult[0]._id) {
-                   return true;
+                    return {
+                        error: false,
+                        result: true   
+                    }
                 }
             } else {
-                return false;
+                return {
+                    error: false,
+                    result: false   
+                }
             }
     
         } catch (error) {
-            console.log(error);
+            return {
+                error: true,
+                message: error.message
+            }
         }
     }
 
@@ -72,14 +107,23 @@ module.exports = class UserController extends FunctionRepo{
     
             if (findResult.length > 0) {
                 if (findResult[0]._id) {
-                   return false;
+                    return {
+                        error: false,
+                        result: false   
+                    }
                 }
             } else {
-                return true;
+                return {
+                    error: false,
+                    result: true   
+                }
             }
     
         } catch (error) {
-            console.log(error);
+            return {
+                error: true,
+                message: error.message
+            }
         }
     }
 
@@ -87,20 +131,32 @@ module.exports = class UserController extends FunctionRepo{
         try {
 
             const create = await createUser.save();
-            return create;
+            return {
+                error: false,
+                result: create
+            }
 
         } catch (error) {
-            return this.returnMethod("", "", 0, "An error occured, please try again")
+            return {
+                error: true,
+                message: error.message
+            }
         }
     }
 
     async createForgotPassword (forgotPasswordData) {
         try {
             const create = await forgotPasswordData.save();
-            return create;
+            return {
+                result: create,
+                error: false
+            }
 
         } catch (error) {
-            return this.returnMethod("", "", 0, "An error occured, please try again")
+            return {
+                error: true,
+                message: error.message
+            }
         }
     }
 
@@ -109,13 +165,17 @@ module.exports = class UserController extends FunctionRepo{
     }
 
     async findOneAndUpdate(userId, newDataObject) {
-
         try {
             let updateRecord = await UserModel.findOneAndUpdate({_id: userId}, { $set:newDataObject }, {new : true });
-            return updateRecord;
+            return {
+                error: false,
+                result: updateRecord
+            }
         } catch (error) {
-            //
-            console.log(error)
+            return {
+                error: true,
+                message: error.message
+            }
         }
     }
 
