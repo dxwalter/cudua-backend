@@ -73,3 +73,30 @@ mutation {
       message
   }
 }
+
+mutation {
+  # remember to pass accessToken in request header
+  CreateBusinessAccount(createInput:{ name: "name", username: "dxwalter" }) {
+  	businessDetails{
+      businessname
+      username
+      address {
+        number
+        street
+        community
+        lga
+        state
+        country
+      }
+      id
+      contact{
+        email
+      }
+      logo
+      description 
+    }
+    code
+    success
+    message
+  }
+}

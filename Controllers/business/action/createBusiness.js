@@ -30,7 +30,7 @@ module.exports = class CreateBusiness extends BusinessController {
 
     async validateBusinessInput (userId) {
         
-        let name = this.name[0].toUpperCase() +  this.name.slice(1);
+        let name = this.name;
         let username = this.username.toLowerCase();
 
         if (name.length <= 3) {
@@ -71,7 +71,7 @@ module.exports = class CreateBusiness extends BusinessController {
 
         return {
             businessDetails : {
-                businessname: data.businessname,
+                businessname: this.MakeFirstLetterUpperCase(data.businessname),
                 username: data.username,
                 id: data._id
             },

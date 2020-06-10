@@ -2,13 +2,13 @@
     # This is the business return type for a registered business
 
     type BusinessAccount {
-        id: ID!,
-        businessname: String!
+        id: ID,
+        businessname: String
         address: AddressType
         contact: BusinessContact
         logo: String
         description: String
-        username: String!
+        username: String
     }
 
     type BusinessContact {

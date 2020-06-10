@@ -126,7 +126,7 @@ module.exports = class LoginUser extends UserController{
 
 
                         return {
-                            // user objec
+                            // user object
                             userDetails: {
                                 userId : userDbDetails._id,
                                 fullname: userDbDetails.fullname,

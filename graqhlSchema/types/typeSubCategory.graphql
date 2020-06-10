@@ -1,0 +1,52 @@
+    # response type
+    interface ResponseType {
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
+
+    # This is the response type that returns no data
+    type DatalessResponse implements ResponseType {
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
+    type Subcategory {
+        subcategoryId: String!
+        subcategoryName: String
+    }
+
+    input CreateSubcategoryInput {
+        subcategoryName: String!
+    }
+
+    input ConfirmSubcategoryInput {
+        # This is the id of the category
+        subcategoryId: String!
+    }
+
+
+    type CreateSubcategoryResponse implements ResponseType {
+        subcategoryId: String!
+        subcategoryName: String!
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
+    #This is the mutation type that will handle create account, forgot and recover pasword
+    type Mutation {
+        createSubCategory(input: CreateCategoryInput): CreateCategoryResponse
+        # ActivateCategory(input: ConfirmCategoryInput): DatalessResponse
+    }

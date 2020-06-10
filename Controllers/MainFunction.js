@@ -12,4 +12,8 @@ module.exports = class FunctionRepo {
             console.log(error)            
         }
     }
+
+    MakeFirstLetterUpperCase (string) {
+        return string[0].toUpperCase() +  string.slice(1);
+    }
 }

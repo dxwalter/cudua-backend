@@ -55,7 +55,7 @@ module.exports = class CreateUser extends UserController{
         }
 
         const createUser = new UserModel ({
-            fullname : this.fullname,
+            fullname : this.MakeFirstLetterUpperCase(this.fullname),
             email : this.email,
             password: this.password
         });

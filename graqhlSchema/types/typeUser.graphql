@@ -1,5 +1,5 @@
     # response type
-    interface responseType {
+    interface ResponseType {
         # Response status code
         code: Int!
         # This boolean value is used to check if an operation ran successfully
@@ -9,7 +9,7 @@
     }
 
     # This is the response type that returns no data
-    type datalessResponse implements responseType {
+    type DatalessResponse implements ResponseType {
         # Response status code
         code: Int!
         # This boolean value is used to check if an operation ran successfully
@@ -20,14 +20,14 @@
 
     # This "User" type defines the queryable fields for every user in our data source.
     type User {
-        fullname: String
-  		email: String
-        phone: String
-    	displaPicture: String
+        fullname: String!
+  		email: String!
+        phone: String!
+    	displaPicture: String!
         # Business id represents the unique id of a business that was created by a user
-    	businessId: String
+    	businessId: String!
         # This user id represents a human account (personal account)
-        userId: String
+        userId: String!
     }
 
     # This method allows a user to reset the password without logging in
@@ -42,7 +42,7 @@
         userId: String!
     }
 
-    type createAccountResponse implements responseType {
+    type CreateAccountResponse implements ResponseType {
         fullname: String!
   		email: String!
         phone: String
@@ -67,8 +67,8 @@
         accessToken: String!
     }
 
-    type loginResponse implements responseType {
-        userDetails: User!
+    type LoginResponse implements ResponseType {
+        userDetails: User
 
         businessDetails: BusinessAccount
 
@@ -102,7 +102,7 @@
         password: String!
     }
 
-    input loginInput {
+    input LoginInput {
         # this is the registered email address of the user
         email: String!
 
@@ -117,14 +117,14 @@
     type Query {
         getUser: User
         getUsers: [User]
-        userLogin(input: loginInput): loginResponse
+        userLogin(input: LoginInput): LoginResponse
     }
 
     #This is the mutation type that will handle create account, forgot and recover pasword
     type Mutation {
-        createUser(user: CreateAccountInput): createAccountResponse
-        recoverPassword(email: String): datalessResponse
-        resetPassword(input: resetPassword): datalessResponse
+        createUser(user: CreateAccountInput): CreateAccountResponse
+        recoverPassword(email: String): DatalessResponse
+        resetPassword(input: resetPassword): DatalessResponse
     }
 
 
