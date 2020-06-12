@@ -21,11 +21,12 @@
 
     type Subcategory {
         subcategoryId: String!
-        subcategoryName: String
+        subcategoryName: String!
     }
 
     input CreateSubcategoryInput {
-        subcategoryName: String!
+        subcategories: [String!]!
+        categoryId: String!
     }
 
     input ConfirmSubcategoryInput {
@@ -47,6 +48,6 @@
 
     #This is the mutation type that will handle create account, forgot and recover pasword
     type Mutation {
-        createSubCategory(input: CreateCategoryInput): CreateCategoryResponse
+        createSubCategory(input: CreateSubcategoryInput): DatalessResponse
         # ActivateCategory(input: ConfirmCategoryInput): DatalessResponse
     }
