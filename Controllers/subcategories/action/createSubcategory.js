@@ -24,7 +24,6 @@ module.exports = class CreateCategory extends SubcategoryController {
     
     returnMethod (code, success, message) {
         return {
-
             code: code,
             success: success,
             message: message
@@ -34,10 +33,9 @@ module.exports = class CreateCategory extends SubcategoryController {
     async checkSubcategoryExists (name, categoryId) {
 
         let checkSubcategoryExistence = await this.checkExists(name, categoryId);
-
         if (checkSubcategoryExistence.error == true) {
             return this.returnMethod("", "", 500, false, `An error occurred: ${checkSubcategoryExistence.message}`);
-        } else if (checkSubcategoryExistence.error == false && checkSubcategoryExistence.result == false) {
+        } else if (checkSubcategoryExistence.result == false) {
             this.subcategoriesExisting += 1;
             return true; 
         }
@@ -52,18 +50,20 @@ module.exports = class CreateCategory extends SubcategoryController {
         const subcategories = this.subcategories;
         const newSubcategoryArray = [];
 
-        if (subcategories.length < 1) {
-            return this.returnMethod("", "", 200, false,   `Enter one or more subcategories seperated by comma`);
+        if (subcategories[0].length < 1) {
+            return this.returnMethod(200, false,   `Enter one or more subcategories seperated by comma`);
         }
 
-        for (const item of subcategories) {
+        for (let item of subcategories) {
+
+            item = this.MakeFirstLetterUpperCase(item)
 
             if (item.length > 2) {
                 // check if exists 
                 let callCheck = await this.checkSubcategoryExists(item, this.categoryId);
                 // if callcheck is == true, it means the subcategory does not exist
                 if (callCheck) {
-                    let newObject = {"name": item};
+                    let newObject = {"name": item, "category_id": this.categoryId};
                     newSubcategoryArray.push(newObject);
                     this.subcategoriesAdded = this.subcategoriesAdded + 1
                 }
@@ -71,35 +71,25 @@ module.exports = class CreateCategory extends SubcategoryController {
             
         }
         
-        console.log(newSubcategoryArray);
-
-        return;
-
-        if (this.name.length < 3) {
-            return this.returnMethod("", "", 200, false, "Enter a valid subcategory name");
+        if (newSubcategoryArray.length == 0) {
+            return this.returnMethod(200, false, 'The subcategories you added already exists')
         }
 
-        // // check if it exists   
-        // let checkSubcategoryExistence = await this.checkSubcategoryExists(this.name);
+        let createSubcategory = await this.createSubcategories(newSubcategoryArray);
 
-        // if (checkSubcategoryExistence.error == true) {
-        //     return this.returnMethod("", "", 500, false, `An error occurred: ${checkSubcategoryExistence.message}`);
-        // } else if (checkSubcategoryExistence.error == false && checkSubcategoryExistence.result == true) {
-        //     return this.returnMethod("", "", 200, false,   `The '${this.name}' subcategory  already exists`);
-        // }
+        if (createSubcategory.error == false) {
 
-        // create
-        const CreateCategory = new CategoryModel ({
-            name : this.name
-        });
+            let firstMessage = this.subcategoriesCount == 1 ? `You submitted one subcategory` : `You submitted ${this.subcategoriesCount} subcategories`;
 
-        let data = await this.CreateCategory(CreateCategory);
-        if (data.error == true) {
-            return this.returnMethod('', '', false, `An error occurred: ${data.message}`,  200);
+            console.log(firstMessage)
+
+            let secondMessage = this.subcategoriesAdded == 1 ? `one of them was added successfully` : `${this.subcategoriesAdded} of them were added successfully`;
+
+            return this.returnMethod(202, true, `${firstMessage}, and ${secondMessage}. It will take 1 to 3 hours for them to be activated.`);
+
+        } else {
+            return this.returnMethod(200, false, `An error occurred: ${createSubcategory.message}`)
         }
-
-        data = data.result;
-        return this.returnMethod(data._id, this.MakeFirstLetterUpperCase(this.name), 202, true, "Category was added successfully. It will take 1 to 6 hours to be activated.")
 
     }
 

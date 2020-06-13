@@ -12,7 +12,7 @@ module.exports = class CreateUser extends UserController{
     constructor (args) {
         super();
         this.fullname = args.fullname;
-        this.email = args.email;
+        this.email = args.email.toLowerCase();
         this.password = args.password.toLowerCase();
         this.model = UserModel;
 

@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 let CategoryController = require('../CategoryController');
-const CategoryModel = require('../../../Models/Categories');
 
 module.exports = class ActivateCategory extends CategoryController {
 
@@ -26,7 +25,7 @@ module.exports = class ActivateCategory extends CategoryController {
             return  this.returnMethod(202, true, `${this.MakeFirstLetterUpperCase(activateCategory.result.name)} category has been activated`);
 
         } else {
-            return this.returnMethod(200, false, "Choose a category to activated.")
+            return this.returnMethod(200, false, "Choose a category to be activated.")
         }
     }
 

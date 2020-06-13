@@ -15,7 +15,7 @@ module.exports = class CreateBusiness extends BusinessController {
     constructor(args) {
         super();
         this.name = args.name;
-        this.username = args.username;
+        this.username = args.username.toLowerCase();
         this.model = BusinessModel;
         this.UserController = new UserController()
     }
@@ -31,7 +31,7 @@ module.exports = class CreateBusiness extends BusinessController {
     async validateBusinessInput (userId) {
         
         let name = this.name;
-        let username = this.username.toLowerCase();
+        let username = this.username;
 
         if (name.length <= 3) {
             return this.returnRequestStatus(200, false, "Your business name must be greater than three characters");
@@ -52,7 +52,7 @@ module.exports = class CreateBusiness extends BusinessController {
         }
       
         const createBusiness = new BusinessModel ({
-            businessname : name,
+            businessname : this.MakeFirstLetterUpperCase(name),
             username : this.username
         });
 
@@ -71,7 +71,7 @@ module.exports = class CreateBusiness extends BusinessController {
 
         return {
             businessDetails : {
-                businessname: this.MakeFirstLetterUpperCase(data.businessname),
+                businessname: data.businessname,
                 username: data.username,
                 id: data._id
             },

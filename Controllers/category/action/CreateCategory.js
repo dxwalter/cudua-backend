@@ -12,7 +12,7 @@ module.exports = class CreateCategory extends CategoryController {
 
     constructor (args) { 
         super(); 
-        this.name = args.categoryName.toLowerCase();
+        this.name = this.MakeFirstLetterUpperCase(args.categoryName);
     }
 
     
@@ -55,7 +55,7 @@ module.exports = class CreateCategory extends CategoryController {
         }
 
         data = data.result;
-        return this.returnMethod(data._id, this.MakeFirstLetterUpperCase(this.name), 202, true, "Category was added successfully. It will take 1 to 6 hours to be activated.")
+        return this.returnMethod(data._id, this.MakeFirstLetterUpperCase(this.name), 202, true, "Category was added successfully. It will take 1 to 3 hours to be activated.")
 
     }
 

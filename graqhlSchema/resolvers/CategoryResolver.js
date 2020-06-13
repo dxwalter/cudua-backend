@@ -1,15 +1,23 @@
 
 let CreateCategory = require('../../Controllers/category/action/CreateCategory');
 let ActivateCategory = require('../../Controllers/category/action/ActivateCategory');
+let GetCategories = require('../../Controllers/category/action/GetCategories');
 
 module.exports = {
     Query: {
-
+        GetAllCategories() {
+            let getAll = new GetCategories();
+            return getAll.GetAll();
+        },
+        GetOneCategory(parent, args, context, info) {
+            let getOneCategory = new GetCategories();
+            return getOneCategory.GetOne(args.input);
+        }
     },
     Mutation: {
         createCategory(parent, args, context, info) {
-            // Remember to pass accessToken validation from Admin
-            // Since admin is the only user to add or delete a category
+            // Remember to pass accessToken validation from Admin and customer
+            // Since admin and customer are the only users to add or delete a category
 
             // let accessToken = context.accessToken;
             // let userId = context.authFunction(accessToken);

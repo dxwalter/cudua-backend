@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
-const CategoryModel = require('../../Models/Categories');
+const CategoryModel = require('../../Models/Categories'); 
+const Subcategory = require('../../Models/Subcategory'); 
 const FunctionRepo = require('../MainFunction');
 
 module.exports = class CategoryController extends FunctionRepo {
@@ -61,6 +62,59 @@ module.exports = class CategoryController extends FunctionRepo {
                 error: false,
                 result: updateRecord
             }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+    async GetAllCategories () {
+        try {
+            const result = await CategoryModel.find(
+                {status: 1}
+            ).populate('subcategoryList');
+            
+            if (result.length > 0) {
+                return {
+                    error: false,
+                    result: result
+                };
+            } else {
+                return {
+                    error: false,
+                    result: false
+                }
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+    async GetOneCategory(categoryId) {
+        try {
+
+            const result = await CategoryModel.find(
+                {status: 1, _id: categoryId}
+            ).populate('subcategoryList').limit(1);
+
+            if (result.length > 0) {
+                return {
+                    error: false,
+                    result: result
+                };
+            } else {
+                return {
+                    error: false,
+                    result: false
+                }
+            }
+
         } catch (error) {
             return {
                 error: true,

@@ -100,3 +100,84 @@ mutation {
     message
   }
 }
+
+mutation {
+  createSubCategory(input: {subcategories: ["One", "two", "three", "four"], categoryId: "5ee0d6d8d08a131d68889c66"}) {
+    code
+    success
+    message
+  }
+}
+
+
+query {
+  GetAllCategories {
+    id
+    name
+    subcategories {
+      subcategoryId
+      subcategoryName
+    }
+    code
+    success
+    message
+  }
+}
+
+mutation{
+  createCategory(input:{categoryName: "Electronics"}) {
+    categoryId
+    categoryName
+    code
+    success
+    message
+  }
+
+  ActivateCategory (input:{categoryId: "5ee520f8f5970734a4cf64dc"}) {
+    code
+    success
+    message
+  }
+}
+
+  mutation {
+
+    ActivateSubcategory(input:{subcategoryId:"5ee52166e8b7eb2888a3a307"}) {
+      code
+      success
+      message
+    }
+  }
+
+query {
+  GetAllCategories {
+    category{
+      id
+      name
+      subcategories {
+        subcategoryId
+        subcategoryName
+      }
+    }
+    code
+    success
+    message
+  }
+}
+
+
+query {
+  GetOneCategory(input: {categoryId: "5ee0d6d8d08a131d68889c66"}) {
+    category {
+      id
+      name
+      subcategories {
+        subcategoryId
+        subcategoryName
+      }
+    }
+    code
+    success
+    message
+  }
+}
