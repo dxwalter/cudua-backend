@@ -60,7 +60,7 @@ module.exports = class CreateCategory extends SubcategoryController {
 
             if (item.length > 2) {
                 // check if exists 
-                let callCheck = await this.checkSubcategoryExists(item, this.categoryId);
+                let callCheck = await this.checkSubcategoryExists({name: item}, this.categoryId);
                 // if callcheck is == true, it means the subcategory does not exist
                 if (callCheck) {
                     let newObject = {"name": item, "category_id": this.categoryId};
@@ -80,8 +80,6 @@ module.exports = class CreateCategory extends SubcategoryController {
         if (createSubcategory.error == false) {
 
             let firstMessage = this.subcategoriesCount == 1 ? `You submitted one subcategory` : `You submitted ${this.subcategoriesCount} subcategories`;
-
-            console.log(firstMessage)
 
             let secondMessage = this.subcategoriesAdded == 1 ? `one of them was added successfully` : `${this.subcategoriesAdded} of them were added successfully`;
 

@@ -8,18 +8,15 @@ const FunctionRepo = require('../MainFunction');
 module.exports = class CategoryController extends FunctionRepo {
     constructor () { super(); }
 
-    async checkCategoryExists (name) {
+    async checkCategoryExists (data) {
         
         try {
-            const findResult = await CategoryModel.find({
-                name: name
-            }).limit(1).exec();   
-    
+            const findResult = await CategoryModel.find(data).limit(1).exec();   
             if (findResult.length > 0) {
                 if (findResult[0]._id) {
                    return {
                        error: false,
-                       result: true   
+                       result: findResult   
                    }
                 }
             } else {

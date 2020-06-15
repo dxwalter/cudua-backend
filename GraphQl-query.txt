@@ -181,3 +181,43 @@ query {
     message
   }
 }
+
+query {
+CheckUsernameExists(input:{username: "dxwaltera"}) {
+  existence
+  code
+  success
+  message
+}
+}
+
+
+//data design for select category and corresponding subcategory for businessDetails
+mutation {
+	ChooseBusinessCategory(input:{
+    categoryId:"5ee052c9fb05d20944e05d7b",
+    dataObject: [
+      		{
+            categoryId: "5ee0d6d8d08a131d68889c66",
+              subcategories: [
+                "5ee427081aeba00b8cc434c4",
+                "5ee427081aeba00b8cc434c5",
+                "5ee427151aeba00b8cc434c6"
+              ]
+          },
+      		{
+            categoryId: "5ee520f8f5970734a4cf64dc",
+            subcategories: [
+              "5ee52166e8b7eb2888a3a306",
+              "5ee52166e8b7eb2888a3a307",
+              "5ee52166e8b7eb2888a3a305"
+            ]
+          }
+    ]
+    
+  }) {
+    code
+    success
+    message
+  }
+}

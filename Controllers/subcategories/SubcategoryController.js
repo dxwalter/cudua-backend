@@ -8,10 +8,10 @@ module.exports = class SubcategoryController extends CategoryController {
         super();
     }
 
-    async checkExists (name, categoryId) {
+    async checkExists (data, categoryId) {
         try {
             const findResult = await SubCatgoryModel.find(
-                {name: name}, {category_id: categoryId}
+                data, {category_id: categoryId}
             ).limit(1).exec();   
     
             if (findResult.length > 0) {

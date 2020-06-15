@@ -1,6 +1,5 @@
 
     # This is the business return type for a registered business
-
     type BusinessAccount {
         id: ID,
         businessname: String
@@ -9,6 +8,16 @@
         logo: String
         description: String
         username: String
+    }
+
+    # This is the response type that returns no data
+    type DatalessResponse implements ResponseType {
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
     }
 
     type BusinessContact {
@@ -53,8 +62,32 @@
         username: String!
     }
 
+    # username input
+    input checkUsernameInput {
+        username: String!
+    }
+
+    # the response type to check if username exists during registration
+    type checkUsernameInputResponse implements responseType {
+        code: Int!
+        success: Boolean!
+        message: String!
+        existence: Int!
+    }
+
+    input categoryMap {
+        categoryId: String!,
+        subcategories: [String!]!
+    }
+
+    input chosenBusinessCategory {
+        categoryId: String!
+        dataObject: [categoryMap]
+    }
+
     type Query {
         GetSingleBusinessDetails:  BusinessAccount
+        CheckUsernameExists(input: checkUsernameInput): checkUsernameInputResponse
     }
 
 

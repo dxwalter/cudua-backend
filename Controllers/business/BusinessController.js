@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
 const BusinessModel = require('../../Models/BusinessModel');
-const UserModel = require('../../Models/UserModel');
 const FunctionRepo = require('../MainFunction');
 
 module.exports = class BusinessController extends FunctionRepo {
@@ -83,4 +82,6 @@ module.exports = class BusinessController extends FunctionRepo {
             }
         }
     }
+
+
 }

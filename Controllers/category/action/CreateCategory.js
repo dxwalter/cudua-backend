@@ -36,7 +36,7 @@ module.exports = class CreateCategory extends CategoryController {
         }
 
         // check if it exists   
-        let checkCategoryExistence = await this.checkCategoryExists(this.name);
+        let checkCategoryExistence = await this.checkCategoryExists({name: this.name});
 
         if (checkCategoryExistence.error == true) {
             return this.returnMethod("", "", 500, false, `An error occurred: ${checkCategoryExistence.message}`);

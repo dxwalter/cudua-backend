@@ -19,13 +19,13 @@ module.exports = {
             // Remember to pass accessToken validation from Admin and customer
             // Since admin and customer are the only users to add or delete a category
 
-            // let accessToken = context.accessToken;
-            // let userId = context.authFunction(accessToken);
-            // if (userId.error == true) {
-            //     return userId
-            // } else {
-            //     userId = userId.message;
-            // }
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
 
             let createCategoryObject = new CreateCategory(args.input);
             return createCategoryObject.validateInput()
