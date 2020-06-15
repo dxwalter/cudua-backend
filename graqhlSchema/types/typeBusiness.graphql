@@ -5,9 +5,25 @@
         businessname: String
         address: AddressType
         contact: BusinessContact
+        businesscategory: [BusinessCategory]
         logo: String
         description: String
         username: String
+    }
+
+    type BusinessCategory {
+        id: String
+        categoryId: String
+        categoryName: String
+        hide: Int
+        subcategories: [BusinessSubcategory]
+    }
+
+    type BusinessSubcategory {
+        itemId: String
+        subcategoryId: String
+        subcategoryName: String
+        hide: Int
     }
 
     # This is the response type that returns no data

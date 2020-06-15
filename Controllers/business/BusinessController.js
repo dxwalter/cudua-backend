@@ -59,8 +59,8 @@ module.exports = class BusinessController extends FunctionRepo {
         try {
             const findResult = await BusinessModel.find({
                 _id: businessId
-            }).limit(1).exec();   
-    
+            }).limit(1);   
+
             if (findResult.length > 0) {
                 if (findResult[0]._id) {
                    return {

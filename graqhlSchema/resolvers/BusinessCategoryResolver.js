@@ -16,7 +16,7 @@ module.exports = {
             }
 
             let createBusinessCategory = new ChooseCategory();
-            return createBusinessCategory.ChooseCategory(args.input.categoryId, args.input.dataObject)
+            return createBusinessCategory.ChooseCategory(args.input.businessId, args.input.categoryId, args.input.subcategories)
             
         }
     }

@@ -26,7 +26,7 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
         }
     }
 
-    async ChooseCategory (businessId, ChosenBusinessCategory) {
+    async ChooseCategory (businessId, categoryId, subcategories) {
         
         if (businessId.length == 0) {
             return this.returnMethod(200, false, "Your business details was not provided. Sign in and try again. If problem persists, contact the support team")
@@ -44,10 +44,6 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
         if (checkfiBusinessExists.result ==  false) {
             return this.returnMethod(200, false, 'Your business account is not recognised');
         }
-
-
-        let categoryList = ChosenBusinessCategory;
-        let categoryId = categoryList[0].categoryId;
 
         // check if category exists in category document/table
         let checkIfCategoryExistInCategoryDoc = await this.CategoryController.checkCategoryExists({_id: categoryId});
@@ -74,7 +70,7 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
         }
 
         // check if selected subcategories exists
-        let subcategoriesList = categoryList[0].subcategories;
+        let subcategoriesList = subcategories;
         let subcategoriesCount = subcategoriesList.length;
         let failedSubcategories = 0
         let passedSubcatgories = [];
@@ -123,7 +119,9 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
             return this.returnMethod(500, false, "An error occured saving your category");
         }
         
-
+        if (create.error == false) {
+            return this.returnMethod(202, true, `Your category and subcategories were added successfully`);
+        }
         
     }   
 }

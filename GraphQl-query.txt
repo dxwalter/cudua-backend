@@ -1,5 +1,5 @@
 {
-  userLogin(input:{email: "thescseoforlife@gmail.com", password: "supermum"}) {
+  userLogin(input:{email: "theceoforlife@gmail.com", password: "supermum"}) {
     
     userDetails {
       fullname
@@ -15,6 +15,18 @@
       username
       logo
       description
+      businesscategory{
+        id
+        categoryId
+        categoryName
+        hide
+        subcategories{
+          itemId
+          subcategoryId
+          subcategoryName
+          hide
+        }
+      }
       address {
         number
         street
@@ -109,21 +121,6 @@ mutation {
   }
 }
 
-
-query {
-  GetAllCategories {
-    id
-    name
-    subcategories {
-      subcategoryId
-      subcategoryName
-    }
-    code
-    success
-    message
-  }
-}
-
 mutation{
   createCategory(input:{categoryName: "Electronics"}) {
     categoryId
@@ -192,27 +189,14 @@ CheckUsernameExists(input:{username: "dxwaltera"}) {
 }
 
 
-//data design for select category and corresponding subcategory for businessDetails
 mutation {
-	ChooseBusinessCategory(input:{
-    categoryId:"5ee052c9fb05d20944e05d7b",
-    dataObject: [
-      		{
-            categoryId: "5ee0d6d8d08a131d68889c66",
-              subcategories: [
-                "5ee427081aeba00b8cc434c4",
-                "5ee427081aeba00b8cc434c5",
-                "5ee427151aeba00b8cc434c6"
-              ]
-          },
-      		{
-            categoryId: "5ee520f8f5970734a4cf64dc",
-            subcategories: [
-              "5ee52166e8b7eb2888a3a306",
-              "5ee52166e8b7eb2888a3a307",
-              "5ee52166e8b7eb2888a3a305"
-            ]
-          }
+	CreateBusinessCategory(input:{
+    businessId:"5ee77d93a35c6f1bf43fe43a",
+    categoryId: "5ee78eaef327350cc89dd4ec",
+    subcategories: [
+      "5ee78f34f327350cc89dd4ed",
+      "5ee78f34f327350cc89dd4ee",
+      "5ee78f34f327350cc89dd4f0"
     ]
     
   }) {

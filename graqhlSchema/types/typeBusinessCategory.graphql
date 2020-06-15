@@ -21,8 +21,9 @@
     }
 
     input chosenBusinessCategory {
-        categoryId: String!
-        dataObject: [categoryMap]
+        businessId: String!
+        categoryId: String!,
+        subcategories: [String!]!
     }
 
 

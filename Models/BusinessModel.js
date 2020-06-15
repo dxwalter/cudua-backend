@@ -31,4 +31,14 @@ const BusinessSchema = mongoose.Schema({
     }
 });
 
+BusinessSchema.virtual('businessCategoryList', {
+    ref: 'business-categories',
+    localField: '_id',
+    foreignField: 'business_id',
+    justOne: false
+})
+
+BusinessSchema.set('toObject', { virtuals: true });
+BusinessSchema.set('toJSON', { virtuals: true });
+
 module.exports = mongoose.model('business-accounts', BusinessSchema);

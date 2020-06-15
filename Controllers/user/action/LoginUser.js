@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 let UserController = require('../UserController');
 let UserModel = require('../../../Models/UserModel');
 let BusinessController = require('../../business/BusinessController');
+let BusinessCategoryController = require('../../businessCategory/BusinessCategoryController');
 
 module.exports = class LoginUser extends UserController{
 
@@ -19,6 +20,7 @@ module.exports = class LoginUser extends UserController{
         this.password = args.password.toLowerCase();
         this.model = UserModel;
         this.BusinessController = new BusinessController();
+        this.BusinessCategoryInstance = new BusinessCategoryController();
     }
 
     returnType (code, success, message) {
@@ -44,6 +46,53 @@ module.exports = class LoginUser extends UserController{
         }
     }
 
+    formatBusinessCategoryData(dataArray) {
+        let businessCategoryArray = [];
+        let categoryCount = 0; // 
+        let subCategoryCount = 0;
+        let subCategoryNameCount = 0;
+
+
+        // retrieve category data
+        for (let category of dataArray) {
+            let arr = dataArray[categoryCount];
+
+            let newData = {
+                id: arr._id,
+                categoryId: arr.category_id,
+                hide: arr.hide,
+                categoryName: arr.categoryList[0].name,
+                subcategories: []
+            }
+
+            //retrieve subcategory data from subcategory array
+            for (let subcategories of arr.subcategory) {
+                console.log(subcategories)
+                newData.subcategories[subCategoryCount] = {
+                    itemId: subcategories._id,
+                    hide: subcategories.hide,
+                    subcategoryId: subcategories.subcategory_id,
+                    subcategoryName: ""
+                }
+                subCategoryCount = subCategoryCount + 1;
+            }
+
+            // retrieve name of subcategory from subcategoryList array
+            for(let subcateName of arr.subcategoryList) {
+                newData.subcategories[subCategoryNameCount].subcategoryName = subcateName.name
+                subCategoryNameCount = subCategoryNameCount + 1;
+            }
+
+            businessCategoryArray[categoryCount] = newData;
+            
+            categoryCount = categoryCount + 1;
+            subCategoryCount = 0;
+            subCategoryNameCount = 0;
+        }
+
+        return businessCategoryArray;
+    }
+
     async getBusinessDetails (businessId) {
 
         // get business data
@@ -64,6 +113,18 @@ module.exports = class LoginUser extends UserController{
                 country: getBusinessData.address.country
             }
 
+            let businessCategory = await this.BusinessCategoryInstance.getbusinessCategories(businessId);
+            if (businessCategory.error == true) {
+                return this.returnType(500 , false, 'An error occurred while retrieving your business category')
+            }
+
+            if (businessCategory.error == false && businessCategory.result == false ) {
+                businessCategory = '';
+            } else {
+                // this is the array of business categories and subcategories chosen by this business owner
+                businessCategory = this.formatBusinessCategoryData(businessCategory.result);
+            }
+
             // business contact
             let businessContact =  {
                 email: getBusinessData.contact.email,
@@ -82,7 +143,8 @@ module.exports = class LoginUser extends UserController{
                 description: getBusinessData.description,
                 address: businessAddress,
                 contact: businessContact,
-                logo: getBusinessData.logo
+                logo: getBusinessData.logo,
+                businesscategory: businessCategory
             }
         } else {
             return "";

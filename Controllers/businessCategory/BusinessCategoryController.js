@@ -77,4 +77,32 @@ module.exports = class BusinessCategoryController extends BusinessController {
 
     }
 
+    async getbusinessCategories (businessId) {
+        try {
+            const findResult = await BusinessCategoryModel.find({
+                business_id : businessId
+            }).populate('categoryList').populate('subcategoryList');   
+
+            if (findResult.length > 0) {
+                if (findResult[0]._id) {
+                   return {
+                       error: false,
+                       result: findResult   
+                   }
+                }
+            } 
+
+            return {
+                error: false,
+                result: false   
+            }
+    
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
 }

@@ -24,4 +24,21 @@ const BusinessCategoriesSchema = mongoose.Schema({
     }
 });
 
+BusinessCategoriesSchema.virtual('categoryList', {
+    ref: 'categories',
+    localField: 'category_id',
+    foreignField: '_id',
+    justOne: false
+});
+
+BusinessCategoriesSchema.virtual('subcategoryList', {
+    ref: 'subcategories',
+    localField: 'subcategory.subcategory_id',
+    foreignField: '_id',
+    justOne: false
+});
+
+BusinessCategoriesSchema.set('toObject', { virtuals: true });
+BusinessCategoriesSchema.set('toJSON', { virtuals: true });
+
 module.exports = mongoose.model('business-categories', BusinessCategoriesSchema);
