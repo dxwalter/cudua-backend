@@ -75,4 +75,30 @@ module.exports = class SubcategoryController extends CategoryController {
         }
     }
 
+    async GetOneSubcategory(subcategoryId) {
+        try {
+
+            const result = await SubCatgoryModel.find(
+                { _id: subcategoryId}
+            ).limit(1);
+
+            if (result.length > 0) {
+                return {
+                    error: false,
+                    result: result
+                };
+            } else {
+                return {
+                    error: false,
+                    result: false
+                }
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
 }

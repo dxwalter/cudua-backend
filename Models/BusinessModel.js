@@ -4,6 +4,11 @@ const BusinessSchema = mongoose.Schema({
     businessname: {
         type: String, required: true
     },
+    owner:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true
+    },
     username: {
         type: String, required: false
     },

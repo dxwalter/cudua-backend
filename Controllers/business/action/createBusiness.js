@@ -53,7 +53,8 @@ module.exports = class CreateBusiness extends BusinessController {
       
         const createBusiness = new BusinessModel ({
             businessname : this.name,
-            username : this.username
+            username : this.username,
+            owner: userId
         });
 
         let data = await this.createBusinessAccount(createBusiness, userId);

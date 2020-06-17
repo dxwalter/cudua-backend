@@ -205,3 +205,27 @@ mutation {
     message
   }
 }
+
+mutation {
+  ShowSelectedBusinessCategory(input: {selectedCategoryId: "5ee7975fa1eb182554da3602"}) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  HideSelectedBusinessCategory(input: {selectedCategoryId: "5ee7975fa1eb182554da3602"}) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  HideSelectedBusinessSubcategory(input:{selectedSubcategoryId: "5ee7a640cbc97f2134eb3fb4"}) {
+    code
+    success
+    message
+  }
+}

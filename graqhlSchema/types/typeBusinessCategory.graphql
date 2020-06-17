@@ -26,7 +26,27 @@
         subcategories: [String!]!
     }
 
+    input hideBusinessCategory{
+        selectedCategoryId: String!
+    }
+
+    input showBusinessCategory{
+        selectedCategoryId: String!
+    }
+
+    input hideBusinessSubcategory {
+        selectedSubcategoryId: String!
+    }
+
+    input showBusinessSubcategory {
+        selectedSubcategoryId: String!
+    }
 
     type Mutation {
         CreateBusinessCategory(input: chosenBusinessCategory): DatalessResponse
+        HideSelectedBusinessCategory(input: hideBusinessCategory): DatalessResponse
+        ShowSelectedBusinessCategory(input: hideBusinessCategory): DatalessResponse
+
+        HideSelectedBusinessSubcategory(input: hideBusinessSubcategory): DatalessResponse
+        ShowSelectedBusinessSubcategory(input: showBusinessSubcategory): DatalessResponse
     }

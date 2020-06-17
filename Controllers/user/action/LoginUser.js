@@ -67,7 +67,6 @@ module.exports = class LoginUser extends UserController{
 
             //retrieve subcategory data from subcategory array
             for (let subcategories of arr.subcategory) {
-                console.log(subcategories)
                 newData.subcategories[subCategoryCount] = {
                     itemId: subcategories._id,
                     hide: subcategories.hide,
