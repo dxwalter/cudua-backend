@@ -1,0 +1,56 @@
+
+# This is the type file for products
+
+scalar Upload
+
+# response type
+interface ResponseType {
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+# This is the response type that returns no data
+type DatalessResponse implements ResponseType {
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type Product {
+    name: String!
+    price: Int!
+    category: String!
+    subcategory: String!
+    images: [String]
+}
+
+type createProductResponse implements ResponseType {
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+input createProduct {
+    name: String!
+    price: Int!
+    category: String!
+    subcategory: String!
+    image: Upload!
+    businessId: String!
+}
+
+
+#This is the mutation type that will handle create account, forgot and recover pasword
+type Mutation {
+    createProduct(input: createProduct): createProductResponse
+}

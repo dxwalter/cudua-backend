@@ -3,12 +3,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const path = require('path');
+
 require('dotenv/config');
 
 const app = express();
 
 const graphqlHTTP = require('express-graphql');
 const { buildSchema }  = require('graphql')
+const GraphQLUpload = require('graphql-upload');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -45,6 +48,8 @@ class startServer {
         mongoose.set('useFindAndModify', false);
         mongoose.set('useCreateIndex', true);
         mongoose.set('useUnifiedTopology', true);
+
+        
 
         // connect to db
         mongoose.connect(process.env.DB_CONNECTION).then(

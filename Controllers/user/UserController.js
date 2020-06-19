@@ -144,6 +144,34 @@ module.exports = class UserController extends FunctionRepo{
         }
     }
 
+    async findUsersById (userId) {
+        try {
+            const findResult = await UserModel.find({
+                _id: userId
+            }).limit(1).exec();  
+            
+            if (findResult.length > 0) {
+                if (findResult[0]._id) {
+                   return {
+                       error: false,
+                       result: findResult[0]
+                   }
+                }
+            } else {
+                return {
+                    error: false,
+                    result: false   
+                }
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async createForgotPassword (forgotPasswordData) {
         try {
             const create = await forgotPasswordData.save();

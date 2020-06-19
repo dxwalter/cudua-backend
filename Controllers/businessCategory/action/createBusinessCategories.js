@@ -71,7 +71,6 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
 
         // check if selected subcategories exists
         let subcategoriesList = subcategories;
-        let subcategoriesCount = subcategoriesList.length;
         let failedSubcategories = 0
         let passedSubcatgories = [];
         let arrayInitial = 0

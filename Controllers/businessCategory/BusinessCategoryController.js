@@ -32,16 +32,22 @@ module.exports = class BusinessCategoryController extends BusinessController {
     async insertSubcategory(businessCategoryId, data) {
         
         try {
-            let find = BusinessCategoryModel.findOne({_id: businessCategoryId});
+            let find = await BusinessCategoryModel.findOne({_id: businessCategoryId});
 
             find.subcategory = {"subcategory_id": data}
 
-            update = await find.save()
-            console.log(update)
-          
+            updateRecord = await find.save()
+            
+            return {
+                error: false,
+                result: updateRecord
+            }
             
         } catch (error) {
-            
+            return {
+                error: false,
+                message: error.message   
+            }
         }
     }
 

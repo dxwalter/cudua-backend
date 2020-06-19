@@ -1,0 +1,42 @@
+    # This is the businesses bookmarked by a customer 
+    
+    type BusinessDetails {
+        businessid: ID!
+        username: String!
+        businessName: String!
+        businesscategory: [BusinessCategory]
+        logo: String
+    }
+
+    type BusinessCategory {
+        categoryId: String!
+        categoryName: String!
+    }
+
+    input createBookmarkInput {
+        businessId: String!
+    }
+
+
+    type createBookmarkResponse  implements responseType{
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+    # response type
+    interface responseType {
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+
+    type Query {
+        getBookmarks: BusinessDetails
+    }
+
+    type Mutation {
+        createBookmark(input: createBookmarkInput): createBookmarkResponse
+        deleteBookmark(input: createBookmarkInput): createBookmarkResponse
+    }
