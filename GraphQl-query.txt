@@ -229,3 +229,19 @@ mutation {
     message
   }
 }
+
+mutation {
+  deleteBookmark(input: {businessId: "5ee77d93a35c6f1bf43fe43a"}){
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  createBookmark(input: {businessId: "5ee77d93a35c6f1bf43fe43a"}){
+    code
+    success
+    message
+  }
+}
