@@ -8,7 +8,6 @@ const BookmarkModel = require('../../Models/Bookmark');
 
 const BusinessController = require('../business/BusinessController')
 const FunctionRepo = require('../MainFunction');
-const { update } = require('../../Models/Categories');
 
 module.exports = class BookmarkController extends BusinessController {
     constructor () { super(); }
@@ -128,4 +127,30 @@ module.exports = class BookmarkController extends BusinessController {
         }
     }
 
+    async getBookmarkListing (userId) {
+        try {
+            let findResult = await BookmarkModel.find({author: userId})
+
+            if (findResult.length > 0) {
+                if (findResult[0]._id) {
+                   return {
+                       error: false,
+                       result: findResult   
+                   }
+                }
+            } 
+
+            return {
+                error: false,
+                result: false   
+            }
+    
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+        
+    }
 }

@@ -180,12 +180,12 @@ query {
 }
 
 query {
-CheckUsernameExists(input:{username: "dxwaltera"}) {
-  existence
-  code
-  success
-  message
-}
+  CheckUsernameExists(input:{username: "dxwaltera"}) {
+    existence
+    code
+    success
+    message
+  }
 }
 
 
@@ -240,6 +240,24 @@ mutation {
 
 mutation {
   createBookmark(input: {businessId: "5ee77d93a35c6f1bf43fe43a"}){
+    code
+    success
+    message
+  }
+}
+
+query{
+  getBookmarks {
+    bookmarks {
+      businessId
+      username
+      businessName
+      logo
+      businessCategory {
+        categoryId
+        categoryName
+      }
+    }
     code
     success
     message

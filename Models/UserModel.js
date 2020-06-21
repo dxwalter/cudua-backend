@@ -14,7 +14,9 @@ const UserSchema = mongoose.Schema({
         type : String, required : true
     },
     business_id : {
-        type: String, required: false, default : ""
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "business-accounts",
+        required: false
     },
     created : {
         type : Date,

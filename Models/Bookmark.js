@@ -12,7 +12,7 @@ const BookmarkSchema = mongoose.Schema({
             ref: "business-accounts",
             required: true
         },
-        added : {
+        created : {
             type : Date,
             default: Date.now()
         }
@@ -24,20 +24,20 @@ const BookmarkSchema = mongoose.Schema({
 });
 
 // get business details
-// BookmarkSchema.virtual('BookmarkBusinessDetailsList', {
-//     ref: 'business-accounts',
-//     localField: 'bookmarks.business_id',
-//     foreignField: 'business_id',
-//     justOne: false
-// });
+BookmarkSchema.virtual('BookmarkBusinessDetailsList', {
+    ref: 'business-accounts',
+    localField: 'bookmarks.business_id',
+    foreignField: '_id',
+    justOne: false
+});
 
 // get business category list
-// BookmarkSchema.virtual('BusinessCategoryList', {
-//     ref: 'business-categories',
-//     localField: 'bookmarks.business_id',
-//     foreignField: 'business_id',
-//     justOne: false
-// });
+BookmarkSchema.virtual('BusinessCategoryList', {
+    ref: 'business-categories',
+    localField: 'bookmarks.business_id',
+    foreignField: 'business_id',
+    justOne: false
+});
 
 // BookmarkSchema.virtual('businessCategoryList', {
 //     ref: 'subcategories',

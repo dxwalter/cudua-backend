@@ -118,7 +118,7 @@ module.exports = class LoginUser extends UserController{
             }
 
             if (businessCategory.error == false && businessCategory.result == false ) {
-                businessCategory = '';
+                businessCategory = null;
             } else {
                 // this is the array of business categories and subcategories chosen by this business owner
                 businessCategory = this.formatBusinessCategoryData(businessCategory.result);
@@ -181,9 +181,13 @@ module.exports = class LoginUser extends UserController{
                         let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });
 
                         let businessId = userDbDetails.business_id;
+                        let businessData = "";
 
-                        // get business details
-                        let businessData = businessId.length > 0 ? await this.getBusinessDetails(businessId) : "";
+                        if (businessId == undefined) {
+                            businessData = null
+                        } else {
+                            businessData = await this.getBusinessDetails(businessId);
+                        }
 
 
                         return {

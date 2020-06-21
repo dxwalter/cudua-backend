@@ -1,10 +1,10 @@
     # This is the businesses bookmarked by a customer 
     
     type BusinessDetails {
-        businessid: ID!
+        businessId: ID!
         username: String!
         businessName: String!
-        businesscategory: [BusinessCategory]
+        businessCategory: [BusinessCategory]
         logo: String
     }
 
@@ -31,9 +31,15 @@
         message: String!
     }
 
+    type getBookmarksResponse implements responseType {
+        bookmarks: [BusinessDetails]
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
 
     type Query {
-        getBookmarks: BusinessDetails
+        getBookmarks: getBookmarksResponse
     }
 
     type Mutation {

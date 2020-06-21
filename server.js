@@ -40,7 +40,8 @@ class startServer {
             context: {
                 accessToken: req.header("accessToken"),
                 authFunction: jwtAuthentication
-            }
+            },
+            tracing: true
         })))
 
         // mongoose config

@@ -119,5 +119,34 @@ module.exports = class CategoryController extends FunctionRepo {
             }
         }
     }
+
+    async GetMultipleCategories(categoryArray) {
+        try {
+
+            const result = await CategoryModel.find(
+                {
+                    '_id' : { $in: categoryArray }
+                }
+            ).populate('subcategoryList');
+
+            if (result.length > 0) {
+                return {
+                    error: false,
+                    result: result
+                };
+            } else {
+                return {
+                    error: false,
+                    result: false
+                }
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
     
 }

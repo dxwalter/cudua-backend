@@ -201,4 +201,19 @@ module.exports = class BusinessCategoryController extends BusinessController {
             }
         }
     }
+
+    async getBusinessCategoryForBookmark (businessId) {
+        try {
+            const findResult = await BusinessCategoryModel.find({
+                business_id : businessId
+            });
+            
+            console.log(findResult)
+            return
+        
+
+        } catch (error) {
+            
+        }
+    }
 }
