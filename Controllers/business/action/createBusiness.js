@@ -41,6 +41,16 @@ module.exports = class CreateBusiness extends BusinessController {
             return this.returnRequestStatus(200, false, "Your business username must be greater than three characters");
         }
 
+        // regex username
+        
+        let checkUsername = new RegExp(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/ig).test(username)
+        
+        console.log(checkUsername);
+
+        if (checkUsername == false) {
+            return this.returnRequestStatus(200, false, "Enter a valid username. User name must not contain any space or special character");
+        }
+
         let usernameCheck = await this.checkUsernameExists(username);
         
         if (usernameCheck.error == true) {
@@ -64,7 +74,7 @@ module.exports = class CreateBusiness extends BusinessController {
 
         data = data.result
 
-        let UserController = this.UserController.findOneAndUpdate(userId, {business_id: data._id});
+        let UserController = this.UserController.findOneAndUpdate(userId, {business_details: data._id});
 
         if (UserController.error == true) {
             return this.returnRequestStatus(200, false, `An error occurred updating your personal account as a business owner. More details: ${UserController.message}`);

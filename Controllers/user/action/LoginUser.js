@@ -92,15 +92,10 @@ module.exports = class LoginUser extends UserController{
         return businessCategoryArray;
     }
 
-    async getBusinessDetails (businessId) {
-
-        // get business data
-        let getBusinessData = await this.BusinessController.getBusinessData(businessId);
-
-        if (getBusinessData.error == false && getBusinessData.result != false) {
+    async getBusinessDetails (businessDetails) {
             
             // business data
-            getBusinessData = getBusinessData.result;
+            let getBusinessData = businessDetails
 
             // business address
             let businessAddress = {
@@ -111,6 +106,8 @@ module.exports = class LoginUser extends UserController{
                 state: getBusinessData.address.state,
                 country: getBusinessData.address.country
             }
+
+            let businessId = getBusinessData._id;
 
             let businessCategory = await this.BusinessCategoryInstance.getbusinessCategories(businessId);
             if (businessCategory.error == true) {
@@ -145,9 +142,7 @@ module.exports = class LoginUser extends UserController{
                 logo: getBusinessData.logo,
                 businesscategory: businessCategory
             }
-        } else {
-            return "";
-        }
+
 
     }
 
@@ -180,13 +175,17 @@ module.exports = class LoginUser extends UserController{
                     if (comparePassword == true) {
                         let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });
 
-                        let businessId = userDbDetails.business_id;
-                        let businessData = "";
+                        let businessDetails = userDbDetails.business_details;
 
-                        if (businessId == undefined) {
+                        let businessData = "";
+                        let businessId = "";
+
+                        if (businessDetails == undefined || businessDetails == null) {
                             businessData = null
+                            businessId = null
                         } else {
-                            businessData = await this.getBusinessDetails(businessId);
+                            businessData = await this.getBusinessDetails(businessDetails);
+                            businessId = businessDetails._id
                         }
 
 
