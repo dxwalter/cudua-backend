@@ -14,9 +14,10 @@ module.exports = class HideBusinessSubcategory extends SubcategoryController {
         this.businessCategoryController = new BusinessCategoryController();
     }
 
-    async hideSubcategory (documentId) {
+    async hideSubcategory (businessId, categoryId, subcategoryId) {
+    
         // note that documentI is the _id from business-category collection
-        if (documentId.length < 1) {
+        if (businessId.length < 1 || categoryId.length < 1, subcategoryId.length < 1) {
             return {
                 code: 200, 
                 success: false,
@@ -24,13 +25,13 @@ module.exports = class HideBusinessSubcategory extends SubcategoryController {
             }
         }
 
-        let hideMyBusinessSubcategory = await this.businessCategoryController.hideAndShowSubcategory(documentId, "hide");
-
+        let hideMyBusinessSubcategory = await this.businessCategoryController.hideAndShowSubcategory(businessId, categoryId, subcategoryId, "hide");
+        
         if (hideMyBusinessSubcategory.error == true) {
             return {
                 code: 500,
                 success: false,
-                message: "An error occurred hiding your subcategory. This was caused by a wrong input or a broken script"
+                message: "An error occurred hiding your subcategory. This was caused by a wrong input or a broken program"
             }
         }
 
@@ -43,27 +44,12 @@ module.exports = class HideBusinessSubcategory extends SubcategoryController {
         }
 
 
-        if (hideMyBusinessSubcategory.error == false && hideMyBusinessSubcategory.result.length > 5) {
-            
-            let subCategoryId = hideMyBusinessSubcategory.result;
-            
-            let getSubcategoryDetails = await this.GetOneSubcategory(subCategoryId);
-
-            if (getSubcategoryDetails.error == true) {
-                return {
-                    code: 200,
-                    success: true,
-                    message: "Your subcategory was hidden successfully"
-                }
-            }
-
-            
-            let subcategoryName = getSubcategoryDetails.result[0].name;
+        if (hideMyBusinessSubcategory.error == false && hideMyBusinessSubcategory.result == true) {
 
             return {
                 code: 200,
                 success: true,
-                message: `${subcategoryName} subcategory was hidden successfully`
+                message: `Your subcategory was hidden successfully`
             }
 
         }

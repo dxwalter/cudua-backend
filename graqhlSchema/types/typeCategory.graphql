@@ -64,7 +64,7 @@
 
     # get one category response
     type GetOneCategoryResponse implements ResponseType {
-        category: categoryData!
+        category: categoryData
         # Response status code
         code: Int!
         # This boolean value is used to check if an operation ran successfully

@@ -16,9 +16,9 @@ module.exports = class ShowBusinessCategory extends BusinessCategoryController {
         this.CategoryController = new CategoryController()
     }
 
-    async showCategory (documentId) {
+    async showCategory (categoryId, businessId) {
         // note that documentI is the _id from business-category collection
-        if (documentId.length < 1) {
+        if (categoryId.length < 1 || businessId.length < 1) {
             return {
                 code: 200, 
                 success: false,
@@ -26,7 +26,7 @@ module.exports = class ShowBusinessCategory extends BusinessCategoryController {
             }
         }
 
-        let showMyBusinesscategory = await this.updateChoosenCategory(documentId, {hide: 0});
+        let showMyBusinesscategory = await this.updateChoosenCategory(businessId, categoryId, {hide: 0});
         if (showMyBusinesscategory.error == true) {
             return {
                 code: 500,
@@ -43,7 +43,6 @@ module.exports = class ShowBusinessCategory extends BusinessCategoryController {
             }
         }
 
-        let categoryId = showMyBusinesscategory.result.category_id;
         let getCategoryDetails = await this.CategoryController.GetOneCategory(categoryId);
 
         if (getCategoryDetails.error == true) {

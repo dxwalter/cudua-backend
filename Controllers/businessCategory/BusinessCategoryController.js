@@ -29,15 +29,18 @@ module.exports = class BusinessCategoryController extends BusinessController {
         }
     }
 
-    async insertSubcategory(businessCategoryId, data) {
-        
+    async insertSubcategory(businessId, categoryId, updateSubcategoryArray) {
+
         try {
-            let find = await BusinessCategoryModel.findOne({_id: businessCategoryId});
+            let find = await BusinessCategoryModel.findOne({business_id: businessId, category_id: categoryId});
 
-            find.subcategory = {"subcategory_id": data}
-
-            updateRecord = await find.save()
+            for(let newSubcategory of updateSubcategoryArray) {
+                find.subcategories.push({"subcategory_id": newSubcategory})
+            }
             
+            let updateRecord = await find.save()
+
+          
             return {
                 error: false,
                 result: updateRecord
@@ -45,7 +48,7 @@ module.exports = class BusinessCategoryController extends BusinessController {
             
         } catch (error) {
             return {
-                error: false,
+                error: true,
                 message: error.message   
             }
         }
@@ -64,7 +67,7 @@ module.exports = class BusinessCategoryController extends BusinessController {
                 if (findResult[0]._id) {
                    return {
                        error: false,
-                       result: true   
+                       result: findResult   
                    }
                 }
             } else {
@@ -111,44 +114,43 @@ module.exports = class BusinessCategoryController extends BusinessController {
         }
     }
 
-    async hideAndShowSubcategory (documentId, updateData) {
+    async hideAndShowSubcategory (businessId, categoryId, subcategoryId, updateData) {
         try {
-            const findResult = await BusinessCategoryModel.find({
-                "subcategory._id" : documentId
-            }).limit(1);
-
+            const findResult = await BusinessCategoryModel.find(
+                {
+                    business_id: businessId,
+                    category_id: categoryId,
+                }
+            ).limit(1);
             
             if (findResult.length > 0) {
                 if (findResult[0]._id) {
-                    
-                    let subcategoriesCount = 0;
-                    let subcategoryId = "";
 
-                    for (let subcategory of findResult[0].subcategory) {
-                        if (subcategory._id == documentId) {
+                    for (const [index, subcategory] of findResult[0].subcategories.entries()) {
+                        if (subcategory.subcategory_id == subcategoryId) {
                             
                             if (updateData == 'hide') {
-                                findResult[0].subcategory[subcategoriesCount].hide = 1
-                                subcategoryId = subcategory.subcategory_id;
+                                findResult[0].subcategories[index].hide = 1
                                 break;
                             }
 
                             if (updateData == 'show') {
-                                findResult[0].subcategory[subcategoriesCount].hide = 0
-                                subcategoryId = subcategory.subcategory_id;
+                                findResult[0].subcategories[index].hide = 0
                                 break;
                             }
                         }
-                        subcategoriesCount = subcategoriesCount + 1;
+
                     }
 
                     try {
-                        const updated = await findResult[0].save()
+
+                        
+                        const updated = await findResult[0].save();
                         
                         if (updated._id.toString().length > 0) {
                             return {
                                 error: false,
-                                result: subcategoryId
+                                result: true
                             }
                         } else {
                             return {
@@ -156,6 +158,7 @@ module.exports = class BusinessCategoryController extends BusinessController {
                                 result: false
                             }
                         }
+
                     } catch (error) {
                         return {
                             error: false,
@@ -179,9 +182,16 @@ module.exports = class BusinessCategoryController extends BusinessController {
         }
     }
 
-    async updateChoosenCategory(documentId, data) {
+    async updateChoosenCategory(businessId, categoryId, data) {
         try {
-            let updateRecord = await BusinessCategoryModel.findOneAndUpdate({_id: documentId}, { $set:data }, {new : true });
+            let updateRecord = await BusinessCategoryModel.findOneAndUpdate(
+                {
+                    business_id: businessId,
+                    category_id: categoryId
+                },
+                { $set:data }, {new : true }
+            );
+
             if (updateRecord) {
                 return {
                     error: false,

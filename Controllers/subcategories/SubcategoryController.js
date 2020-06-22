@@ -1,5 +1,6 @@
 
 const SubCatgoryModel = require('../../Models/Subcategory');
+const CatgoryModel = require('../../Models/Categories');
 let CategoryController = require('../category/CategoryController');
 
 
@@ -10,7 +11,7 @@ module.exports = class SubcategoryController extends CategoryController {
 
     async checkExists (data, categoryId) {
         try {
-            const findResult = await SubCatgoryModel.find(
+            const findResult = await CatgoryModel.find(
                 data, {category_id: categoryId}
             ).limit(1).exec();   
     

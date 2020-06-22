@@ -4,11 +4,11 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-let SubcategoryController = require('../SubcategoryController')
+let CategoryController = require('../../category/CategoryController')
 const Subcategory = require('../../../Models/Subcategory');
 
 
-module.exports = class CreateCategory extends SubcategoryController {
+module.exports = class CreateCategory extends CategoryController {
 
     constructor (args) { 
         super(); 
@@ -19,6 +19,8 @@ module.exports = class CreateCategory extends SubcategoryController {
         this.subcategoriesAdded = 0; // the number of subcategories successfully added to the db
 
         this.categoryId = args.categoryId
+
+        this.categorySubcategory;
     }
 
     
@@ -30,14 +32,18 @@ module.exports = class CreateCategory extends SubcategoryController {
         }
     }
 
-    async checkSubcategoryExists (name, categoryId) {
+    checkSubcategoryExists (subcategoryName, subcategoryList) {
 
-        let checkSubcategoryExistence = await this.checkExists(name, categoryId);
-        if (checkSubcategoryExistence.error == true) {
-            return this.returnMethod("", "", 500, false, `An error occurred: ${checkSubcategoryExistence.message}`);
-        } else if (checkSubcategoryExistence.result == false) {
-            this.subcategoriesExisting += 1;
-            return true; 
+        if (subcategoryList.length > 0) {
+            for (let subData of subcategoryList) {
+                if (subcategoryName.toLowerCase()  == subData.name.toLowerCase()) {
+                    this.subcategoriesExisting += 1;
+                    return false
+                }
+            }
+            return true
+        } else {
+            return true
         }
 
     }
@@ -48,10 +54,28 @@ module.exports = class CreateCategory extends SubcategoryController {
         // add
 
         const subcategories = this.subcategories;
+        const categoryId = this.categoryId;
         const newSubcategoryArray = [];
 
-        if (subcategories[0].length < 1) {
+        if (categoryId.length < 2) {
+            return this.returnMethod(200, false,   `Choose a category`);
+        }
+
+
+        if (subcategories.length < 1 || subcategories[0].length < 1) {
             return this.returnMethod(200, false,   `Enter one or more subcategories seperated by comma`);
+        }
+
+        // get category details
+        let getCategoryDetails = await this.GetOneCategory(categoryId);
+        if (getCategoryDetails.error == true) {
+            return this.returnMethod(500, false, `An error occurred. Please refresh the page and try again`);
+        }
+
+        if (getCategoryDetails.result.length > 0) {
+            this.categorySubcategory = getCategoryDetails.result[0].subcategories;
+        } else {
+            return this.returnMethod(200, false, 'An error occurred. The selected category has been deleted or being moved')
         }
 
         for (let item of subcategories) {
@@ -60,22 +84,26 @@ module.exports = class CreateCategory extends SubcategoryController {
 
             if (item.length > 2) {
                 // check if exists 
-                let callCheck = await this.checkSubcategoryExists({name: item}, this.categoryId);
+                let callCheck = this.checkSubcategoryExists(item, this.categorySubcategory);
+                console.log(callCheck)
                 // if callcheck is == true, it means the subcategory does not exist
                 if (callCheck) {
-                    let newObject = {"name": item, "category_id": this.categoryId};
+                    let newObject = {"name": item};
                     newSubcategoryArray.push(newObject);
                     this.subcategoriesAdded = this.subcategoriesAdded + 1
                 }
+
             }
             
         }
         
         if (newSubcategoryArray.length == 0) {
-            return this.returnMethod(200, false, 'The subcategories you added already exists')
+            return this.returnMethod(200, false, 'The subcategory(s) you added already exists')
         }
 
-        let createSubcategory = await this.createSubcategories(newSubcategoryArray);
+
+        let createSubcategory = await this.createNewSubcategory(categoryId, newSubcategoryArray)
+
 
         if (createSubcategory.error == false) {
 
@@ -86,7 +114,7 @@ module.exports = class CreateCategory extends SubcategoryController {
             return this.returnMethod(202, true, `${firstMessage}, and ${secondMessage}. It will take 1 to 3 hours for them to be activated.`);
 
         } else {
-            return this.returnMethod(200, false, `An error occurred: ${createSubcategory.message}`)
+            return this.returnMethod(200, false, `An error occurred and it is our fault. Refresh and try again`)
         }
 
     }

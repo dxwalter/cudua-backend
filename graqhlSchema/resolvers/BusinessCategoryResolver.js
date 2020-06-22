@@ -36,7 +36,7 @@ module.exports = {
             }
 
             let hide = new HideBusinessCategory();
-            return hide.hideCategory(args.input.selectedCategoryId);
+            return hide.hideCategory(args.input.categoryId, args.input.businessId);
         },
         ShowSelectedBusinessCategory(parent, args, context, info) {
             let accessToken = context.accessToken;
@@ -48,7 +48,7 @@ module.exports = {
             }
 
             let show = new ShowBusinessCategory();
-            return show.showCategory(args.input.selectedCategoryId);
+            return show.showCategory(args.input.categoryId, args.input.businessId);
         },
         HideSelectedBusinessSubcategory(parent, args, context, info) {
             let accessToken = context.accessToken;
@@ -60,7 +60,7 @@ module.exports = {
             }
 
             let hideBusinessSubcategory = new HideBusinessSubcategory();
-            return hideBusinessSubcategory.hideSubcategory(args.input.selectedSubcategoryId)
+            return hideBusinessSubcategory.hideSubcategory(args.input.businessId, args.input.categoryId, args.input.subcategoryId)
         },
         ShowSelectedBusinessSubcategory (parent, args, context, info) {
             let accessToken = context.accessToken;
@@ -72,7 +72,7 @@ module.exports = {
             }
 
             let showBusinessSubcategory = new ShowBusinessSubcategory();
-            return showBusinessSubcategory.showSubcategory(args.input.selectedSubcategoryId)
+            return showBusinessSubcategory.showSubcategory(args.input.businessId, args.input.categoryId, args.input.subcategoryId)
         }
     }
 }

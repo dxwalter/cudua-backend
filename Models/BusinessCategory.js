@@ -14,10 +14,10 @@ const BusinessCategoriesSchema = mongoose.Schema({
     hide: {
         type: Number, required: false, default: 0
     },
-    subcategory: [{
+    subcategories: [{
         subcategory_id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "",
+            ref: "categories.subcategories",
             required: false
         },
         hide: {

@@ -10,6 +10,21 @@ const CategorySchema = mongoose.Schema({
     status: {
         type: Number, default: 0
     },
+    subcategories: [{
+        name: {
+            type: String, required: false
+        },
+        status: {
+            type: Number, default: 0
+        },
+        icon: {
+            type: String, required: false
+        },
+        created : {
+            type : Date,
+            default: Date.now()
+        }
+    }],
     created : {
         type : Date,
         default: Date.now()

@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const CategoryModel = require('../../Models/Categories'); 
 const Subcategory = require('../../Models/Subcategory'); 
 const FunctionRepo = require('../MainFunction');
+const res = require('express/lib/response');
 
 module.exports = class CategoryController extends FunctionRepo {
     constructor () { super(); }
@@ -52,6 +53,31 @@ module.exports = class CategoryController extends FunctionRepo {
         }
     }
 
+    
+    async createNewSubcategory(categoryId, subcategories) {
+        try {
+
+            let findRecord = await CategoryModel.findOne({_id: categoryId});
+
+
+            for(let items of subcategories) {
+                findRecord.subcategories.push(items)
+            }
+            
+            let updateRecord = await findRecord.save()
+
+            return {
+                error: false,
+                result: updateRecord
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async findOneAndUpdate(categoryId, newDataObject) {
         try {
             let updateRecord = await CategoryModel.findOneAndUpdate({_id: categoryId}, { $set:newDataObject }, {new : true });
@@ -67,11 +93,49 @@ module.exports = class CategoryController extends FunctionRepo {
         }
     }
 
+    async subcategoryActivation(categoryId, subcategoryId) {
+
+        try {
+
+            let updatedName = "";
+
+            let findRecord = await CategoryModel.findOne({_id: categoryId});
+            for(let items of findRecord.subcategories) {
+                if (subcategoryId == items._id) {
+                    items.status = 1
+                    updatedName = items.name
+                }
+            }
+            
+            let updateRecord = await findRecord.save()
+
+            if (updateRecord == null) {
+                return {
+                    error: false,
+                    result: false
+                }
+            } else {
+                return {
+                    error: false,
+                    result: updatedName
+                }
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async GetAllCategories () {
         try {
             const result = await CategoryModel.find(
-                {status: 1}
-            ).populate('subcategoryList');
+                {status: 1},
+            ).populate({
+                path: 'subcategories',
+            });
             
             if (result.length > 0) {
                 return {
@@ -98,7 +162,7 @@ module.exports = class CategoryController extends FunctionRepo {
 
             const result = await CategoryModel.find(
                 {status: 1, _id: categoryId}
-            ).populate('subcategoryList').limit(1);
+            ).populate('subcategories').limit(1);
 
             if (result.length > 0) {
                 return {

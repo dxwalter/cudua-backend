@@ -14,9 +14,9 @@ module.exports = class HideBusinessSubcategory extends SubcategoryController {
         this.businessCategoryController = new BusinessCategoryController();
     }
 
-    async showSubcategory (documentId) {
+    async showSubcategory (businessId, categoryId, subcategoryId) {
         // note that documentI is the _id from business-category collection
-        if (documentId.length < 1) {
+        if (businessId.length < 1 || categoryId.length < 1, subcategoryId.length < 1) {
             return {
                 code: 200, 
                 success: false,
@@ -24,7 +24,7 @@ module.exports = class HideBusinessSubcategory extends SubcategoryController {
             }
         }
 
-        let showMyBusinessSubcategory = await this.businessCategoryController.hideAndShowSubcategory(documentId, "show");
+        let showMyBusinessSubcategory = await this.businessCategoryController.hideAndShowSubcategory(businessId, categoryId, subcategoryId, "show");
 
         if (showMyBusinessSubcategory.error == true) {
             return {
@@ -43,27 +43,12 @@ module.exports = class HideBusinessSubcategory extends SubcategoryController {
         }
 
 
-        if (showMyBusinessSubcategory.error == false && showMyBusinessSubcategory.result.length > 5) {
-            
-            let subCategoryId = showMyBusinessSubcategory.result;
-            
-            let getSubcategoryDetails = await this.GetOneSubcategory(subCategoryId);
-
-            if (getSubcategoryDetails.error == true) {
-                return {
-                    code: 200,
-                    success: true,
-                    message: "Your subcategory is now visible to your customers"
-                }
-            }
-
-            
-            let subcategoryName = getSubcategoryDetails.result[0].name;
+        if (showMyBusinessSubcategory.error == false && showMyBusinessSubcategory.result == true) {
 
             return {
                 code: 200,
                 success: true,
-                message: `${subcategoryName} subcategory is now visible to your customers`
+                message: `Your subcategory is now visible to your customers`
             }
 
         }

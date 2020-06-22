@@ -73,8 +73,6 @@ module.exports = class BookmarkController extends BusinessController {
     async deleteUserBookmark(userId, businessId) {
         
         try {
-
-            console.log(businessId)
             
             let deleteBookmark = await BookmarkModel.updateOne({author: userId}, 
                 {$pull : {bookmarks : {"business_id" : businessId }}},
