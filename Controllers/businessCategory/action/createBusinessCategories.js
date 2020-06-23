@@ -78,7 +78,7 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
     }
 
     checkIfSubcategoryExistsIncategory(subcategoryId, subcategoryArray) {
-        
+    
         for (let subcategory of subcategoryArray) {
             if (subcategoryId == subcategory._id) {
                 return true
@@ -120,7 +120,7 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
         }
 
         if (checkIfCategoryExistInCategoryDoc.error == false && checkIfCategoryExistInCategoryDoc.result.length > 0) {
-            this.categorySubcategories = checkIfCategoryExistInCategoryDoc.result[0].subcategories
+            this.categorySubcategories = checkIfCategoryExistInCategoryDoc.result[0].subcategoryList
         }
 
         // check if this category has been created by the business before now.

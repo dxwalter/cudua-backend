@@ -48,46 +48,40 @@ module.exports = class LoginUser extends UserController{
 
     formatBusinessCategoryData(dataArray) {
 
+
         let businessCategoryArray = [];
         let categoryCount = 0; // 
-        let subCategoryCount = 0;
-        let subCategoryNameCount = 0;
-
 
         // retrieve category data
-        for (let category of dataArray) {
-            let arr = dataArray[categoryCount];
+        for (const [categoryIndex, category] of dataArray.entries()) {
+            let arr = category;
+            let categoryDetails = category.category_id
+            let subcategoriesList = category.subcategories;
+
 
             let newData = {
                 id: arr._id,
-                categoryId: arr.category_id,
+                categoryId: categoryDetails._id,
                 hide: arr.hide,
-                categoryName: arr.categoryList[0].name,
+                categoryName: categoryDetails.name,
                 subcategories: []
             }
 
             //retrieve subcategory data from subcategory array
-            for (let subcategories of arr.subcategory) {
-                newData.subcategories[subCategoryCount] = {
+            for (const [subcategoryIndex, subcategories] of subcategoriesList.entries()) {
+                let subcategoryDetails = subcategories.subcategory_id
+                newData.subcategories.push({
                     itemId: subcategories._id,
                     hide: subcategories.hide,
-                    subcategoryId: subcategories.subcategory_id,
-                    subcategoryName: ""
-                }
-                subCategoryCount = subCategoryCount + 1;
-            }
-
-            // retrieve name of subcategory from subcategoryList array
-            for(let subcateName of arr.subcategoryList) {
-                newData.subcategories[subCategoryNameCount].subcategoryName = subcateName.name
-                subCategoryNameCount = subCategoryNameCount + 1;
+                    subcategoryId: subcategoryDetails._id,
+                    subcategoryName: subcategoryDetails.name
+                })
             }
 
             businessCategoryArray[categoryCount] = newData;
             
             categoryCount = categoryCount + 1;
-            subCategoryCount = 0;
-            subCategoryNameCount = 0;
+
         }
 
         return businessCategoryArray;
@@ -111,17 +105,17 @@ module.exports = class LoginUser extends UserController{
 
             let businessId = getBusinessData._id;
 
-            let businessCategory = await this.BusinessCategoryInstance.getbusinessCategories(businessId);
+            let businessCategories = await this.BusinessCategoryInstance.getbusinessCategories(businessId);
         
-            if (businessCategory.error == true) {
+            if (businessCategories.error == true) {
                 return this.returnType(500 , false, 'An error occurred while retrieving your business category')
             }
 
-            if (businessCategory.error == false && businessCategory.result == false ) {
-                businessCategory = null;
+            if (businessCategories.error == false && businessCategories.result == false ) {
+                businessCategories = null;
             } else {
                 // this is the array of business categories and subcategories chosen by this business owner
-                businessCategory = this.formatBusinessCategoryData(businessCategory.result);
+                businessCategories = this.formatBusinessCategoryData(businessCategories.result);
             }
 
             // business contact
@@ -143,7 +137,7 @@ module.exports = class LoginUser extends UserController{
                 address: businessAddress,
                 contact: businessContact,
                 logo: getBusinessData.logo,
-                businesscategory: businessCategory
+                businessCategories: businessCategories
             }
 
 

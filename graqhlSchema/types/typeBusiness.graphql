@@ -5,7 +5,7 @@
         businessname: String
         address: AddressType
         contact: BusinessContact
-        businesscategory: [BusinessCategory]
+        businessCategories: [BusinessCategory]
         logo: String
         description: String
         username: String
