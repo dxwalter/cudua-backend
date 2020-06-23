@@ -125,10 +125,6 @@ module.exports = class BookmarkController extends BusinessController {
         try {
 
             let findResult = await BookmarkModel.find({author: userId}).populate("BookmarkBusinessDetailsList").populate('BusinessCategoryList');
-            console.log(findResult)
-
-            return;
-
             if (findResult.length > 0) {
                 if (findResult[0]._id) {
                    return {
