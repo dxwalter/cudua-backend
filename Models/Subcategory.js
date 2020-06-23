@@ -7,7 +7,7 @@ const SubcategorySchema = mongoose.Schema({
         required: true
     },
     name: {
-        type: String, required: true
+        type: String, required: true, trim: true
     },
     status: {
         type: Number, default: 0

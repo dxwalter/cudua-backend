@@ -1,7 +1,7 @@
 
 # This is the type file for products
 
-# scalar Upload
+scalar Upload
 
 # response type
 interface ResponseType {
@@ -41,12 +41,12 @@ type createProductResponse implements ResponseType {
 }
 
 input createProduct {
-    name: String!
-    price: Int!
-    category: String!
-    subcategory: String!
-    # image: Upload!
-    businessId: String!
+    # name: String!
+    # price: Int!
+    # category: String!
+    # subcategory: String!
+    image: Upload!
+    # businessId: String!
 }
 
 

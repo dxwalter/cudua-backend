@@ -21,6 +21,7 @@ module.exports = class GetBookmarks extends BookmarkController {
     }
 
     async getMyBookmarks (userId) {
+
         
         let bookmarkData = await this.getBookmarkListing(userId);
         
@@ -33,14 +34,15 @@ module.exports = class GetBookmarks extends BookmarkController {
         }
 
         // returned result
-        bookmarkData = bookmarkData.result[0]
+        bookmarkData = bookmarkData.result
         let businessIds = [];
 
         for (const [index, businessId] of bookmarkData.bookmarks.entries()) {
             businessIds[index] = businessId.business_id;
         }
 
-        let businessDetails = await this.BusinessCategoryController.getBusinessCategoryForBookmark(businessIds[0])
+        
+        // let businessDetails = await this.BusinessCategoryController.getBusinessCategoryForBookmark(businessIds[0])
     
     }
 

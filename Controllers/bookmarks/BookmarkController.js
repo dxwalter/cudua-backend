@@ -98,10 +98,6 @@ module.exports = class BookmarkController extends BusinessController {
             }
         }
 
-
-        
-
-
     }
 
 
@@ -127,7 +123,11 @@ module.exports = class BookmarkController extends BusinessController {
 
     async getBookmarkListing (userId) {
         try {
-            let findResult = await BookmarkModel.find({author: userId})
+
+            let findResult = await BookmarkModel.find({author: userId}).populate("BookmarkBusinessDetailsList").populate('BusinessCategoryList');
+            console.log(findResult)
+
+            return;
 
             if (findResult.length > 0) {
                 if (findResult[0]._id) {

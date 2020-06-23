@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const BusinessSchema = mongoose.Schema({
     businessname: {
-        type: String, required: true
+        type: String, required: true, trim: true
     },
     owner:{
         type: mongoose.Schema.Types.ObjectId,
@@ -10,10 +10,10 @@ const BusinessSchema = mongoose.Schema({
         required: true
     },
     username: {
-        type: String, required: false
+        type: String, required: false, trim: true
     },
     address: {
-        number: { type: String, default: ""},
+        number: { type: Number, default: ""},
         street: { type: String, default: ""},
         community: { type: String, default: ""},
         lga: { type: String, default: ""},
