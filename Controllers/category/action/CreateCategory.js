@@ -40,7 +40,7 @@ module.exports = class CreateCategory extends CategoryController {
 
         if (checkCategoryExistence.error == true) {
             return this.returnMethod("", "", 500, false, `An error occurred: ${checkCategoryExistence.message}`);
-        } else if (checkCategoryExistence.error == false && checkCategoryExistence.result == true) {
+        } else if (checkCategoryExistence.error == false && checkCategoryExistence.result.length > 0) {
             return this.returnMethod("", "", 200, false,   `The '${this.name}' category  already exists`);
         }
 

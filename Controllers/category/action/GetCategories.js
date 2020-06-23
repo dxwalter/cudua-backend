@@ -19,16 +19,16 @@ module.exports = class AllCategories extends CategoryController {
         
         if (data.error == true) {
             return {
-                category: [],
+                category: null,
                 code: 500,
                 success: false,
-                message: `An error occurred: ${data.message}` 
+                message: `An error occurred: Please try again` 
             }
         }
         
         if (data.result == false) {
             return {
-                category: [],
+                category: null,
                 code: 500,
                 success: false,
                 message: `No category has been added` 
@@ -45,7 +45,7 @@ module.exports = class AllCategories extends CategoryController {
                 subcategories: []
             }
 
-            for (let [subcatIndex, subcatData] of data.subcategories.entries()) {
+            for (let [subcatIndex, subcatData] of data.subcategoryList.entries()) {
                 if (subcatData.status == 1) {
                     newDataArray[index].subcategories.push({
                         subcategoryId: subcatData._id,
@@ -105,7 +105,7 @@ module.exports = class AllCategories extends CategoryController {
             subcategories: []
         }
 
-        for (let subcat of getCategory.subcategories) {
+        for (let subcat of getCategory.subcategoryList) {
             if (subcat.status == 1) {
                 category.subcategories.push({
                     subcategoryId: subcat._id,

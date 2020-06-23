@@ -191,11 +191,11 @@ query {
 
 mutation {
 	CreateBusinessCategory(input:{
-    businessId:"5ee77d93a35c6f1bf43fe43a",
-    categoryId: "5ee78eaef327350cc89dd4ec",
+    businessId:"5eef76e8756c5c272880f144",
+    categoryId: "5ef112f3465b8f11dc368a95",
     subcategories: [
-      "5ee78f34f327350cc89dd4ed",
-      "5ee78f34f327350cc89dd4ee",
+      "5ef115077f01021150c1d043",
+      "5ef115077f01021150c1d044",
       "5ee78f34f327350cc89dd4f0"
     ]
     

@@ -1,4 +1,3 @@
-
 const CreateSubCategory = require('../../Controllers/subcategories/action/CreateSubcategory');
 const ActivateSubcategory = require('../../Controllers/subcategories/action/ActivateSubcategory');
 

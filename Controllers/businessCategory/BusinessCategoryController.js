@@ -90,7 +90,7 @@ module.exports = class BusinessCategoryController extends BusinessController {
         try {
             const findResult = await BusinessCategoryModel.find({
                 business_id : businessId
-            }).populate('categoryList').populate('subcategoryList');   
+            }).populate('category_id')
 
             if (findResult.length > 0) {
                 if (findResult[0]._id) {
@@ -218,7 +218,7 @@ module.exports = class BusinessCategoryController extends BusinessController {
                 business_id : businessId
             });
             
-            console.log(findResult)
+            
             return
         
 

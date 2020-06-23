@@ -47,6 +47,7 @@ module.exports = class LoginUser extends UserController{
     }
 
     formatBusinessCategoryData(dataArray) {
+
         let businessCategoryArray = [];
         let categoryCount = 0; // 
         let subCategoryCount = 0;
@@ -93,6 +94,7 @@ module.exports = class LoginUser extends UserController{
     }
 
     async getBusinessDetails (businessDetails) {
+
             
             // business data
             let getBusinessData = businessDetails
@@ -110,6 +112,7 @@ module.exports = class LoginUser extends UserController{
             let businessId = getBusinessData._id;
 
             let businessCategory = await this.BusinessCategoryInstance.getbusinessCategories(businessId);
+        
             if (businessCategory.error == true) {
                 return this.returnType(500 , false, 'An error occurred while retrieving your business category')
             }
@@ -164,6 +167,7 @@ module.exports = class LoginUser extends UserController{
                     let userId = userDbDetails._id
                     let dbPassword = userDbDetails.password;
 
+                    
                     
                     
                     let comparePassword = await this.comparePassword(dbPassword)

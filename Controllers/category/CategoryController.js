@@ -93,48 +93,12 @@ module.exports = class CategoryController extends FunctionRepo {
         }
     }
 
-    async subcategoryActivation(categoryId, subcategoryId) {
-
-        try {
-
-            let updatedName = "";
-
-            let findRecord = await CategoryModel.findOne({_id: categoryId});
-            for(let items of findRecord.subcategories) {
-                if (subcategoryId == items._id) {
-                    items.status = 1
-                    updatedName = items.name
-                }
-            }
-            
-            let updateRecord = await findRecord.save()
-
-            if (updateRecord == null) {
-                return {
-                    error: false,
-                    result: false
-                }
-            } else {
-                return {
-                    error: false,
-                    result: updatedName
-                }
-            }
-
-        } catch (error) {
-            return {
-                error: true,
-                message: error.message
-            }
-        }
-    }
-
     async GetAllCategories () {
         try {
             const result = await CategoryModel.find(
                 {status: 1},
             ).populate({
-                path: 'subcategories',
+                path: 'subcategoryList',
             });
             
             if (result.length > 0) {
@@ -162,7 +126,7 @@ module.exports = class CategoryController extends FunctionRepo {
 
             const result = await CategoryModel.find(
                 {status: 1, _id: categoryId}
-            ).populate('subcategories').limit(1);
+            ).populate('subcategoryList').limit(1);
 
             if (result.length > 0) {
                 return {

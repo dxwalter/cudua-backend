@@ -2,6 +2,7 @@
 const SubCatgoryModel = require('../../Models/Subcategory');
 const CatgoryModel = require('../../Models/Categories');
 let CategoryController = require('../category/CategoryController');
+const { updateOne } = require('../../Models/Categories');
 
 
 module.exports = class SubcategoryController extends CategoryController {

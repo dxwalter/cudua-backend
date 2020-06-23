@@ -32,7 +32,6 @@
     input ConfirmSubcategoryInput {
         # This is the id of the category
         subcategoryId: String!
-        categoryId: String!
     }
 
 
