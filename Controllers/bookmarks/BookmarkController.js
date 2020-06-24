@@ -125,6 +125,7 @@ module.exports = class BookmarkController extends BusinessController {
         try {
 
             let findResult = await BookmarkModel.find({author: userId}).populate("BookmarkBusinessDetailsList").populate('BusinessCategoryList');
+            
             if (findResult.length > 0) {
                 if (findResult[0]._id) {
                    return {
@@ -146,5 +147,32 @@ module.exports = class BookmarkController extends BusinessController {
             }
         }
         
+    }
+
+    async getMyBusinessBookmarkers(businessId) {
+        try {
+
+            let findResult = await BookmarkModel.find({'bookmarks.business_id': businessId}).populate("author");
+
+            if (findResult.length > 0) {
+                if (findResult[0]._id) {
+                   return {
+                       error: false,
+                       result: findResult   
+                   }
+                }
+            } 
+
+            return {
+                error: false,
+                result: false   
+            }
+    
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
     }
 }

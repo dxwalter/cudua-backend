@@ -13,6 +13,7 @@ const UserSchema = mongoose.Schema({
     password : {
         type : String, required : true
     },
+    profilePicture: {type: String, required: false},
     business_details : {
         type: mongoose.Schema.Types.ObjectId,
         ref: "business-accounts",

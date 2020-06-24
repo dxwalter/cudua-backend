@@ -1,14 +1,8 @@
 "use-strict";
 
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
 let BusinessController = require('../BusinessController')
-let BusinessModel = require('../../../Models/BusinessModel');
 
-let UserModel = require('../../../Models/UserModel');
-let UserController = require('../../user/UserController')
 
 module.exports = class UsernameActions extends BusinessController {
     constructor () {

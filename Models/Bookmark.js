@@ -37,7 +37,7 @@ BookmarkSchema.virtual('BusinessCategoryList', {
     localField: 'bookmarks.business_id',
     foreignField: 'business_id',
     justOne: false,
-    options: {hide: 0}
+    match: { hide: 0 }
 });
 
 // BookmarkSchema.virtual('businessCategoryList', {

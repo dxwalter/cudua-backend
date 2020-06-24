@@ -3,9 +3,6 @@ const BookmarkController = require('../BookmarkController');
 const BusinessCategoryController = require('../../businessCategory/BusinessCategoryController');
 const CategoryController = require('../../category/CategoryController');
 
-
-const BookmarkModel = require('../../../Models/Bookmark');
-
 module.exports = class GetBookmarks extends BookmarkController {
     constructor () { 
         super();
@@ -56,17 +53,25 @@ module.exports = class GetBookmarks extends BookmarkController {
                 businessCategory: []
             }
 
-            // note that BusinessCategoryList is an array of array of object
-            // BusinessCategoryList[[categorydata_1, categorydata_n]] 
+         
+            /**
+             * Note that BusinessCategoryList is an array of array  ([[categorydata_1, categorydata_n]]) 
+             * if the number of result returned is greater that 1
+             * If the number of result is less than 2, then it will be an array of objects like so [categorydata_1, categorydata_n]
+             */
 
             let businessCategories = data.BusinessCategoryList;
             
-            for (const [categoryIndex, category] of businessCategories[0].entries()) {
-                let catId = category.category_id;
+            businessCategories = businessCategories[0].length == undefined ? businessCategories : businessCategories[0]
+        
+            
+            for (const [categoryIndex, category] of businessCategories.entries()) {
+                let catId = category.category_id.toString();
                 
                 if (categoryObject[catId] == undefined) {
                     // retrieve category datails
                     let getCategory = await this.CategoryController.GetOneCategory(catId);
+                    
                     if (getCategory.error == false) {
                         let newData = {
                             categoryId: getCategory.result[0]._id,
@@ -88,7 +93,7 @@ module.exports = class GetBookmarks extends BookmarkController {
             }
         }
 
-        console.log(categoryObject)
+        
         return this.returnData(dataManager, 200, true, "Your bookmarks has been successfully retrieved")
     
     }

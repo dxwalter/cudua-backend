@@ -7,6 +7,7 @@
         contact: BusinessContact
         businessCategories: [BusinessCategory]
         logo: String
+        coverPhoto: String
         description: String
         username: String
     }
@@ -101,12 +102,31 @@
         dataObject: [categoryMap]
     }
 
+    type editBasicDetailsResponse implements responseType{
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+    input editBusinessDetails {
+        businessId: String!
+        businessName: String,
+        businessUsername: String,
+        businessDescription: String
+    }
+
+    input editbusinessPhoneNumberInput {
+        phoneNumbers: String!
+        businessId: String!
+    }
+
     type Query {
         GetSingleBusinessDetails:  BusinessAccount
         CheckUsernameExists(input: checkUsernameInput): checkUsernameInputResponse
     }
 
-
     type Mutation {
         CreateBusinessAccount (createInput: CreateBusinessAccountInput ): CreateBusinessAccountResponse
+        EditBusinessBasicDetails(input: editBusinessDetails): editBasicDetailsResponse
+        EditBusinessPhoneNumber(input: editbusinessPhoneNumberInput): editBasicDetailsResponse
     }

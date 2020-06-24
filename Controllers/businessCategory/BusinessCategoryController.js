@@ -232,4 +232,6 @@ module.exports = class BusinessCategoryController extends BusinessController {
             
         }
     }
+
+    
 }

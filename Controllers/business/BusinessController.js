@@ -15,7 +15,7 @@ module.exports = class BusinessController extends FunctionRepo {
             const findResult = await BusinessModel.find({
                 username: username
             }).limit(1).exec();   
-    
+
             if (findResult.length > 0) {
                 if (findResult[0]._id) {
                    return {
@@ -83,5 +83,46 @@ module.exports = class BusinessController extends FunctionRepo {
         }
     }
 
+    async findOneAndUpdate(businessId, newDataObject) {
+        try {
+            let updateRecord = await BusinessModel.findOneAndUpdate({_id: businessId}, { $set:newDataObject }, {new : true });
+            return {
+                error: false,
+                result: updateRecord
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+
+    async saveBusinessPhoneNumber(businessId, phoneNumber) {
+        try {
+            const findResult = await BusinessModel.findOne({
+                _id: businessId
+            }).exec();   
+
+            findResult.contact.phone = []
+            
+            for(let number of phoneNumber) {
+                findResult.contact.phone.push(number);
+            }
+
+            let saveData = await findResult.save();
+            return {
+                error: false,
+                result: saveData
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
 
 }

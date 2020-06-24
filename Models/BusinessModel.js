@@ -22,13 +22,19 @@ const BusinessSchema = mongoose.Schema({
     },
     contact: {
         email: {type: String, default: ""},
-        phone: {type: String, default: ""},
+        phone: [{type: String}],
         whatsapp: {
             status: {type: Number, default: 0, required: false},
             number: {type: String, default: ""}
         }
     },
+    description: {
+        type: String,
+        required: false,
+        trim: true
+    },
     logo: {type: String, default: ""},
+    coverPhoto: {type: String, default: ""},
     description: {type: String, default: ""},
     created : {
         type : Date,

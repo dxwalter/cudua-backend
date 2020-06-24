@@ -263,3 +263,41 @@ query{
     message
   }
 }
+
+{
+  getBookmakers(input: {businessId: "5ef1e8ab4b38312320f56ada"}) {
+    customerData {
+      name
+      profilePhoto
+    }
+    code
+    success
+    message
+  }
+}    
+
+
+
+mutation {
+  EditBusinessBasicDetails(input:{
+    businessId: "5eef76e8756c5c272880f144",
+    businessName: "Business 1",
+    businessUsername: "username_1",
+    businessDescription: "Vestibulum"
+  }){
+    code
+    success
+    message
+  }
+}
+
+mutation {
+    EditBusinessPhoneNumber(input:{
+    phoneNumbers: ["08037478690, 08104686729, 23434353453474453"],
+    businessId: "5eef76e8756c5c272880f144"
+  }) {
+    code
+    success
+    message
+  }
+}

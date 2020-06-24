@@ -1,13 +1,8 @@
 "use-strict";
 
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
 let BusinessController = require('../BusinessController')
 let BusinessModel = require('../../../Models/BusinessModel');
 
-let UserModel = require('../../../Models/UserModel');
 let UserController = require('../../user/UserController')
 
 module.exports = class CreateBusiness extends BusinessController {
@@ -44,11 +39,9 @@ module.exports = class CreateBusiness extends BusinessController {
         // regex username
         
         let checkUsername = new RegExp(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/ig).test(username)
-        
-        console.log(checkUsername);
 
         if (checkUsername == false) {
-            return this.returnRequestStatus(200, false, "Enter a valid username. User name must not contain any space or special character");
+            return this.returnRequestStatus(200, false, "Enter a valid username. Username must not contain any space or special character");
         }
 
         let usernameCheck = await this.checkUsernameExists(username);
@@ -62,8 +55,8 @@ module.exports = class CreateBusiness extends BusinessController {
         }
       
         const createBusiness = new BusinessModel ({
-            businessname : this.name,
-            username : this.username,
+            businessname : name,
+            username : username,
             owner: userId
         });
 

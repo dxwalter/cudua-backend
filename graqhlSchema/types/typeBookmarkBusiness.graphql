@@ -38,11 +38,24 @@
         message: String!
     }
 
+    type bookmarker{
+        name: String,
+        profilePhoto: String,
+    }
+
+    type getBookmarkersResponse {
+        customerData: [bookmarker],
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
     type Query {
         getBookmarks: getBookmarksResponse
+        getBookmakers(input: createBookmarkInput): getBookmarkersResponse  
     }
 
     type Mutation {
-        createBookmark(input: createBookmarkInput): createBookmarkResponse
-        deleteBookmark(input: createBookmarkInput): createBookmarkResponse
+        createBookmark(input: createBookmarkInput!): createBookmarkResponse
+        deleteBookmark(input: createBookmarkInput!): createBookmarkResponse
     }

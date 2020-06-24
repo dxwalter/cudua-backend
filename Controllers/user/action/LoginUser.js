@@ -137,6 +137,7 @@ module.exports = class LoginUser extends UserController{
                 address: businessAddress,
                 contact: businessContact,
                 logo: getBusinessData.logo,
+                coverPhoto: getBusinessData.coverPhoto,
                 businessCategories: businessCategories
             }
 
