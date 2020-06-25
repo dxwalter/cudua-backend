@@ -38,6 +38,34 @@ module.exports = class BusinessController extends FunctionRepo {
         }
     }
 
+    async checkIfEmailExists(email) {
+        try {
+            const findResult = await BusinessModel.find({
+                'contact.email': email
+            }).limit(1).exec();   
+
+            if (findResult.length > 0) {
+                if (findResult[0]._id) {
+                   return {
+                       error: false,
+                       result: true   
+                   }
+                }
+            } else {
+                return {
+                    error: false,
+                    result: false   
+                }
+            }
+    
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async createBusinessAccount (data, userId) {
         
         try {

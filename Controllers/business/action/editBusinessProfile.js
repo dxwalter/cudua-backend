@@ -2,12 +2,13 @@
 
 
 let BusinessController = require('../BusinessController')
-
+let UserController = require('../../user/UserController')
 
 module.exports = class EditBusinessDetails extends BusinessController {
 
     constructor () {
         super();
+        this.UserController = new UserController()
     }
 
     
@@ -158,6 +159,68 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
         
 
+    }
+
+    async editBusinessEmailAddress(emailAddress, businessId, notification, userId) {
+        
+        let businessData = await this.getBusinessData(businessId);
+
+        if (businessData.error == true) {
+            return this.returnData(500, false, "An error occurred. Please try again")
+        } else {
+            // check if user is a valid business owner
+            if (businessData.result.owner != userId) {
+                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+            }
+        }
+
+        let updateNotification = await this.UserController.findOneAndUpdate(userId, {email_notification: notification});
+        
+        if (emailAddress == businessData.result.contact.email) {
+            return this.returnData(200, false, "No update was made. Enter a new email address for your business")
+        }
+
+
+        if (emailAddress.length < 4) {
+            return this.returnData(200, false, "Enter a valid email address")
+        }
+
+        let checkIfEmailExists = await this.checkIfEmailExists(emailAddress);
+
+        if (checkIfEmailExists.error == true) {
+            return this.returnData(500, false, "An error occurred. Please try again")
+        }
+
+        if (checkIfEmailExists.result == false) {
+            // check if email exists as user email
+            let emailInUser = await this.UserController.findUserByEmail(emailAddress);
+
+            if (emailInUser.error == true) {
+                return this.returnData(500, false, "An error occurred. Please try again")
+            } 
+          
+            if (emailInUser.result.length > 0) {
+                
+                if (emailInUser.result[0]._id != userId) {
+                    return this.returnData(200, false, "The email address you chose already exists")
+                }
+
+            }
+
+        } else {
+            return this.returnData(200, false, "The email address you chose already exists")
+        }
+
+        // update email
+        let newEmailUpdate = {'contact.email': emailAddress}
+        let updateEmail = await this.findOneAndUpdate(businessId, newEmailUpdate)
+        
+        if (updateEmail.error == false) {
+            return this.returnData(202, true, "Your email was updated successfully")
+        } else {
+            return this.returnData(500, false, "An error occurred updating your email")
+        }
+        
     }
 
 }

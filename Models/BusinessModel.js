@@ -21,7 +21,7 @@ const BusinessSchema = mongoose.Schema({
         country: {type: String, default: ""}
     },
     contact: {
-        email: {type: String, default: ""},
+        email: {type: String, default: "", trim: true},
         phone: [{type: String}],
         whatsapp: {
             status: {type: Number, default: 0, required: false},

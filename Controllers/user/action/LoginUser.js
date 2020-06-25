@@ -194,6 +194,7 @@ module.exports = class LoginUser extends UserController{
                                 userId : userDbDetails._id,
                                 fullname: userDbDetails.fullname,
                                 email: userDbDetails.email,
+                                email_notification: userDbDetails.email_notification,
                                 phone: "",
                                 displaPicture: "",
                                 businessId: businessId,

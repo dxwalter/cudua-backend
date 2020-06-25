@@ -39,7 +39,7 @@
 
     type BusinessContact {
         email: String,
-        phone: String,
+        phone: [String],
         whatsapp: WhatsappType
     }
 
@@ -120,6 +120,12 @@
         businessId: String!
     }
 
+    input editbusinessEmailInput {
+        email: String!
+        businessId: String!
+        notification: Int
+    }
+
     type Query {
         GetSingleBusinessDetails:  BusinessAccount
         CheckUsernameExists(input: checkUsernameInput): checkUsernameInputResponse
@@ -129,4 +135,5 @@
         CreateBusinessAccount (createInput: CreateBusinessAccountInput ): CreateBusinessAccountResponse
         EditBusinessBasicDetails(input: editBusinessDetails): editBasicDetailsResponse
         EditBusinessPhoneNumber(input: editbusinessPhoneNumberInput): editBasicDetailsResponse
+        EditBusinessEmailAddress(input: editbusinessEmailInput): editBasicDetailsResponse
     }

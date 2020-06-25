@@ -22,6 +22,7 @@
     type User {
         fullname: String!
   		email: String!
+  		email_notification: Int!
         phone: String!
     	displaPicture: String!
         # Business id represents the unique id of a business that was created by a user

@@ -11,7 +11,6 @@ const app = express();
 
 const graphqlHTTP = require('express-graphql');
 const { buildSchema }  = require('graphql')
-const GraphQLUpload = require('graphql-upload');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -41,7 +40,8 @@ class startServer {
                 accessToken: req.header("accessToken"),
                 authFunction: jwtAuthentication
             },
-            tracing: true
+            tracing: true,
+            ssr: true
         })))
 
         // mongoose config
