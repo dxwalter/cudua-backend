@@ -1,5 +1,8 @@
 
     # This is the business return type for a registered business
+
+    scalar Upload
+
     type BusinessAccount {
         id: ID,
         businessname: String
@@ -38,8 +41,8 @@
     }
 
     type BusinessContact {
-        email: String,
-        phone: [String],
+        email: String
+        phone: [String]
         whatsapp: WhatsappType
     }
 
@@ -126,6 +129,16 @@
         notification: Int
     }
 
+    input editWhatsappContact {
+        phoneNumber: String!
+        businessId: String!
+        notification: Int
+    }
+
+    input updateProfilePhoto {
+        file: Upload!
+    }
+
     type Query {
         GetSingleBusinessDetails:  BusinessAccount
         CheckUsernameExists(input: checkUsernameInput): checkUsernameInputResponse
@@ -136,4 +149,6 @@
         EditBusinessBasicDetails(input: editBusinessDetails): editBasicDetailsResponse
         EditBusinessPhoneNumber(input: editbusinessPhoneNumberInput): editBasicDetailsResponse
         EditBusinessEmailAddress(input: editbusinessEmailInput): editBasicDetailsResponse
+        EditBusinesslogo(file: Upload!): editBasicDetailsResponse
+        EditWhatsappContact(input: editWhatsappContact): editBasicDetailsResponse
     }

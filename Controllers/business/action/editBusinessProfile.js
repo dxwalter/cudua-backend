@@ -223,4 +223,50 @@ module.exports = class EditBusinessDetails extends BusinessController {
         
     }
 
+    async editBusinessWhatsappContact(phoneNumber, businessId, notification, userId) {
+
+        let businessData = await this.getBusinessData(businessId);
+
+        if (businessData.error == true) {
+            return this.returnData(500, false, "An error occurred. Please try again")
+        } else {
+            // check if user is a valid business owner
+            if (businessData.result.owner != userId) {
+                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+            }
+        }
+
+        if (phoneNumber.length < 5) {
+            return this.returnData(200, false, `Enter a valid phone number`)
+        }
+
+        let updateNotification = await this.findOneAndUpdate(businessId, {'contact.whatsapp.status': notification});
+
+        // check if whatsapp number exists for a business
+        
+        if (phoneNumber == businessData.result.contact.whatsapp.number) {
+            return this.returnData(200, false, "No update was made. Enter a new Whatsapp phone number for your business")
+        }
+
+        // check if phone number exists in user 
+        let userNumberCheck = await this.UserController.findUserByEmail(phoneNumber);
+
+        if (userNumberCheck.result.length > 0) {
+            if (userNumberCheck.result[0]._id != userId) {
+                return this.returnData(200, false, "The phone number you chose already exists. Choose a different phone number")
+            }
+        }
+
+        // update email
+        let newWhatsappUpdate = {'contact.whatsapp.number': phoneNumber}
+        let updateWhatsapp = await this.findOneAndUpdate(businessId, newWhatsappUpdate)
+        
+        if (updateWhatsapp.error == false) {
+            return this.returnData(202, true, "Your Whatsapp number was updated successfully")
+        } else {
+            return this.returnData(500, false, "An error occurred updating your email")
+        }
+
+    }
+
 }

@@ -126,7 +126,6 @@ module.exports = class BusinessController extends FunctionRepo {
         }
     }
 
-
     async saveBusinessPhoneNumber(businessId, phoneNumber) {
         try {
             const findResult = await BusinessModel.findOne({

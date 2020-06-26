@@ -10,7 +10,8 @@ require('dotenv/config');
 const app = express();
 
 const graphqlHTTP = require('express-graphql');
-const { buildSchema }  = require('graphql')
+const { graphqlUploadExpress } = require('graphql-upload');
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -27,21 +28,24 @@ const schema = makeExecutableSchema({
     resolvers
 });
 
+
 class startServer {
     constructor(app) {
 
-        app.use(bodyParser.urlencoded({ extended: true }));
-        app.use(bodyParser.json());
+        // app.use(bodyParser.urlencoded({ extended: true }));
+        // app.use(bodyParser.json());
 
-        app.use("/graphql", bodyParser.json(), graphqlHTTP((req, res) => ({
+        app.use("/graphql", 
+        // bodyParser.json(), 
+        graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+        graphqlHTTP((req, res) => ({
             schema,
             graphiql: true,
             context: {
                 accessToken: req.header("accessToken"),
                 authFunction: jwtAuthentication
             },
-            tracing: true,
-            ssr: true
+            tracing: true
         })))
 
         // mongoose config

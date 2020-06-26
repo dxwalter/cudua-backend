@@ -2,6 +2,11 @@
 const UsernameActions = require('../../Controllers/business/action/usernameActions')
 const CreateBusiness = require('../../Controllers/business/action/createBusiness') 
 const EditBusinessProfile = require('../../Controllers/business/action/editBusinessProfile') 
+const { GraphQLUpload } = require('graphql-upload');
+
+module.exports = {
+    Upload: GraphQLUpload
+}
 
 module.exports = {
     Query: {
@@ -62,5 +67,19 @@ module.exports = {
             let edit = new EditBusinessProfile();
             return edit.editBusinessEmailAddress(args.input.email, args.input.businessId, args.input.notification, userId);
         },
+        EditBusinesslogo (parent, args, context, info) {
+            
+        },
+        EditWhatsappContact (parent, args, context, info) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+
+            let edit = new EditBusinessProfile();
+            return edit.editBusinessWhatsappContact(args.input.phoneNumber, args.input.businessId, args.input.notification, userId);
+        }
     }
 }
