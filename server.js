@@ -10,11 +10,7 @@ require('dotenv/config');
 const app = express();
 
 const graphqlHTTP = require('express-graphql');
-const { graphqlUploadExpress } = require('graphql-upload');
-
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+const {apolloUploadExpress}  = require('apollo-upload-server');
 
 const jwtAuthentication = require('./Controllers/jwtAuthController');
 
@@ -32,12 +28,13 @@ const schema = makeExecutableSchema({
 class startServer {
     constructor(app) {
 
-        // app.use(bodyParser.urlencoded({ extended: true }));
-        // app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: true }));
+        app.use(bodyParser.json());
+        
 
         app.use("/graphql", 
-        // bodyParser.json(), 
-        graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+        bodyParser.json(), 
+        apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
         graphqlHTTP((req, res) => ({
             schema,
             graphiql: true,

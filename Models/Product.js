@@ -29,27 +29,18 @@ const Product = mongoose.Schema({
         type: String
     },
     sizes: [
-        {
-            type: Number
-        }
+        { type: String, trim: true}
     ],
-    colors: [
-        {
-            type: String
-        }
-    ],
-    brand: {
-        type: String
-    },
-    hide: {
-        type: Number
-    },
+    colors: [{ type: String, trim: true }],
+    brand: { type: String },
+    hide: { type: Number },
+    tags: [{ type: String, trim: true }],
     reviews: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "product-review",
         required: false
     },
-    owner: {
+    business_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "business-accounts",
         required: true

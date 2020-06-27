@@ -1,13 +1,12 @@
 
-
-const fs = require('fs');
+let CreateProduct = require('../../Controllers/product/action/createNewProduct')
 
 module.exports = {
     Query: {
 
     },
     Mutation: {
-        createProduct (parent, args, context, info) {
+        CreateProduct (parent, args, context, info) {
             let accessToken = context.accessToken;
             let userId = context.authFunction(accessToken);
             if (userId.error == true) {
@@ -16,12 +15,10 @@ module.exports = {
                 userId = userId.message;
             }
 
-            console.log(args);
-            return {
-                code: 200,
-                success: true,
-                message: "good  "
-            }
+            args = args.input;
+
+            let createNewProduct = new CreateProduct();
+            return createNewProduct.createProduct(args.name, args.price, args.category, args.subcategory, args.businessId, userId)
 
         }
     }

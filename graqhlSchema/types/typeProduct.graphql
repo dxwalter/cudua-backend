@@ -32,6 +32,7 @@ type Product {
 }
 
 type createProductResponse implements ResponseType {
+    productId: String
     # Response status code
     code: Int!
     # This boolean value is used to check if an operation ran successfully
@@ -41,16 +42,16 @@ type createProductResponse implements ResponseType {
 }
 
 input createProduct {
-    # name: String!
-    # price: Int!
-    # category: String!
-    # subcategory: String!
-    image: Upload!
-    # businessId: String!
+    name: String!
+    price: Int!
+    category: String!
+    subcategory: String!
+    # image: Upload!
+    businessId: String!
 }
 
 
 #This is the mutation type that will handle create account, forgot and recover pasword
 type Mutation {
-    createProduct(input: createProduct): createProductResponse
+    CreateProduct   (input: createProduct): createProductResponse
 }

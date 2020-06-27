@@ -129,14 +129,16 @@
         notification: Int
     }
 
+    
     input editWhatsappContact {
         phoneNumber: String!
         businessId: String!
         notification: Int
     }
 
-    input updateProfilePhoto {
+    input editBusinessLogo {
         file: Upload!
+        businessId: String!
     }
 
     type Query {
@@ -147,8 +149,11 @@
     type Mutation {
         CreateBusinessAccount (createInput: CreateBusinessAccountInput ): CreateBusinessAccountResponse
         EditBusinessBasicDetails(input: editBusinessDetails): editBasicDetailsResponse
+
         EditBusinessPhoneNumber(input: editbusinessPhoneNumberInput): editBasicDetailsResponse
         EditBusinessEmailAddress(input: editbusinessEmailInput): editBasicDetailsResponse
-        EditBusinesslogo(file: Upload!): editBasicDetailsResponse
+
+        EditBusinesslogo(input: editBusinessLogo): editBasicDetailsResponse
+
         EditWhatsappContact(input: editWhatsappContact): editBasicDetailsResponse
     }

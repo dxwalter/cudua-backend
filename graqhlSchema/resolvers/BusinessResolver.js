@@ -2,13 +2,29 @@
 const UsernameActions = require('../../Controllers/business/action/usernameActions')
 const CreateBusiness = require('../../Controllers/business/action/createBusiness') 
 const EditBusinessProfile = require('../../Controllers/business/action/editBusinessProfile') 
-const { GraphQLUpload } = require('graphql-upload');
+const { GraphQLUpload } = require('apollo-upload-server');
 
-module.exports = {
-    Upload: GraphQLUpload
+
+const storeFS = ({ stream, filename }) => {
+    const uploadDir = '../backend/photos';
+    const path = `${uploadDir}/${filename}`;
+    return new Promise((resolve, reject) =>
+        stream
+            .on('error', error => {
+                if (stream.truncated)
+                    // delete the truncated file
+                    fs.unlinkSync(path);
+                reject(error);
+            })
+            .pipe(fs.createWriteStream(path))
+            .on('error', error => reject(error))
+            .on('finish', () => resolve({ path }))
+    );
 }
 
+
 module.exports = {
+    Upload: GraphQLUpload,
     Query: {
         GetSingleBusinessDetails (parent, args, context, info) {
             console.log(args)
@@ -67,9 +83,6 @@ module.exports = {
             let edit = new EditBusinessProfile();
             return edit.editBusinessEmailAddress(args.input.email, args.input.businessId, args.input.notification, userId);
         },
-        EditBusinesslogo (parent, args, context, info) {
-            
-        },
         EditWhatsappContact (parent, args, context, info) {
             let userId = context.authFunction(context.accessToken);
             if (userId.error == true) {
@@ -80,6 +93,21 @@ module.exports = {
 
             let edit = new EditBusinessProfile();
             return edit.editBusinessWhatsappContact(args.input.phoneNumber, args.input.businessId, args.input.notification, userId);
+        },
+        EditBusinesslogo: async (parent, args, context, info) => {
+
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+
+            const { filename, mimetype, createReadStream } = await args.input.file;
+            const stream = createReadStream();
+            const pathObj = await storeFS({ stream, filename });
+            const fileLocation = pathObj.path;
+           
         }
     }
 }

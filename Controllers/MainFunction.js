@@ -1,6 +1,8 @@
 const Sengrid  = require('@sendgrid/mail');
 Sengrid.setApiKey(process.env.SENDGRID_API_KEY);
 
+const fs = require('fs');
+
 module.exports = class FunctionRepo {
 
     constructor () {}
@@ -16,4 +18,6 @@ module.exports = class FunctionRepo {
     MakeFirstLetterUpperCase (string) {
         return string[0].toUpperCase() +  string.slice(1);
     }
+
+    
 }
