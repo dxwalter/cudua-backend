@@ -5,24 +5,6 @@ const EditBusinessProfile = require('../../Controllers/business/action/editBusin
 const { GraphQLUpload } = require('apollo-upload-server');
 
 
-const storeFS = ({ stream, filename }) => {
-    const uploadDir = '../backend/photos';
-    const path = `${uploadDir}/${filename}`;
-    return new Promise((resolve, reject) =>
-        stream
-            .on('error', error => {
-                if (stream.truncated)
-                    // delete the truncated file
-                    fs.unlinkSync(path);
-                reject(error);
-            })
-            .pipe(fs.createWriteStream(path))
-            .on('error', error => reject(error))
-            .on('finish', () => resolve({ path }))
-    );
-}
-
-
 module.exports = {
     Upload: GraphQLUpload,
     Query: {
@@ -94,7 +76,7 @@ module.exports = {
             let edit = new EditBusinessProfile();
             return edit.editBusinessWhatsappContact(args.input.phoneNumber, args.input.businessId, args.input.notification, userId);
         },
-        EditBusinesslogo: async (parent, args, context, info) => {
+        async EditBusinesslogo (parent, args, context, info) {
 
             let userId = context.authFunction(context.accessToken);
             if (userId.error == true) {
@@ -104,9 +86,24 @@ module.exports = {
             }
 
             const { filename, mimetype, createReadStream } = await args.input.file;
-            const stream = createReadStream();
-            const pathObj = await storeFS({ stream, filename });
-            const fileLocation = pathObj.path;
+
+            let uploadLogo = new EditBusinessProfile();
+            return uploadLogo.changeBusinessLogo(args.input.businessId, args.input.file, userId);
+           
+        },
+        async EditBusinessCoverPhoto (parent, args, context, info) {
+
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+
+            const { filename, mimetype, createReadStream } = await args.input.file;
+
+            let coverPhoto = new EditBusinessProfile();
+            return coverPhoto.changeBusinessCoverPhoto(args.input.businessId, args.input.file, userId);
            
         }
     }

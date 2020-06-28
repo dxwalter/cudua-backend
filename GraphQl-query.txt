@@ -277,7 +277,16 @@ query{
   }
 }    
 
-
+mutation ($file: Upload!) {
+  EditBusinesslogo(input: {
+    file: $file,
+    businessId: "5eef76e8756c5c272880f144"
+  }) {
+    code
+    success
+    message
+  }
+}
 
 mutation {
   EditBusinessBasicDetails(input:{
@@ -303,13 +312,36 @@ mutation {
   }
 }
 
-mutation {
+mutation ($file: Upload!) {
+  EditBusinessCoverPhoto(input: {
+    file: $file,
+    businessId: "5eef76e8756c5c272880f144"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation ($file: Upload!) {
+  EditBusinesslogo(input: {
+    file: $file,
+    businessId: "5eef76e8756c5c272880f144"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation ($file: Upload!) {
   CreateProduct(input:{
     name: "My product 1",
       price: 2000,
     category: "5ef1d9ad412b5a139467b413",
     subcategory: "5ef1da9a412b5a139467b416",
-    businessId: "5eef76e8756c5c272880f144"
+    businessId: "5eef76e8756c5c2",
+    file: $file
   }) {
     productId
     code

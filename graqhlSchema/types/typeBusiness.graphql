@@ -155,5 +155,7 @@
 
         EditBusinesslogo(input: editBusinessLogo): editBasicDetailsResponse
 
+        EditBusinessCoverPhoto(input: editBusinessLogo): editBasicDetailsResponse
+
         EditWhatsappContact(input: editWhatsappContact): editBasicDetailsResponse
     }

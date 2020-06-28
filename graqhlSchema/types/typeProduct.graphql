@@ -46,7 +46,7 @@ input createProduct {
     price: Int!
     category: String!
     subcategory: String!
-    # image: Upload!
+    file: Upload!
     businessId: String!
 }
 

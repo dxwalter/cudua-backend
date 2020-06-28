@@ -1,7 +1,9 @@
 
+const { GraphQLUpload } = require('apollo-upload-server');
 let CreateProduct = require('../../Controllers/product/action/createNewProduct')
 
 module.exports = {
+    Upload: GraphQLUpload,
     Query: {
 
     },
@@ -18,7 +20,7 @@ module.exports = {
             args = args.input;
 
             let createNewProduct = new CreateProduct();
-            return createNewProduct.createProduct(args.name, args.price, args.category, args.subcategory, args.businessId, userId)
+            return createNewProduct.createProduct(args.name, args.price, args.category, args.subcategory, args.businessId, args.file, userId)
 
         }
     }

@@ -21,7 +21,7 @@ const Product = mongoose.Schema({
         type: String,
         required: true
     }],
-    main_image: {
+    primary_image: {
         type: String,
         required: true
     },

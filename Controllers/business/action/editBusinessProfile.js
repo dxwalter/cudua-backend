@@ -8,9 +8,12 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
     constructor () {
         super();
-        this.UserController = new UserController()
+        this.UserController = new UserController();
+        this.businessLogoPath = 'uploads/logo';
+        this.businessCoverPhotoPath = 'uploads/coverPhoto';
     }
 
+    
     
     returnData (code, success, message) {
         return {
@@ -267,6 +270,100 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnData(500, false, "An error occurred updating your email")
         }
 
+    }
+
+    async changeBusinessLogo(businessId, file, userId) {
+        
+        let businessData = await this.getBusinessData(businessId);
+
+        if (businessData.error == true) {
+            return this.returnData(500, false, "An error occurred. Please try again")
+        } else {
+            // check if user is a valid business owner
+            if (businessData.result.owner != userId) {
+                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+            }
+        }
+
+        const { filename, mimetype, createReadStream } = await file;
+
+        if (filename.length < 1) {
+            return this.returnData(200, false, "Choose a logo for your business")
+        }
+
+        // encrypt file name
+        let newFileName = this.encryptFileName(filename) + "." + mimetype.split('/')[1];
+
+        const stream = createReadStream();
+
+        let path = this.businessLogoPath;
+
+        const pathObj = await this.uploadImageFile(stream, newFileName, path);
+
+        if (pathObj.error == true) {
+            return this.returnData(500, false, "An error occurred uploading your business logo")
+        }
+
+        // move to cloudinary
+
+
+        // update new file name
+        
+        let newLogo = {'logo': newFileName}
+        let updateLogo = await this.findOneAndUpdate(businessId, newLogo)
+        
+        if (updateLogo.error == false) {
+            return this.returnData(202, true, "Your business logo was updated successfully")
+        } else {
+            return this.returnData(500, false, "An error occurred updating your business logo")
+        }
+    }
+
+    async changeBusinessCoverPhoto(businessId, file, userId) {
+        
+        let businessData = await this.getBusinessData(businessId);
+
+        if (businessData.error == true) {
+            return this.returnData(500, false, "An error occurred. Please try again")
+        } else {
+            // check if user is a valid business owner
+            if (businessData.result.owner != userId) {
+                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+            }
+        }
+
+        const { filename, mimetype, createReadStream } = await file;
+
+        if (filename.length < 1) {
+            return this.returnData(200, false, "Choose a cover photo for your business")
+        }
+
+        // encrypt file name
+        let newFileName = this.encryptFileName(filename) + "." + mimetype.split('/')[1];
+
+        const stream = createReadStream();
+
+        let path = this.businessCoverPhotoPath;
+
+        const pathObj = await this.uploadImageFile(stream, newFileName, path);
+
+        if (pathObj.error == true) {
+            return this.returnData(500, false, "An error occurred uploading your business cover photo")
+        }
+
+        // move to cloudinary
+
+
+        // update new file name
+        
+        let newCover = {'coverPhoto': newFileName}
+        let updateCover = await this.findOneAndUpdate(businessId, newCover)
+        
+        if (updateCover.error == false) {
+            return this.returnData(202, true, "Your business cover photo was updated successfully")
+        } else {
+            return this.returnData(500, false, "An error occurred updating your business cover photo")
+        }
     }
 
 }
