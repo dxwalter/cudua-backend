@@ -34,6 +34,28 @@ module.exports = {
 
             let editProduct = new EditProduct();
             return editProduct.editProductDescription(args.input.description, args.input.productId, args.input.businessId, userId);
+        },
+        EditProductTags (parent, args, context, info) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) {
+                return userId
+            } else {
+                userId = userId.message
+            }
+
+            let editProduct = new EditProduct();
+            return editProduct.editProductTags(args.input.tags, args.input.productId, args.input.businessId, userId);
+        },
+        RemoveProductTag (parent, args, context, info) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) {
+                return userId
+            } else {
+                userId = userId.message
+            }
+
+            let editProduct = new EditProduct();
+            return editProduct.removeProductTag(args.input.tag, args.input.productId, args.input.businessId, userId);
         }
     }
 }
