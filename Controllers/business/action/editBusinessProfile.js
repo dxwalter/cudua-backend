@@ -306,6 +306,21 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
         // move to cloudinary
 
+        //upload to cloudinary
+
+        let folder = "cudua_commerce/business/"+businessId+"/logo/";
+        let publicId = newFileName;
+        let tag = 'logo';
+        let imagePath = pathObj.path;
+
+        let moveToCloud = await this.moveToCloudinary(folder, imagePath, publicId, tag);
+
+        let deleteFile = await this.deleteFileFromFolder(imagePath)
+
+        if (moveToCloud.error == true) {
+            return this.returnData(500, false, `An error occurred uploading your business logo`)
+        }
+
 
         // update new file name
         
@@ -352,6 +367,21 @@ module.exports = class EditBusinessDetails extends BusinessController {
         }
 
         // move to cloudinary
+
+        //upload to cloudinary
+
+        let folder = "cudua_commerce/business/"+businessId+"/cover/";
+        let publicId = newFileName;
+        let tag = 'cover';
+        let imagePath = pathObj.path;
+
+        let moveToCloud = await this.moveToCloudinary(folder, imagePath, publicId, tag);
+
+        let deleteFile = await this.deleteFileFromFolder(imagePath)
+
+        if (moveToCloud.error == true) {
+            return this.returnData(500, false, `An error occurred uploading your business logo`)
+        }
 
 
         // update new file name

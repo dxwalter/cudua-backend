@@ -50,8 +50,16 @@ input createProduct {
     businessId: String!
 }
 
+input addDescription {
+    description: String!
+    productId: String!
+    businessId: String!
+}
+
 
 #This is the mutation type that will handle create account, forgot and recover pasword
 type Mutation {
-    CreateProduct   (input: createProduct): createProductResponse
+    CreateProduct(input: createProduct): createProductResponse
+
+    EditDescription(input: addDescription): DatalessResponse
 }

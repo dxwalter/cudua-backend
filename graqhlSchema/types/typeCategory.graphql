@@ -35,8 +35,8 @@
 
 
     type CreateCategoryResponse implements ResponseType {
-        categoryId: String!
-        categoryName: String!
+        categoryId: String
+        categoryName: String
         # Response status code
         code: Int!
         # This boolean value is used to check if an operation ran successfully

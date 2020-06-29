@@ -26,6 +26,7 @@ module.exports = {
             } else {
                 userId = userId.message;
             }
+            
 
             let createCategoryObject = new CreateCategory(args.input);
             return createCategoryObject.validateInput()

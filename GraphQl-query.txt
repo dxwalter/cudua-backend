@@ -349,3 +349,15 @@ mutation ($file: Upload!) {
     message
   }
 }
+
+mutation{
+	EditDescription(input:{
+    description: "Duis leo. Vestibulum ullamcorper mauris at ligula. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac placerat dolor lectus quis orci. Mauris turpis nunc, blandit et, volutpat molestie, porta ut, ligula. Nulla neque dolor, sagittis eget, iaculis quis, molestie non, velit.",
+    productId: "5ef9b6e16ffa370878d3296f",
+    businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}

@@ -4,10 +4,11 @@ let ProductController = require('../ProductController')
 let createBusinessCategory = require('../../businessCategory/action/createBusinessCategories');
 
 module.exports = class CreateNewProduct extends ProductController {
+    
     constructor () {
         super();
         this.BusinessCategory = new createBusinessCategory();
-        this.businessProductPath = 'uploads/product';
+        this.businessProductPath = 'uploads/product/';
     }
 
     returnData (productId, code, success, message) {
@@ -63,9 +64,8 @@ module.exports = class CreateNewProduct extends ProductController {
 
         const stream = createReadStream();
 
-        let path = this.businessProductPath;
 
-        const pathObj = await this.uploadImageFile(stream, newFileName, path);
+        const pathObj = await this.uploadImageFile(stream, newFileName, this.businessProductPath);
 
         if (pathObj.error == true) {
             return this.returnData(null, 500, false, "An error occurred uploading your product photo. Please try again")
@@ -73,12 +73,26 @@ module.exports = class CreateNewProduct extends ProductController {
 
         //upload to cloudinary
 
+        let folder = "cudua_commerce/business/"+businessId+"/product/";
+        let publicId = newFileName;
+        let tag = 'product';
+        let imagePath = pathObj.path;
+
+        let moveToCloud = await this.moveToCloudinary(folder, imagePath, publicId, tag);
+
+        let deleteFile = await this.deleteFileFromFolder(imagePath)
+
+        if (moveToCloud.error == true) {
+            return this.returnData(null, 500, false, `An error occurred creating ${name}`)
+        }
+
         let createProduct = new ProductModel({
             name: name,
             price: price,
             category: category,
             subcategory: subcategory,
             primary_image: newFileName,
+            images:[newFileName],
             business_id: businessId
         });
 

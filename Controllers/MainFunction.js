@@ -3,6 +3,14 @@ Sengrid.setApiKey(process.env.SENDGRID_API_KEY);
 const fs = require('fs');
 const crypto = require("crypto");
 
+let cloudinary = require('cloudinary').v2;
+
+cloudinary.config({ 
+    cloud_name: process.env.CLOUDINARY_NAME, 
+    api_key: process.env.CLOUDINARY_API_KEY, 
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 module.exports = class FunctionRepo {
 
     constructor () {}
@@ -21,7 +29,7 @@ module.exports = class FunctionRepo {
 
     uploadImageFile = async ( stream, filename, filePath ) => {
         const uploadDir = filePath;
-        const path = `${uploadDir}/${filename}`;
+        const path = `${uploadDir}${filename}`;
         return new Promise((resolve, reject) =>
             stream
                 .on('error', error => {
@@ -40,5 +48,49 @@ module.exports = class FunctionRepo {
         return crypto.createHmac('sha256', process.env.SHARED_SECRET).update(originalName).digest('hex')
     }
 
-    
+    async deleteFileFromFolder(path) {
+        try {
+            fs.unlinkSync(path)
+            return true
+        } catch(err) {
+            return false
+        }
+    }
+
+    HashFileName (originalName) {
+        return crypto.createHmac('sha256', process.env.SHARED_SECRET).update(originalName).digest('hex')
+    }
+
+    async moveToCloudinary (folder, imagePath, publicId, tag) {
+
+        try {
+
+            let returnData;
+
+            let data = await cloudinary.uploader.upload(
+                imagePath, {
+                    folder: folder,
+                    use_filename: true, 
+                    unique_filename: false,
+                    folder: folder,
+                    public_id: publicId, 
+                    tags: tag
+                }, function (error, result) {
+                    returnData = {
+                       error: error,
+                       result: result
+                   }
+                }
+            );
+
+            return returnData
+            
+        } catch (error) {
+            return {
+                error: true,
+                message: error
+            }
+        }
+        
+    }
 }

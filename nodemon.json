@@ -1,0 +1,7 @@
+{
+  "verbose": true,
+  "ignore": ["*.test.js", "uploads/*", "fixtures/*"],
+  "execMap": {
+    "start" : "nodemon -e js,json,graphql server.js"
+  }
+}

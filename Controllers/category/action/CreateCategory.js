@@ -50,6 +50,7 @@ module.exports = class CreateCategory extends CategoryController {
         });
 
         let data = await this.CreateCategory(CreateCategory);
+
         if (data.error == true) {
             return this.returnMethod('', '', false, `An error occurred: ${data.message}`,  200);
         }

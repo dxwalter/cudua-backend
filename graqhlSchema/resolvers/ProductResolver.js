@@ -1,6 +1,7 @@
 
 const { GraphQLUpload } = require('apollo-upload-server');
-let CreateProduct = require('../../Controllers/product/action/createNewProduct')
+let CreateProduct = require('../../Controllers/product/action/createNewProduct');
+let EditProduct = require('../../Controllers/product/action/editProduct');
 
 module.exports = {
     Upload: GraphQLUpload,
@@ -22,6 +23,17 @@ module.exports = {
             let createNewProduct = new CreateProduct();
             return createNewProduct.createProduct(args.name, args.price, args.category, args.subcategory, args.businessId, args.file, userId)
 
+        },
+        EditDescription (parent, args, context, info) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) {
+                return userId
+            } else {
+                userId = userId.message
+            }
+
+            let editProduct = new EditProduct();
+            return editProduct.editProductDescription(args.input.description, args.input.productId, args.input.businessId, userId);
         }
     }
 }
