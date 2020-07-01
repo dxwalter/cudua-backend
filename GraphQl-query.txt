@@ -361,3 +361,100 @@ mutation{
     message
   }
 }
+
+mutation{
+	EditProductTags(input:{
+    tags: ["tags 1", "tags 2", "tag 3", "Tag 4", "Tag 5"],
+    productId: "5ef9b6e16ffa370878d3296f",
+    businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation{
+	RemoveProductTag(input:{
+    tag: "tags 2",
+    productId: "5ef9b6e16ffa370878d3296f",
+    businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation{
+	CreateProductSizes(input:{
+    sizes: ["12", "15", "35", "12"],
+    productId: "5ef9b6e16ffa370878d3296f",
+    businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation{
+	RemoveProductSize(input:{
+    size: "12",
+    productId: "5ef9b6e16ffa370878d3296f",
+    businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation{
+	CreateProductColors(input:{
+    colors: ["#fff", "#000", "#ccc",  "#ddd", "#ggg", "#cdcdcd", "#mqmqmq"],
+    productId: "5ef9b6e16ffa370878d3296f",
+    businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation{
+	RemoveProductColor(input:{
+    color: "#fff",
+    productId: "5ef9b6e16ffa370878d3296f",
+    businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation  {
+    MakePrimaryImage(input:{
+      imageName: "ebc400accc70f6ce98f65f536293e2967ce7db289e8e533e65f0442f21d2ff6e.jpeg",
+      productId: "5ef9b6e16ffa370878d3296f",
+      businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    images
+    code
+    success
+    message
+  }
+}
+
+mutation  {
+    RemoveProductPicture(input:{
+      imageName: "4c6fa73dd91cd0ef6ee5e518a2c4f6030a62fe531d436e4d00bc9f1b3ede9a33.jpeg",
+      productId: "5ef9b6e16ffa370878d3296f",
+      businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+} 

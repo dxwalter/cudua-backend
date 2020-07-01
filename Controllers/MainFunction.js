@@ -62,7 +62,7 @@ module.exports = class FunctionRepo {
     }
 
     async moveToCloudinary (folder, imagePath, publicId, tag) {
-
+    
         try {
 
             let returnData;
@@ -70,11 +70,11 @@ module.exports = class FunctionRepo {
             let data = await cloudinary.uploader.upload(
                 imagePath, {
                     folder: folder,
-                    use_filename: true, 
-                    unique_filename: false,
-                    folder: folder,
+                    unique_filename: true,
+                    use_filename:true,
                     public_id: publicId, 
-                    tags: tag
+                    tags: tag,
+                    overwrite: false
                 }, function (error, result) {
                     returnData = {
                        error: error,

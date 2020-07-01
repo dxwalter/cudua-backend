@@ -35,6 +35,14 @@ const Product = mongoose.Schema({
     brand: { type: String },
     hide: { type: Number },
     tags: [{ type: String, trim: true }],
+    review_details: {
+        reviews: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "product-review",
+            required: false
+        },
+        score: Number
+    },
     business_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "business-accounts",

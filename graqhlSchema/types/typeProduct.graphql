@@ -68,6 +68,51 @@ input removeProductTag {
     businessId: String!
 }
 
+input removeProductSize {
+    size: String!
+    productId: String!
+    businessId: String!
+}
+
+input removeProductColor {
+    color: String!
+    productId: String!
+    businessId: String!
+}
+
+input createProductSize {
+    sizes: [String]!
+    productId: String!
+    businessId: String!
+}
+
+input createProductColor {
+    colors: [String]!
+    productId: String!
+    businessId: String!
+}
+
+input addMorePhotos {
+    file: Upload!
+    productId: String!
+    businessId: String!
+}
+
+type ImageArrayResponse implements ResponseType {
+    images: [String!]
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+input makePrimaryInput {
+    imageName: String!
+    productId: String!
+    businessId: String!
+}
 
 #This is the mutation type that will handle create account, forgot and recover pasword
 type Mutation {
@@ -78,4 +123,18 @@ type Mutation {
     EditProductTags(input: editProductTags): DatalessResponse
 
     RemoveProductTag(input: removeProductTag): DatalessResponse
+
+    CreateProductSizes(input: createProductSize): DatalessResponse
+
+    RemoveProductSize(input: removeProductSize): DatalessResponse
+
+    CreateProductColors(input: createProductColor): DatalessResponse
+
+    RemoveProductColor(input: removeProductColor): DatalessResponse
+
+    AddmorePhotos(input: addMorePhotos): DatalessResponse
+
+    MakePrimaryImage (input: makePrimaryInput): ImageArrayResponse
+
+    RemoveProductPicture(input: makePrimaryInput): DatalessResponse
 }

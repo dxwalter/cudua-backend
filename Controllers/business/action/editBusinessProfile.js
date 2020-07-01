@@ -292,7 +292,8 @@ module.exports = class EditBusinessDetails extends BusinessController {
         }
 
         // encrypt file name
-        let newFileName = this.encryptFileName(filename) + "." + mimetype.split('/')[1];
+        let encryptedName = this.encryptFileName(filename)
+        let newFileName = encryptedName + "." + mimetype.split('/')[1];
 
         const stream = createReadStream();
 
@@ -354,7 +355,8 @@ module.exports = class EditBusinessDetails extends BusinessController {
         }
 
         // encrypt file name
-        let newFileName = this.encryptFileName(filename) + "." + mimetype.split('/')[1];
+        let encryptedName = this.encryptFileName(filename)
+        let newFileName = encryptedName + "." + mimetype.split('/')[1];
 
         const stream = createReadStream();
 

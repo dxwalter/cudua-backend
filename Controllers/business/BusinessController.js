@@ -12,22 +12,20 @@ module.exports = class BusinessController extends FunctionRepo {
 
     async checkUsernameExists (username) {
         try {
-            const findResult = await BusinessModel.find({
+            const findResult = await BusinessModel.findOne({
                 username: username
-            }).limit(1).exec();   
+            });   
 
-            if (findResult.length > 0) {
-                if (findResult[0]._id) {
-                   return {
-                       error: false,
-                       result: true   
-                   }
-                }
-            } else {
+            if (findResult._id) {
                 return {
                     error: false,
-                    result: false   
+                    result: true   
                 }
+            }
+    
+            return {
+                error: false,
+                result: false   
             }
     
         } catch (error) {
@@ -40,23 +38,22 @@ module.exports = class BusinessController extends FunctionRepo {
 
     async checkIfEmailExists(email) {
         try {
-            const findResult = await BusinessModel.find({
+            const findResult = await BusinessModel.findOne({
                 'contact.email': email
-            }).limit(1).exec();   
+            });   
 
-            if (findResult.length > 0) {
-                if (findResult[0]._id) {
+                if (findResult._id) {
                    return {
                        error: false,
                        result: true   
                    }
                 }
-            } else {
+       
                 return {
                     error: false,
                     result: false   
                 }
-            }
+    
     
         } catch (error) {
             return {
@@ -85,18 +82,16 @@ module.exports = class BusinessController extends FunctionRepo {
 
     async getBusinessData (businessId) {
         try {
-            const findResult = await BusinessModel.find({
+            const findResult = await BusinessModel.findOne({
                 _id: businessId
-            }).limit(1);   
+            });   
 
-            if (findResult.length > 0) {
-                if (findResult[0]._id) {
-                   return {
-                       error: false,
-                       result: findResult[0]   
-                   }
+            if (findResult._id) {
+                return {
+                    error: false,
+                    result: findResult   
                 }
-            } 
+            }
 
             return {
                 error: false,
