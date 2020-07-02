@@ -577,11 +577,14 @@ module.exports = class EditProduct extends ProductController {
             dataObject = {images: newArray}
         }
  
-
+        
         // remove from db
         let imageUpdate = await this.findOneAndUpdate(productId, dataObject);
+        let publicID = `cudua_commerce/business/${businessId}/product/${fileName.split('.')[0]}`;
         
         // remove from cloudinary
+        let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+        
         
         if (imageUpdate.error) return this.returnData(500, false, "An error occurred while deleting your product image.")
 

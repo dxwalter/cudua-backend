@@ -93,4 +93,16 @@ module.exports = class FunctionRepo {
         }
         
     }
+
+    async removeFromCloudinary (publicId, fileType) {
+        let returnData;
+        cloudinary.uploader.destroy(publicId, {
+            resource_type: fileType
+        }, function (error, result) {
+            returnData = {
+                error: error,
+                result: result
+            }
+        });
+    }
 }

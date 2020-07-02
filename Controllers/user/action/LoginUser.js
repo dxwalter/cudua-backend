@@ -172,7 +172,6 @@ module.exports = class LoginUser extends UserController{
                         let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });
 
                         let businessDetails = userDbDetails.business_details;
-                        console.log(userDbDetails)
 
                         let businessData = "";
                         let businessId = "";

@@ -9,8 +9,8 @@ module.exports = class EditBusinessDetails extends BusinessController {
     constructor () {
         super();
         this.UserController = new UserController();
-        this.businessLogoPath = 'uploads/logo';
-        this.businessCoverPhotoPath = 'uploads/coverPhoto';
+        this.businessLogoPath = 'uploads/logo/';
+        this.businessCoverPhotoPath = 'uploads/coverPhoto/';
     }
 
     
@@ -275,7 +275,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
     async changeBusinessLogo(businessId, file, userId) {
         
         let businessData = await this.getBusinessData(businessId);
-
+        
         if (businessData.error == true) {
             return this.returnData(500, false, "An error occurred. Please try again")
         } else {
@@ -285,11 +285,15 @@ module.exports = class EditBusinessDetails extends BusinessController {
             }
         }
 
+        businessData = businessData.result
+
         const { filename, mimetype, createReadStream } = await file;
 
         if (filename.length < 1) {
             return this.returnData(200, false, "Choose a logo for your business")
         }
+
+        // delete old logo from cloudinary
 
         // encrypt file name
         let encryptedName = this.encryptFileName(filename)
@@ -300,17 +304,21 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let path = this.businessLogoPath;
 
         const pathObj = await this.uploadImageFile(stream, newFileName, path);
-
+        console.log(pathObj)
         if (pathObj.error == true) {
             return this.returnData(500, false, "An error occurred uploading your business logo")
         }
 
         // move to cloudinary
+        let publicID = `cudua_commerce/business/${businessId}/logo/${businessData.logo.split('.')[0]}`;
+        
+        // remove from cloudinary
+        let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
 
         //upload to cloudinary
 
         let folder = "cudua_commerce/business/"+businessId+"/logo/";
-        let publicId = newFileName;
+        let publicId = encryptedName;
         let tag = 'logo';
         let imagePath = pathObj.path;
 
@@ -348,6 +356,8 @@ module.exports = class EditBusinessDetails extends BusinessController {
             }
         }
 
+        businessData = businessData.result
+
         const { filename, mimetype, createReadStream } = await file;
 
         if (filename.length < 1) {
@@ -368,12 +378,18 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnData(500, false, "An error occurred uploading your business cover photo")
         }
 
-        // move to cloudinary
+        
+
+        // delete old cover from cloudinary
+        let publicID = `cudua_commerce/business/${businessId}/cover/${businessData.coverPhoto.split('.')[0]}`;
+
+        // remove from cloudinary
+        let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
 
         //upload to cloudinary
 
         let folder = "cudua_commerce/business/"+businessId+"/cover/";
-        let publicId = newFileName;
+        let publicId = encryptedName;
         let tag = 'cover';
         let imagePath = pathObj.path;
 

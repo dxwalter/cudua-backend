@@ -48,6 +48,10 @@ const Product = mongoose.Schema({
         ref: "business-accounts",
         required: true
     },
+    hide: {
+        type: Number,
+        default: 0
+    },
     created : {
         type : Date,
         default: Date.now()

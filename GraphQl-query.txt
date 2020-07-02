@@ -288,6 +288,18 @@ mutation ($file: Upload!) {
   }
 }
 
+mutation ($file: Upload!) {
+  EditBusinessCoverPhoto(input: {
+    file: $file,
+    businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+
 mutation {
   EditBusinessBasicDetails(input:{
     businessId: "5eef76e8756c5c272880f144",
@@ -458,3 +470,15 @@ mutation  {
     message
   }
 } 
+
+mutation ($file: Upload!) {
+    AddmorePhotos(input:{
+      file: $file
+      productId: "5ef9b6e16ffa370878d3296f",
+      businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}
