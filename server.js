@@ -51,8 +51,6 @@ class startServer {
         mongoose.set('useCreateIndex', true);
         mongoose.set('useUnifiedTopology', true);
 
-        
-
         // connect to db
         mongoose.connect(process.env.DB_CONNECTION).then(
             app.listen(3000, () => console.log('server starts @ port 3000')),  (err) => {

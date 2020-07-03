@@ -23,6 +23,15 @@ module.exports = {
             return createNewProduct.createProduct(args.name, args.price, args.category, args.subcategory, args.businessId, args.file, userId)
 
         },
+        EditBasicDetails(parent, args, context, info) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+        },
         AddmorePhotos (parent, args, context, info) {
             let accessToken = context.accessToken;
             let userId = context.authFunction(accessToken);

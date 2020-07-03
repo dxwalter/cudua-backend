@@ -482,3 +482,18 @@ mutation ($file: Upload!) {
     message
   }
 }
+
+mutation{
+  EditBasicDetails(input: {
+    productId: "",
+    productName: "new name of product",
+    productPrice: "4000",
+    category: "",
+    subcategory: "",
+    businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}

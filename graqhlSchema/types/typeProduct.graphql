@@ -115,9 +115,20 @@ input makePrimaryInput {
     businessId: String!
 }
 
+input editBasicDetails {
+    productId: String!
+    businessId: String!
+    productName: String
+    productPrice: Int
+    category: String
+    subcategory: String
+}
+
 #This is the mutation type that will handle create account, forgot and recover pasword
 type Mutation {
     CreateProduct(input: createProduct): createProductResponse
+
+    EditBasicDetails(input: editBasicDetails): DatalessResponse
 
     EditDescription(input: addDescription): DatalessResponse
 
