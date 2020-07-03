@@ -55,5 +55,8 @@
     "@types/mongoose": "^5.7.21",
     "@types/node": "^14.0.5",
     "nodemon": "^2.0.4"
+  },
+  "engines": {
+    "node": "12.17.0"
   }
 }
