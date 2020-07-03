@@ -50,6 +50,7 @@ input createProduct {
     businessId: String!
 }
 
+
 input addDescription {
     description: String!
     productId: String!
@@ -137,4 +138,4 @@ type Mutation {
     MakePrimaryImage (input: makePrimaryInput): ImageArrayResponse
 
     RemoveProductPicture(input: makePrimaryInput): DatalessResponse
-}
+}   
