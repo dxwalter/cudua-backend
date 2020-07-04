@@ -57,18 +57,18 @@ module.exports = class BusinessCategoryController extends BusinessController {
     async checkChoosenCategoryExist (categoryId, businessId) {
         
         try {
-            const findResult = await BusinessCategoryModel.find(
+            const findResult = await BusinessCategoryModel.findOne(
                 {
                     category_id: categoryId,
                     business_id: businessId
                 }
-            ).limit(1).exec();   
-            if (findResult.length > 0) {
-                if (findResult[0]._id) {
-                   return {
-                       error: false,
-                       result: findResult   
-                   }
+            );   
+           
+        
+            if (findResult != null) {
+                return {
+                    error: false,
+                    result: findResult   
                 }
             } else {
                 return {

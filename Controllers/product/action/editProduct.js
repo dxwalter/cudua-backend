@@ -1,6 +1,7 @@
 const ProductModel = require('../../../Models/Product');
 const ProductController = require('../ProductController');
 const createBusinessCategory = require('../../businessCategory/action/createBusinessCategories');
+const Categories = require('../../../Models/Categories');
 
 
 module.exports = class EditProduct extends ProductController {
@@ -17,6 +18,74 @@ module.exports = class EditProduct extends ProductController {
             success: success,
             message: message
         }
+    }
+
+    async editProductBasicDetails (name, price, category, subcategory, businessId, productId, userId) {
+        
+        let dataObject = {};
+        let dataChange = 0;
+
+        // check if business exists
+        let businessData = await this.getBusinessData(businessId);
+
+        if (businessData.error == true) {
+            return this.returnData(200, false, "Your business is not recognised.")
+        } else {
+            // check if user is a valid business owner
+            if (businessData.result.owner != userId) {
+                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+            }
+        }
+
+        let getProductDetails = await this.FindProductById(productId);
+
+        if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+
+        getProductDetails = getProductDetails.result;
+
+        if (name.length > 2) {
+            if (name != getProductDetails.name) {
+                dataObject.name = this.MakeFirstLetterUpperCase(name); 
+                dataChange = 1;
+            }
+        } else  {
+            return this.returnData(200, false, `Enter a valid name for the product you want to upload`)
+        }
+
+        if (price != false) {
+            if (price != getProductDetails.price) {
+                dataObject.price = price
+                dataChange = 1;
+            }
+        }
+
+
+        if (category.length > 0 || subcategory.length > 0) {
+            if (category != getProductDetails.category || subcategory != getProductDetails.subcategory) {
+                let businessCategory = await this.BusinessCategory.addASingleCategoryOrSubcategory(businessId, category, subcategory)
+                if (businessCategory.success == false) {
+                    return this.returnData(businessCategory.code, false, businessCategory.message)
+                } else {
+                    dataObject.category = category
+                    dataObject.subcategory = subcategory
+                    dataChange = 1
+                }
+            }
+        }
+
+        if (dataChange == 0) {
+            return this.returnData(200, false, 'No update was made. Update product details')
+        }
+
+
+        let basicDetailsUpdate = await this.findOneAndUpdate(productId, dataObject);
+
+        if (basicDetailsUpdate.error == true) {
+            return this.returnData(500, false, `An error occurred updating the product details for ${getProductDetails.name}`)
+        }
+
+        return this.returnData(202, true, `The product details for ${getProductDetails.name} was updated successfully`);
+
     }
 
     async editProductDescription(description, productId, businessId, userId) {

@@ -47,7 +47,7 @@ module.exports = class CreateNewProduct extends ProductController {
             return this.returnData(null, 200, false, `Choose a catgory and subcategory for the product you want to upload`)
         }
 
-        let businessCategory = await this.BusinessCategory.ChooseCategory(businessId, category, [subcategory])
+        let businessCategory = await this.BusinessCategory.addASingleCategoryOrSubcategory(businessId, category, subcategory)
         
         if (businessCategory.code == 500) {
             return this.returnData(null, 500, false, `An error occurred. The category or subcategory you chose is not recognised.`)

@@ -31,6 +31,19 @@ module.exports = {
             } else {
                 userId = userId.message;
             }
+
+            args = args.input
+
+            let editProduct = new EditProduct();
+            return editProduct.editProductBasicDetails(
+                args.productName,
+                args.productPrice,
+                args.category,
+                args.subcategory,
+                args.businessId,
+                args.productId,
+                userId
+            );
         },
         AddmorePhotos (parent, args, context, info) {
             let accessToken = context.accessToken;

@@ -27,15 +27,33 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
         }
     }
 
+    async createCategoryForBusiness(businessId, categoryId, passedSubcatgories) {
+
+        const createBusinessCategory = new BusinessCategoryModel ({
+            business_id: businessId,
+            category_id: categoryId,
+            subcategories: passedSubcatgories
+        });
+
+        let create = await this.createBusinessCategory(createBusinessCategory)
+        
+        if (create.error == true) {
+            return this.returnMethod(500, false, "An error occured saving your category");
+        }
+        
+        if (create.error == false) {
+            return this.returnMethod(202, true, `Your category and subcategories were added successfully`);
+        }
+    }
+
     async addNewSubcategory(businessId, categoryId, newSubcategoryArray, myCategoryData) {
        
         let readySubcategories = [];
         let subcatStatus = 0;
-        
         let oldSubcategories = [];
 
         // set old categories
-        for (let oldSubcat of myCategoryData.result[0].subcategories) {
+        for (let oldSubcat of myCategoryData.result.subcategories) {
             oldSubcategories.push(oldSubcat.subcategory_id);
         }
        
@@ -59,7 +77,7 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
         let uniqueArray = Array.from(new Set(readySubcategories))
         
         if (uniqueArray.length == 0) {
-            return this.returnMethod(200, false, "An error occurred. Choose a new subcategory.")
+            return this.returnMethod(200, false, "An error occurred. The subcategory you chose already exists. Choose a different subcategory.")
         }
 
         let updateData = await this.insertSubcategory(businessId, categoryId, uniqueArray);
@@ -70,9 +88,9 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
 
         if (updateData.error == false) {
             if (uniqueArray.length > 1) {
-                return this.returnMethod(200, false, "Your subcategories were added successfully.")
+                return this.returnMethod(200, true, "Your subcategories were added successfully.")
             } else {
-                return this.returnMethod(200, false, "Your subcategory was added successfully.")
+                return this.returnMethod(200, true, "Your subcategory was added successfully.")
             }
         }
     }
@@ -119,6 +137,13 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
             return this.returnMethod(500, false, `An error occurred: This category has been moved or deleted`)
         }
 
+
+        if (checkIfCategoryExistInCategoryDoc.result[0].subcategoryList == undefined) {
+            //possible error is categoryId does not match in db
+            return this.returnMethod(500, false, `An error occurred: This subcategory has been moved or deleted`)
+        }
+
+
         if (checkIfCategoryExistInCategoryDoc.error == false && checkIfCategoryExistInCategoryDoc.result.length > 0) {
             this.categorySubcategories = checkIfCategoryExistInCategoryDoc.result[0].subcategoryList
         }
@@ -134,7 +159,7 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
         /**
          * Update subcategory if category has been added to a business before now
          */
-        if (checkIfCategoryHasBeenChosenByBusiness.result.length > 0 && checkIfCategoryHasBeenChosenByBusiness.error == false) {
+        if (checkIfCategoryHasBeenChosenByBusiness.result._id.length > 0 && checkIfCategoryHasBeenChosenByBusiness.error == false) {
             // edit and add subacategory
             return await this.addNewSubcategory(businessId, categoryId, businessSubcategoriesList, checkIfCategoryHasBeenChosenByBusiness)
         }
@@ -152,6 +177,8 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
 
                 if (checkSubcatgoryExists ==  true) {
                     passedSubcatgories.push({subcategory_id: subcategories})
+                } else {
+                    return this.returnMethod(200, false, `An error occurred. A subcategory you chose does not exist`)
                 }
         }
 
@@ -167,21 +194,65 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
 
 
         // create
-        const createBusinessCategory = new BusinessCategoryModel ({
-            business_id: businessId,
-            category_id: categoryId,
-            subcategories: passedSubcatgories
-        });
-
-        let create = await this.createBusinessCategory(createBusinessCategory)
-        
-        if (create.error == true) {
-            return this.returnMethod(500, false, "An error occured saving your category");
-        }
-        
-        if (create.error == false) {
-            return this.returnMethod(202, true, `Your category and subcategories were added successfully`);
-        }
+        return await this.createCategoryForBusiness(businessId, categoryId, passedSubcatgories)
         
     }   
+
+    // this is used by product upload
+    async addASingleCategoryOrSubcategory(businessId, category, subcategory) {
+
+        // check if category exists in category document/table
+        let categoryExists = await this.CategoryController.checkCategoryExists({_id: category, status: 1});
+
+        if (categoryExists.error == true) {
+            return this.returnMethod(200, false, 'An error occurred. This category has either been moved or delete')
+        }
+
+        if (categoryExists.error == false && categoryExists.result == false) return this.returnMethod(200, false, 'An error occurred. This category has either been moved or delete')
+
+        if (categoryExists.result[0].subcategoryList == undefined) {
+            //possible error is categoryId does not match in db
+            return this.returnMethod(500, false, `An error occurred: This subcategory has been moved or deleted`)
+        }
+
+        let subcategoriesList = categoryExists.result[0].subcategoryList
+        let subcatCheck = 0;
+
+        // check if subcategory exists in category
+        for (let subcat of subcategoriesList) {
+            if (subcategory == subcat._id) subcatCheck = 1
+        }
+        
+        if (subcatCheck == 0) {
+            return this.returnMethod(200, false, 'An error occurred. This subcategory has either been moved or delete')
+        }
+
+
+        // check if category has been choosen by business
+        let checkCategoryByBusiness = await this.checkChoosenCategoryExist(category, businessId);
+   
+        if (checkCategoryByBusiness.error == false ) {
+
+            if (checkCategoryByBusiness.result == false) {
+                return await this.createCategoryForBusiness(businessId, category, [{subcategory_id: subcategory}])
+            }
+        }
+        
+        if (checkCategoryByBusiness.error == true) return this.returnMethod(200, false, 'An error occurred while checking if this category has been added to your business')
+
+        let selectedBusinessSubcat = checkCategoryByBusiness.result.subcategories
+        subcatCheck = 0;
+        for (let subcat of selectedBusinessSubcat) {
+            if (subcategory == subcat.subcategory_id) subcatCheck = 1
+        }
+
+        if (subcatCheck == 1) return this.returnMethod(200, true, 'This category and subcategory has been added to your account')
+
+        let updateData = await  this.insertSubcategory(businessId, category, [subcategory]);
+
+        if (updateData.error == true) return this.returnMethod(500, false, "An error occurred updating your subcategory.")
+
+        if (updateData.error == false) return this.returnMethod(200, true, "Your subcategory was added successfully.")
+
+    }
 }

@@ -485,11 +485,11 @@ mutation ($file: Upload!) {
 
 mutation{
   EditBasicDetails(input: {
-    productId: "",
+    productId: "5ef9b6e16ffa370878d3296f",
     productName: "new name of product",
-    productPrice: "4000",
-    category: "",
-    subcategory: "",
+    productPrice: 4000,
+    category: "5ef8b4679f6ead2a4cd36e1c",
+    subcategory: "5ef8c29f428a3c19ece5cdca",
     businessId: "5ef8b0907b9cec18b8e1495a"
   }) {
     code
