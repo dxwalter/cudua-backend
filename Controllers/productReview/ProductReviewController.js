@@ -46,13 +46,13 @@ module.exports = class ProductReviewController extends FunctionRepo {
     async getReviewByProductId(productId) {
         try {
             const getReviews = await productReview.find({product_id: productId})
-            .populate('author', 'fullname profilePicture').exec();
-
-            console.log(getReviews)
+            .populate('author', 'fullname profilePicture')
+            .sort({_id: -1})
+            .limit(15).exec();
 
             return {
                 error: false,
-                result: findScores
+                result: getReviews
             }
         } catch (error) {
             return {

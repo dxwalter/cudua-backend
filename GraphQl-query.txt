@@ -519,3 +519,54 @@ mutation {
     message
   }
 }
+
+mutation {
+	CreateProductReview(input:{
+    productId:"5f010972c5544d3794faf3b9",
+    message: "Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Vivamus consectetuer hendrerit lacus. Nunc egestas, augue at pellentesque laoreet, felis eros vehicula leo, at malesuada velit leo quis pede. In ac felis quis tortor malesuada pretium. Curabitur at lacus ac velit ornare lobortis.",
+    score: 1
+  }) {
+    code
+    success
+    message
+  }
+}
+
+query {
+  GetProductById(input:{
+    productId: "5f010972c5544d3794faf3b9"
+  })
+  {
+    product{
+      id
+      name
+      price
+      tags
+      colors
+      sizes
+      hide
+      reviewScore
+      category{
+        categoryId
+        categoryName
+      }
+      subcategory{
+        subcategoryId
+        subcategoryName
+      }
+      images
+      primaryImage
+            reviews {
+        author {
+          fullname
+          displaPicture
+        }
+        rating
+        description
+      }
+    }
+    code
+    success
+    message
+  }
+}
