@@ -93,8 +93,11 @@ module.exports = class CreateNewProduct extends ProductController {
             subcategory: subcategory,
             primary_image: newFileName,
             images:[newFileName],
-            business_id: businessId
+            business_id: businessId,
         });
+
+        createProduct.review_details.reviews = createProduct._id
+        console.log(createProduct)
 
         let create = await this.InsertNewProduct(createProduct);
 

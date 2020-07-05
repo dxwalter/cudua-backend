@@ -38,10 +38,13 @@ const Product = mongoose.Schema({
     review_details: {
         reviews: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "product-review",
+            ref: "product-review.product_id",
             required: false
         },
-        score: Number
+        score: {
+            type: Number,
+            default: 0
+        }
     },
     business_id: {
         type: mongoose.Schema.Types.ObjectId,

@@ -2,6 +2,7 @@
 const { GraphQLUpload } = require('apollo-upload-server');
 let CreateProduct = require('../../Controllers/product/action/createNewProduct');
 let EditProduct = require('../../Controllers/product/action/editProduct');
+let ProductVisibility = require('../../Controllers/product/action/hideAndShowProduct');
 
 module.exports = {
     Upload: GraphQLUpload,
@@ -162,6 +163,28 @@ module.exports = {
 
             let editProduct = new EditProduct();
             return editProduct.removeProductColor(args.input.color, args.input.productId, args.input.businessId, userId);
+        },
+        HideProduct (parent, args, context, info) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) {
+                return userId
+            } else {
+                userId = userId.message
+            }
+
+            let hideProduct = new ProductVisibility();
+            return hideProduct.HideProduct(args.input.productId, args.input.businessId, userId)
+        },
+        ShowProduct (parent, args, context, info) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) {
+                return userId
+            } else {
+                userId = userId.message
+            }
+
+            let showProduct = new ProductVisibility();
+            return showProduct.ShowProduct(args.input.productId, args.input.businessId, userId)
         }
     }
 }

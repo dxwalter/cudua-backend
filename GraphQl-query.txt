@@ -497,3 +497,25 @@ mutation{
     message
   }
 }
+
+mutation {
+  HideProduct(input : {
+		productId: "5f010972c5544d3794faf3b9",
+    businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  ShowProduct(input : {
+		productId: "5f010972c5544d3794faf3b9",
+    businessId: "5ef8b0907b9cec18b8e1495a"
+  }) {
+    code
+    success
+    message
+  }
+}

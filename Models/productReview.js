@@ -6,9 +6,9 @@ const ProductReview = mongoose.Schema({
         ref: "users",
         required: true
     },
-    product: {
+    product_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "product",
+        ref: "products",
         required: true
     },
     rating: {type: String, required: true},
