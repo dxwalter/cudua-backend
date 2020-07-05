@@ -31,6 +31,11 @@
         userId: String!
     }
 
+    type UserReview {
+        fullname: String!
+        displaPicture: String
+    }
+
     # This method allows a user to reset the password without logging in
     input resetPassword {
         # this is the new password the user will provide as input and it must be greater that 5 characters

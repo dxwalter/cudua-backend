@@ -96,9 +96,6 @@ module.exports = class CreateNewProduct extends ProductController {
             business_id: businessId,
         });
 
-        createProduct.review_details.reviews = createProduct._id
-        console.log(createProduct)
-
         let create = await this.InsertNewProduct(createProduct);
 
         if (create.error == true) {

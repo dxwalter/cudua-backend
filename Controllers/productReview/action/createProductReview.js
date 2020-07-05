@@ -2,7 +2,8 @@
 
 let ProductReviewController = require('../ProductReviewController');
 let ProductController = require('../../product/ProductController');
-let BusinessController = require('../../business/BusinessController')
+let BusinessController = require('../../business/BusinessController');
+let ProductReviewModel = require('../../../Models/productReview')
 
 module.exports = class CreateProductReview extends ProductReviewController {
 
@@ -38,7 +39,36 @@ module.exports = class CreateProductReview extends ProductReviewController {
 
         if (userId == getBusinessDetails.owner) return this.returnData(200, false, "You cannot write a review for your own product")
 
+        let createReview = new ProductReviewModel({
+            author: userId,
+            product_id: productId,
+            rating: score,
+            description: message
+        });
+
+        let create = await this.InsertNewReview(createReview);
+
+        await this.InsertNewReview(createReview);
+
+        if (create.error) return this.returnData(500, false, `An error occurred while saving your review`);
+
+        let getAllReviews = await this.GetReviewScore(productId);
         
+        if (getAllReviews.error) return this.returnData(200, true, `Your review was submitted successfully`)
+
+        let reviewCount = getAllReviews.result.length;
+        let addedScores = 0;
+
+        for (let reviewScore of getAllReviews.result) {
+            addedScores = addedScores + parseInt(reviewScore.rating, 10);
+        }
+
+        let productReviewScore = addedScores / reviewCount;
+
+        // update in product
+        await this.ProductController.findOneAndUpdate(productId, {'score': productReviewScore.toFixed(1)})
+
+        return this.returnData(200, true, `Your review was submitted successfully`)
 
     }
 

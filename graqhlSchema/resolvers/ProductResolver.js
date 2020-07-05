@@ -3,11 +3,15 @@ const { GraphQLUpload } = require('apollo-upload-server');
 let CreateProduct = require('../../Controllers/product/action/createNewProduct');
 let EditProduct = require('../../Controllers/product/action/editProduct');
 let ProductVisibility = require('../../Controllers/product/action/hideAndShowProduct');
+let GetProduct = require('../../Controllers/product/action/getProducts')
 
 module.exports = {
     Upload: GraphQLUpload,
     Query: {
-
+        GetProductById(_, args) {
+            let getProduct  = new GetProduct();
+            return getProduct.getProductById(args.input.productId);
+        }
     },
     Mutation: {
         CreateProduct (parent, args, context, info) {

@@ -35,16 +35,9 @@ const Product = mongoose.Schema({
     brand: { type: String },
     hide: { type: Number },
     tags: [{ type: String, trim: true }],
-    review_details: {
-        reviews: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "product-review.product_id",
-            required: false
-        },
-        score: {
-            type: Number,
-            default: 0
-        }
+    score: {
+        type: Number,
+        default: 0
     },
     business_id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -59,6 +52,17 @@ const Product = mongoose.Schema({
         type : Date,
         default: Date.now()
     }
+});
+
+Product.virtual('ProductReviewList', {
+    ref: 'product-review',
+    localField: '_id',
+    foreignField: 'product_id',
+    justOne: false,
 })
+
+Product.set('toObject', { virtuals: true });
+Product.set('toJSON', { virtuals: true });
+
 
 module.exports = mongoose.model('product', Product);

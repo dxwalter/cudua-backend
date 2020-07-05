@@ -36,6 +36,27 @@ module.exports = class ProductController extends BusinessController {
         }
     }
 
+    async GetProductById (productId) {
+        try {
+            
+            const findProduct = await ProductModel.findOne({_id: productId})
+            .populate('category')
+            .populate('subcategory')
+            .exec();
+
+            return {
+                error: false,
+                result: findProduct
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async findOneAndUpdate(productId, newDataObject) {
         try {
             let updateRecord = await ProductModel.findOneAndUpdate({_id: productId}, { $set:newDataObject }, {new : true });

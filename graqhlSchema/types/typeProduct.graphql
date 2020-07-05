@@ -24,11 +24,19 @@ type DatalessResponse implements ResponseType {
 }
 
 type Product {
+    id: String!
     name: String!
     price: Int!
-    category: String!
-    subcategory: String!
+    tags: [String]!
+    colors: [String]!
+    sizes: [String]!
+    hide: Int!
+    reviews: [ProductReview]
+    reviewScore: Int!
+    category: Category!
+    subcategory: Subcategory!
     images: [String]
+    primaryImage: String!
 }
 
 type createProductResponse implements ResponseType {
@@ -127,6 +135,24 @@ input editBasicDetails {
 input hideProduct {
     productId: String!
     businessId: String!
+}
+
+type SingleProductResponse {
+    product: Product
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+input productId {
+    productId: String!
+}
+
+type Query {
+    GetProductById(input: productId): SingleProductResponse
 }
 
 #This is the mutation type that will handle create account, forgot and recover pasword

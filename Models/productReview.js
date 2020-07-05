@@ -12,7 +12,7 @@ const ProductReview = mongoose.Schema({
         required: true
     },
     rating: {type: String, required: true},
-    description: {type: String, required: false},
+    description: {type: String, trim: true, required: false},
     created : {
         type : Date,
         default: Date.now()

@@ -18,6 +18,12 @@ type DatalessResponse implements ResponseType {
     message: String!
 }
 
+type ProductReview {
+    author: UserReview!
+    rating: String!
+    description: String
+}
+
 input createProductReview {
     productId: String!
     message: String!
