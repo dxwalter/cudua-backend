@@ -147,12 +147,92 @@ type SingleProductResponse {
     message: String!
 }
 
+type MultipleProductResponse {
+    products: [Product]
+    # This is the total number of products a business has in a category
+    # Not the total number of products returned from this route in a request
+    totalProductsInCategoryCount: Int
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type BusinessSearchResultResponse {
+    products: [Product]
+    resultCount: Int
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+
+type MultipleProductResponseSubcategory {
+    products: [Product]
+    # This is the total number of products a business has in a category
+    # Not the total number of products returned from this route in a request
+    totalProductsInSubcategoryCount: Int
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
 input productId {
     productId: String!
 }
 
+input businessGetProductByCategory {
+    businessId: String!
+    categoryId: String!
+    """
+    Page stands for pagination.
+    For everytime a request is made to this route, 12 products are returned.
+    To get the next 12 products, page has to be set to 2.
+    Set page to 1 when making your query the first time since graphql does not support default values yet.
+    Subsequently, page can be incremental by 1 for more results
+    Note that page increases by 1
+    """
+    page: Int
+}
+
+
+input businessGetProductBySubcategory {
+    businessId: String!
+    subcategoryId: String!
+    """
+    Page stands for pagination.
+    For everytime a request is made to this route, 12 products are returned.
+    To get the next 12 products, page has to be set to 2.
+    Set page to 1 when making your query the first time since graphql does not support default values yet.
+    Subsequently, page can be incremental by 1 for more results
+    Note that page increases by 1
+    """
+    page: Int
+}
+
+input businessSearchProduct {
+    keyword: String!
+    businessId: String!
+}
+
 type Query {
+    # A business or a user can get the details of a product with its reviews
     GetProductById(input: productId): SingleProductResponse
+
+    # A business can get all the products under a category
+    BusinessGetProductByCategory (input: businessGetProductByCategory): MultipleProductResponse
+
+    BusinessGetProductBysubCategory(input: businessGetProductBySubcategory): MultipleProductResponseSubcategory
+
+    BusinessSearchProduct(input: businessSearchProduct): BusinessSearchResultResponse
 }
 
 #This is the mutation type that will handle create account, forgot and recover pasword

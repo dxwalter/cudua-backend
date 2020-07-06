@@ -11,6 +11,45 @@ module.exports = {
         GetProductById(_, args) {
             let getProduct  = new GetProduct();
             return getProduct.getProductById(args.input.productId);
+        },
+        BusinessGetProductByCategory(_, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+            args = args.input;
+
+            let getProductByCategory = new GetProduct();
+            return getProductByCategory.businessGetProductByCategory(args.businessId, args.categoryId, args.page, userId)
+        },
+        BusinessGetProductBysubCategory(_, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+            args = args.input;
+
+            let getProductByCategory = new GetProduct();
+            return getProductByCategory.businessGetProductBySubcategory(args.businessId, args.subcategoryId, args.page, userId)            
+        },
+        BusinessSearchProduct(_, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+            args = args.input;
+
+            let searchForProduct = new GetProduct();
+            return searchForProduct.SearchForBusinessProduct(args.businessId, args.keyword.trim(), userId)            
         }
     },
     Mutation: {

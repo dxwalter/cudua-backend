@@ -558,6 +558,7 @@ query {
       primaryImage
             reviews {
         author {
+          authorId
           fullname
           displaPicture
         }
@@ -565,6 +566,104 @@ query {
         description
       }
     }
+    code
+    success
+    message
+  }
+}
+
+query {
+  BusinessGetProductByCategory(input: {
+    businessId: "5ef8b0907b9cec18b8e1495a",
+    categoryId: "5effda1dc88fa53534ca8b4a",
+    page: 1
+  }) {
+    products {
+      id
+      name
+      price
+      tags
+      colors
+      sizes
+      hide
+      reviewScore
+      category {
+        categoryId
+        categoryName
+      }
+      subcategory {
+        subcategoryId
+        subcategoryName
+      }
+      images
+      primaryImage
+    }
+    code
+    success
+    message
+  }
+}
+
+query {
+  BusinessGetProductBysubCategory(input: {
+    businessId: "5ef8b0907b9cec18b8e1495a",
+    subcategoryId: "5effda1dc88fa53534ca8b4a",
+    page: 1
+  }) {
+    products {
+      id
+      name
+      price
+      tags
+      colors
+      sizes
+      hide
+      reviewScore
+      category {
+        categoryId
+        categoryName
+      }
+      subcategory {
+        subcategoryId
+        subcategoryName
+      }
+      images
+      primaryImage
+    }
+    totalProductsInSubcategoryCount
+    code
+    success
+    message
+  }
+}
+
+query {
+  BusinessSearchProduct(input: {
+    keyword: "Kerew",
+    businessId: ""
+  })
+  {
+    products {
+      id
+      name
+      price
+      tags
+      colors
+      sizes
+      hide
+      reviewScore
+      category {
+        categoryId
+        categoryName
+      }
+      subcategory {
+        subcategoryId
+        subcategoryName
+      }
+      images
+      primaryImage
+    }
+    resultCount
     code
     success
     message

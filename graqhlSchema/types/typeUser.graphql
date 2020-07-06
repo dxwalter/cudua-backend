@@ -32,6 +32,7 @@
     }
 
     type UserReview {
+        authorId: String!
         fullname: String!
         displaPicture: String
     }

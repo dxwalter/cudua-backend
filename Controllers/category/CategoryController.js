@@ -13,6 +13,7 @@ module.exports = class CategoryController extends FunctionRepo {
         
         try {
             const findResult = await CategoryModel.find(data).populate('subcategoryList').limit(1).exec();
+               
             if (findResult.length > 0) {
                 if (findResult[0]._id) {
                    return {
@@ -124,21 +125,14 @@ module.exports = class CategoryController extends FunctionRepo {
     async GetOneCategory(categoryId) {
         try {
 
-            const result = await CategoryModel.find(
+            const result = await CategoryModel.findOne(
                 {status: 1, _id: categoryId}
-            ).populate('subcategoryList').limit(1);
-
-            if (result.length > 0) {
-                return {
-                    error: false,
-                    result: result
-                };
-            } else {
-                return {
-                    error: false,
-                    result: false
-                }
-            }
+            ).populate('subcategoryList');
+                
+            return {
+                error: false,
+                result: result
+            };
 
         } catch (error) {
             return {

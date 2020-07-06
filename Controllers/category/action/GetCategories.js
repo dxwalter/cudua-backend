@@ -81,23 +81,23 @@ module.exports = class AllCategories extends CategoryController {
 
         if (getCategory.error == true) {
             return {
-                category: [],
+                category: null,
                 code:500,
                 success: false,
                 message: `An error occurred: ${getCategory.message}` 
             }
         }
 
-        if (getCategory.result == false) {
+        if (getCategory.result._id.length < 1) {
             return {
-                category: [],
+                category: null,
                 code: 200,
                 success: true,
                 message: `No category was found` 
             }
         }
 
-        getCategory = getCategory.result[0];
+        getCategory = getCategory.result;
 
         let category = {
             id: getCategory._id,

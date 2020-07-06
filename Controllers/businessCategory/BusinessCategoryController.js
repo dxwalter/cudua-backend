@@ -90,7 +90,9 @@ module.exports = class BusinessCategoryController extends BusinessController {
         try {
             const findResult = await BusinessCategoryModel.find({
                 business_id : businessId
-            }).populate({
+            })
+            .sort({_id: -1})
+            .populate({
                 path: 'category_id',
                 model: 'categories',
             }).populate({
