@@ -61,7 +61,6 @@ module.exports = class ProductController extends BusinessController {
         try {
             let countResult = await ProductModel.countDocuments({$and : [dataObject]});
             return countResult
-            
         } catch (error) {
             return error.message;
         }
@@ -82,7 +81,7 @@ module.exports = class ProductController extends BusinessController {
             .populate('subcategory')
 
 
-            let countDocuments = await ProductModel.estimatedDocumentCount({business_id: businessId, category: categoryId});
+            let countDocuments = await ProductModel.countDocuments({business_id: businessId, category: categoryId});
         
             let result = {
                 totalNumberOfProducts: countDocuments,
