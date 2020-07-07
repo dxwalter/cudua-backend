@@ -8,9 +8,25 @@ const HideBusinessSubcategory = require('../../Controllers/businessCategory/acti
 // show business subcategory
 const ShowBusinessSubcategory = require('../../Controllers/businessCategory/action/showBusinessSubcategory');
 
+// get business category
+const GetCateories = require('../../Controllers/businessCategory/action/getBusinessCatgory');
+
 module.exports = {
     Query: {
+        GetBusinessCategoriesWithSubcategory (_, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
 
+            args = args.input
+
+            let getCategory = new GetCateories();
+            return getCategory.getBusinessCategoriesAndSubcategoriesWithCount(args.businessId, userId)
+        }
     },
     Mutation: {
         CreateBusinessCategory(parent, args, context, info) {

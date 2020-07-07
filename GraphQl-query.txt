@@ -669,3 +669,22 @@ query {
     message
   }
 }
+
+query {
+  GetBusinessCategoriesWithSubcategory (input: {
+    businessId: "5ef8b0907b9cec18b8e1495a",
+  }) {
+      businessCategory{
+      categoryId
+      categoryName
+      subcategory {
+        subcategoryId
+        subcategoryName
+        subcategoryProductCount
+      }
+    }
+    code
+    success
+    message
+  }
+}

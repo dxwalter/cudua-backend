@@ -47,6 +47,37 @@
         categoryId: String!
     }
 
+    input getBusinessCategory {
+        businessId: String!
+    }
+
+    type businessSubcategory {
+        subcategoryId: String!
+        subcategoryName: String!
+        subcategoryProductCount: Int!
+    }
+
+    type businessCategory {
+        categoryId: String!
+        categoryName: String!
+        subcategory: [businessSubcategory]
+    }
+
+    type businessCategoryWithCountResponse implements ResponseType {
+
+        businessCategory: [businessCategory!]
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
+    type Query {
+        GetBusinessCategoriesWithSubcategory (input: getBusinessCategory): businessCategoryWithCountResponse
+    }
+
     type Mutation {
         CreateBusinessCategory(input: chosenBusinessCategory): DatalessResponse
 

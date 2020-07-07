@@ -90,56 +90,56 @@ module.exports = class LoginUser extends UserController{
     async getBusinessDetails (businessDetails) {
 
             
-            // business data
-            let getBusinessData = businessDetails
+        // business data
+        let getBusinessData = businessDetails
 
-            // business address
-            let businessAddress = {
-                number: getBusinessData.address.number,
-                street: getBusinessData.address.street,
-                community: getBusinessData.address.community,
-                lga: getBusinessData.address.lga,
-                state: getBusinessData.address.state,
-                country: getBusinessData.address.country
+        // business address
+        let businessAddress = {
+            number: getBusinessData.address.number,
+            street: getBusinessData.address.street,
+            community: getBusinessData.address.community,
+            lga: getBusinessData.address.lga,
+            state: getBusinessData.address.state,
+            country: getBusinessData.address.country
+        }
+
+        let businessId = getBusinessData._id;
+
+        let businessCategories = await this.BusinessCategoryInstance.getbusinessCategories(businessId);
+    
+        if (businessCategories.error == true) {
+            return this.returnType(500 , false, 'An error occurred while retrieving your business category')
+        }
+
+        if (businessCategories.error == false && businessCategories.result == false ) {
+            businessCategories = null;
+        } else {
+            // this is the array of business categories and subcategories chosen by this business owner
+            businessCategories = this.formatBusinessCategoryData(businessCategories.result);
+        }
+
+        // business contact
+        let businessContact =  {
+            email: getBusinessData.contact.email,
+            phone: getBusinessData.contact.phone,
+            whatsapp: {
+                status: getBusinessData.contact.whatsapp.status,
+                number: getBusinessData.contact.whatsapp.number
             }
-
-            let businessId = getBusinessData._id;
-
-            let businessCategories = await this.BusinessCategoryInstance.getbusinessCategories(businessId);
+        }
         
-            if (businessCategories.error == true) {
-                return this.returnType(500 , false, 'An error occurred while retrieving your business category')
-            }
-
-            if (businessCategories.error == false && businessCategories.result == false ) {
-                businessCategories = null;
-            } else {
-                // this is the array of business categories and subcategories chosen by this business owner
-                businessCategories = this.formatBusinessCategoryData(businessCategories.result);
-            }
-
-            // business contact
-            let businessContact =  {
-                email: getBusinessData.contact.email,
-                phone: getBusinessData.contact.phone,
-                whatsapp: {
-                    status: getBusinessData.contact.whatsapp.status,
-                    number: getBusinessData.contact.whatsapp.number
-                }
-            }
-            
-            // Business data including address and contact put together
-            return {
-                id: getBusinessData._id,
-                businessname: getBusinessData.businessname,
-                username: getBusinessData.username,
-                description: getBusinessData.description,
-                address: businessAddress,
-                contact: businessContact,
-                logo: getBusinessData.logo,
-                coverPhoto: getBusinessData.coverPhoto,
-                businessCategories: businessCategories
-            }
+        // Business data including address and contact put together
+        return {
+            id: getBusinessData._id,
+            businessname: getBusinessData.businessname,
+            username: getBusinessData.username,
+            description: getBusinessData.description,
+            address: businessAddress,
+            contact: businessContact,
+            logo: getBusinessData.logo,
+            coverPhoto: getBusinessData.coverPhoto,
+            businessCategories: businessCategories
+        }
 
 
     }

@@ -57,6 +57,16 @@ module.exports = class ProductController extends BusinessController {
         }
     }
 
+    async countBusinessProducts (dataObject) {
+        try {
+            let countResult = await ProductModel.countDocuments({$and : [dataObject]});
+            return countResult
+            
+        } catch (error) {
+            return error.message;
+        }
+    }
+
     async GetBusinessProductsByCategory(businessId, categoryId, page) {
 
         try {
@@ -72,8 +82,8 @@ module.exports = class ProductController extends BusinessController {
             .populate('subcategory')
 
 
-            let countDocuments = await ProductModel.countDocuments({business_id: businessId, category: categoryId});
-            console.log(countDocuments)
+            let countDocuments = await ProductModel.estimatedDocumentCount({business_id: businessId, category: categoryId});
+        
             let result = {
                 totalNumberOfProducts: countDocuments,
                 products: getProducts.length > 0 ? getProducts : null
@@ -118,7 +128,7 @@ module.exports = class ProductController extends BusinessController {
             .populate('subcategory')
 
 
-            let countDocuments = await ProductModel.countDocuments({business_id: businessId, subcategory: subcategoryId});
+            let countDocuments = await ProductModel.estimatedDocumentCount({business_id: businessId, subcategory: subcategoryId});
             let result = {
                 totalNumberOfProducts: countDocuments,
                 products: getProducts.length > 0 ? getProducts : null

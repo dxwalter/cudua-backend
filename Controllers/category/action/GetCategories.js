@@ -1,12 +1,7 @@
 
 "use-strict";
 
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
 let CategoryController = require('../CategoryController');
-const { request } = require('http');
 const Categories = require('../../../Models/Categories');
 
 module.exports = class AllCategories extends CategoryController {

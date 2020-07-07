@@ -86,6 +86,7 @@ module.exports = class BusinessCategoryController extends BusinessController {
 
     }
 
+
     async getbusinessCategories (businessId) {
         try {
             const findResult = await BusinessCategoryModel.find({
@@ -100,18 +101,9 @@ module.exports = class BusinessCategoryController extends BusinessController {
                 model: 'subcategories'
             })
 
-            if (findResult.length > 0) {
-                if (findResult[0]._id) {
-                   return {
-                       error: false,
-                       result: findResult   
-                   }
-                }
-            } 
-
             return {
                 error: false,
-                result: false   
+                result: findResult   
             }
     
         } catch (error) {
@@ -121,7 +113,6 @@ module.exports = class BusinessCategoryController extends BusinessController {
             }
         }
     }
-
     async hideAndShowSubcategory (businessId, categoryId, subcategoryId, updateData) {
         try {
             const findResult = await BusinessCategoryModel.find(

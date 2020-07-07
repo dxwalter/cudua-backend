@@ -31,7 +31,7 @@ module.exports = class BookmarkController extends BusinessController {
 
     async countUserBookmark (userId) {
         try {
-            let count = await BookmarkModel.where({ author: userId }).countDocuments();
+            let count = await BookmarkModel.where({ author: userId }).estimatedDocumentCount();
             return {
                 error: false,
                 result: count
