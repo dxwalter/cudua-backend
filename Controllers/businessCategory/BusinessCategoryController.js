@@ -7,7 +7,6 @@ const SubcategoryModel = require('../../Models/Subcategory');
 
 const BusinessController = require('../business/BusinessController')
 const FunctionRepo = require('../MainFunction');
-const { update } = require('../../Models/Categories');
 
 module.exports = class BusinessCategoryController extends BusinessController {
     constructor () { super(); }
@@ -34,9 +33,13 @@ module.exports = class BusinessCategoryController extends BusinessController {
         try {
             let find = await BusinessCategoryModel.findOne({business_id: businessId, category_id: categoryId});
 
+            let newArrayOfSubcategories = [];
+
             for(let newSubcategory of updateSubcategoryArray) {
-                find.subcategories.push({"subcategory_id": newSubcategory})
+                newArrayOfSubcategories.push({"subcategory_id": newSubcategory})
             }
+
+            find.subcategories = newArrayOfSubcategories
             
             let updateRecord = await find.save()
 
@@ -65,18 +68,11 @@ module.exports = class BusinessCategoryController extends BusinessController {
             );   
            
         
-            if (findResult != null) {
-                return {
-                    error: false,
-                    result: findResult   
-                }
-            } else {
-                return {
-                    error: false,
-                    result: false   
-                }
+            return {
+                error: false,
+                result: findResult   
             }
-    
+
         } catch (error) {
             return {
                 error: true,

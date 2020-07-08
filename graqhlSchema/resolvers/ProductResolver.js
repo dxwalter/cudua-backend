@@ -161,7 +161,7 @@ module.exports = {
             }
 
             let editProduct = new EditProduct();
-            return editProduct.removeProductTag(args.input.tag, args.input.productId, args.input.businessId, userId);
+            return editProduct.removeProductTag(args.input.tagId, args.input.productId, args.input.businessId, userId);
         },
         CreateProductSizes (parent, args, context, info) {
             let userId = context.authFunction(context.accessToken);
@@ -183,7 +183,7 @@ module.exports = {
             }
 
             let editProduct = new EditProduct();
-            return editProduct.removeProductSize(args.input.size, args.input.productId, args.input.businessId, userId);
+            return editProduct.removeProductSize(args.input.sizeId, args.input.productId, args.input.businessId, userId);
         },
         CreateProductColors (parent, args, context, info) {
             let userId = context.authFunction(context.accessToken);
@@ -205,7 +205,7 @@ module.exports = {
             }
 
             let editProduct = new EditProduct();
-            return editProduct.removeProductColor(args.input.color, args.input.productId, args.input.businessId, userId);
+            return editProduct.removeProductColor(args.input.colorId, args.input.productId, args.input.businessId, userId);
         },
         HideProduct (parent, args, context, info) {
             let userId = context.authFunction(context.accessToken);

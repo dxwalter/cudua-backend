@@ -47,10 +47,10 @@ module.exports = class CreateBusiness extends BusinessController {
         let usernameCheck = await this.checkUsernameExists(username);
         
         if (usernameCheck.error == true) {
-            return this.returnRequestStatus(200, false, usernameCheck.message);
+            return this.returnRequestStatus(200, false, 'An error occurred checking if username exists');
         }
 
-        if (usernameCheck.result == true) {
+        if (usernameCheck.result > 0) {
             return this.returnRequestStatus(200, false, `The username ${username} exists. Try a different username`);
         }
       
@@ -61,6 +61,7 @@ module.exports = class CreateBusiness extends BusinessController {
         });
 
         let data = await this.createBusinessAccount(createBusiness, userId);
+
         if (data.error == true) {
             return this.returnMethod('', '', false, data.message,  200);
         }

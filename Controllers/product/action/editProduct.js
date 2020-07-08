@@ -40,6 +40,7 @@ module.exports = class EditProduct extends ProductController {
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
 
         getProductDetails = getProductDetails.result;
 
@@ -109,6 +110,7 @@ module.exports = class EditProduct extends ProductController {
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
 
         getProductDetails = getProductDetails.result;
  
@@ -152,14 +154,23 @@ module.exports = class EditProduct extends ProductController {
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
 
         getProductDetails = getProductDetails.result;
-
+        
         tags = tags.map(x => this.MakeFirstLetterUpperCase(x))
+
         let mainTags = Array.from(new Set(tags))
 
+        let tagObject = []
+
+        for (let x of mainTags) {
+            tagObject.push({tag_name: x})
+        }
+
         if (getProductDetails.tags.length == 0) {
-            let newTag = {tags: mainTags}
+
+            let newTag = {tags: tagObject}
             let tagUpdate = await this.findOneAndUpdate(productId, newTag);
 
             if (tagUpdate.error == true) {
@@ -169,13 +180,9 @@ module.exports = class EditProduct extends ProductController {
             return this.returnData(202, true, `The tags for ${getProductDetails.name} was updated successfully`);
         }
 
-
+       
         // update tag in db
-        let newArrayTag = getProductDetails.tags.concat(tags)
-        newArrayTag = newArrayTag.map(x => this.MakeFirstLetterUpperCase(x))
-        let newMainTags = Array.from(new Set(newArrayTag))
-
-        let newTag = {tags: newMainTags}
+        let newTag = {tags: tagObject}
         let tagUpdate = await this.findOneAndUpdate(productId, newTag);
 
         if (tagUpdate.error == true) {
@@ -187,9 +194,9 @@ module.exports = class EditProduct extends ProductController {
         
     }
 
-    async removeProductTag (tag, productId, businessId, userId) {
+    async removeProductTag (tagId, productId, businessId, userId) {
 
-        if (tag.length < 1) return this.returnData(200, false, `Click on the tag you want to remove`)
+        if (tagId.length < 1) return this.returnData(200, false, `Click on the tag you want to remove`)
         
         if (!productId || !businessId) return this.returnData(200, false, "Your business and product details were not provided. Kindly refresh the page and try again")
         
@@ -206,14 +213,19 @@ module.exports = class EditProduct extends ProductController {
         }
 
         let getProductDetails = await this.FindProductById(productId);
+
+        if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
+
         getProductDetails = getProductDetails.result
         
         let savedTags = getProductDetails.tags
 
-        let userTag = this.MakeFirstLetterUpperCase(tag);
         let check = 0;
+
+
         for (const [index, tag] of savedTags.entries()) {
-            if (userTag == tag) {
+            if (tagId == tag._id) {
                 savedTags.splice(index, 1);
                 check = 1
             }
@@ -227,10 +239,10 @@ module.exports = class EditProduct extends ProductController {
         let tagUpdate = await this.findOneAndUpdate(productId, newData);
 
         if (tagUpdate.error == true) {
-            return this.returnData(500, false, `An error occurred removing ${userTag} tag`)
+            return this.returnData(500, false, `An error occurred removing your tag`)
         }
 
-        return this.returnData(202, true, `${userTag} was removed successfully`);
+        return this.returnData(202, true, `Tag removed successfully`);
     }
 
     async createAvailableSizes (sizes, productId, businessId, userId) {
@@ -260,8 +272,14 @@ module.exports = class EditProduct extends ProductController {
         sizes = sizes.map(x => this.MakeFirstLetterUpperCase(x))
         let mainSizes = Array.from(new Set(sizes))
 
+        let newSizeArray = []
+
+        for (let x of mainSizes) {
+            newSizeArray.push({sizes: x})
+        }
+
         if (getProductDetails.sizes.length == 0) {
-            let newSizes = {sizes: mainSizes}
+            let newSizes = {sizes: newSizeArray}
             let sizeUpdate = await this.findOneAndUpdate(productId, newSizes);
 
             if (sizeUpdate.error == true) {
@@ -273,11 +291,7 @@ module.exports = class EditProduct extends ProductController {
         
 
         // update sizes in db
-        let newArraySize = getProductDetails.sizes.concat(sizes)
-        newArraySize = newArraySize.map(x => this.MakeFirstLetterUpperCase(x))
-        let newMainSizes = Array.from(new Set(newArraySize))
-
-        let newSizeObject = {sizes: newMainSizes}
+        let newSizeObject = {sizes: newSizeArray}
         let sizeUpdate = await this.findOneAndUpdate(productId, newSizeObject);
 
         if (sizeUpdate.error == true) {
@@ -288,9 +302,9 @@ module.exports = class EditProduct extends ProductController {
 
     }
     
-    async removeProductSize (size, productId, businessId, userId) {
+    async removeProductSize (sizeId, productId, businessId, userId) {
 
-        if (size.length < 1) return this.returnData(200, false, `Click on the size you want to remove`)
+        if (sizeId.length < 1) return this.returnData(200, false, `Click on the size you want to remove`)
         
         if (!productId || !businessId) return this.returnData(200, false, "Your business and product details were not provided. Kindly refresh the page and try again")
         
@@ -311,12 +325,10 @@ module.exports = class EditProduct extends ProductController {
         
         let savedSizes = getProductDetails.sizes
 
-        let userSize = this.MakeFirstLetterUpperCase(size);
-
         let check = 0;
 
         for (const [index, size] of savedSizes.entries()) {
-            if (userSize == size) {
+            if (sizeId == size._id) {
                 savedSizes.splice(index, 1);
 
                 // check changes
@@ -332,10 +344,10 @@ module.exports = class EditProduct extends ProductController {
         let sizeUpdate = await this.findOneAndUpdate(productId, newData);
 
         if (sizeUpdate.error == true) {
-            return this.returnData(500, false, `An error occurred removing ${userSize} size`)
+            return this.returnData(500, false, `An error occurred removing a product size`)
         }
 
-        return this.returnData(202, true, `${userSize} was removed successfully`);
+        return this.returnData(202, true, `A product size was removed successfully`);
 
     }
 
@@ -360,14 +372,22 @@ module.exports = class EditProduct extends ProductController {
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
 
         getProductDetails = getProductDetails.result;
 
         colors = colors.map(x => this.MakeFirstLetterUpperCase(x))
         let mainColors = Array.from(new Set(colors))
 
+        let newColorArray = []
+
+        for (let x of mainColors) {
+            newColorArray.push({color_codes: x})
+        }
+
         if (getProductDetails.colors.length == 0) {
-            let newColors = {colors: mainColors}
+
+            let newColors = {colors: newColorArray}
             let colorUpdate = await this.findOneAndUpdate(productId, newColors);
 
             if (colorUpdate.error == true) {
@@ -378,12 +398,8 @@ module.exports = class EditProduct extends ProductController {
         }
 
 
-        // update sizes in db
-        let newArrayColor = getProductDetails.colors.concat(colors)
-        newArrayColor = newArrayColor.map(x => this.MakeFirstLetterUpperCase(x))
-        let newMainColor = Array.from(new Set(newArrayColor))
-
-        let newColorObject = {colors: newMainColor}
+        // update color in db
+        let newColorObject = {colors: newColorArray}
         let colorUpdate = await this.findOneAndUpdate(productId, newColorObject);
 
         if (colorUpdate.error == true) {
@@ -395,9 +411,9 @@ module.exports = class EditProduct extends ProductController {
 
     }
     
-    async removeProductColor (color, productId, businessId, userId) {
+    async removeProductColor (colorId, productId, businessId, userId) {
 
-        if (color.length < 1) return this.returnData(200, false, `Click on the color you want to remove`)
+        if (colorId.length < 1) return this.returnData(200, false, `Click on the color you want to remove`)
         
         if (!productId || !businessId) return this.returnData(200, false, "Your business and product details were not provided. Kindly refresh the page and try again")
         
@@ -414,16 +430,18 @@ module.exports = class EditProduct extends ProductController {
         }
 
         let getProductDetails = await this.FindProductById(productId);
+
+        if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
+
         getProductDetails = getProductDetails.result
         
         let savedColor = getProductDetails.colors
 
-        let userColor = this.MakeFirstLetterUpperCase(color);
-
         let check = 0;
 
         for (const [index, color] of savedColor.entries()) {
-            if (userColor == color) {
+            if (colorId == color._id) {
                 savedColor.splice(index, 1);
 
                 // check changes
@@ -439,10 +457,10 @@ module.exports = class EditProduct extends ProductController {
         let colorUpdate = await this.findOneAndUpdate(productId, newData);
 
         if (colorUpdate.error == true) {
-            return this.returnData(500, false, `An error occurred removing the color ${userColor}`)
+            return this.returnData(500, false, `An error occurred removing color`)
         }
 
-        return this.returnData(202, true, `${userColor} color was removed successfully`);
+        return this.returnData(202, true, `Color was removed successfully`);
 
     }
 
@@ -466,6 +484,10 @@ module.exports = class EditProduct extends ProductController {
         }
 
         let getProductDetails = await this.FindProductById(productId);
+
+        if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
+
         getProductDetails = getProductDetails.result;
 
         // encrypt file name
@@ -551,6 +573,10 @@ module.exports = class EditProduct extends ProductController {
         }
 
         let getProductDetails = await this.FindProductById(productId);
+
+        if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
+
         getProductDetails = getProductDetails.result;
 
         if (fileName == getProductDetails.primary_image) {
@@ -619,6 +645,7 @@ module.exports = class EditProduct extends ProductController {
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
 
         getProductDetails = getProductDetails.result;
 

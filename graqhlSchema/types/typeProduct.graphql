@@ -72,19 +72,19 @@ input editProductTags {
 }
 
 input removeProductTag {
-    tag: String!
+    tagId: String!
     productId: String!
     businessId: String!
 }
 
 input removeProductSize {
-    size: String!
+    sizeId: String!
     productId: String!
     businessId: String!
 }
 
 input removeProductColor {
-    color: String!
+    colorId: String!
     productId: String!
     businessId: String!
 }

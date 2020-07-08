@@ -28,13 +28,17 @@ const Product = mongoose.Schema({
     description: {
         type: String
     },
-    sizes: [
-        { type: String, trim: true}
-    ],
-    colors: [{ type: String, trim: true }],
+    sizes: [{ 
+        sizes: {type: String, trim: true}
+    }],
+    colors: [{ 
+        color_codes: {type: String, trim: true} 
+    }],
     brand: { type: String },
     hide: { type: Number },
-    tags: [{ type: String, trim: true }],
+    tags: [{
+        tag_name : { type: String, trim: true }
+    }],
     score: {
         type: Number,
         default: 0

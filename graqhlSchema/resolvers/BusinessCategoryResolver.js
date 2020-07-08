@@ -39,7 +39,7 @@ module.exports = {
             }
 
             let createBusinessCategory = new ChooseCategory();
-            return createBusinessCategory.ChooseCategory(args.input.businessId, args.input.categoryId, args.input.subcategories)
+            return createBusinessCategory.ChooseCategory(args.input.businessId, args.input.categoryId, args.input.subcategories, userId)
             
         },
         HideSelectedBusinessCategory(parent, args, context, info) {

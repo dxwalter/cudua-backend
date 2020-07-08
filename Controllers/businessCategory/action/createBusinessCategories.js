@@ -45,33 +45,23 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
     async addNewSubcategory(businessId, categoryId, newSubcategoryArray, myCategoryData) {
        
         let readySubcategories = [];
-        let subcatStatus = 0;
         let oldSubcategories = [];
 
         // set old categories
-        for (let oldSubcat of myCategoryData.result.subcategories) {
-            oldSubcategories.push(oldSubcat.subcategory_id);
+        for (let oldSubcat of myCategoryData.subcategories) {
+            oldSubcategories.push(oldSubcat.subcategory_id.toString());
         }
        
         for (let newSubcatId of newSubcategoryArray) {
-            
-            for (let oldSubcatId of oldSubcategories) {
-                if (newSubcatId == oldSubcatId) {
-                    subcatStatus = 1;
-                }
+            if (this.checkIfSubcategoryExistsIncategory(newSubcatId, this.categorySubcategories)) {
+                readySubcategories.push(newSubcatId)
             }
-
-            if (subcatStatus == 0) {
-                if (this.checkIfSubcategoryExistsIncategory(newSubcatId, this.categorySubcategories)) {
-                    readySubcategories.push(newSubcatId)
-                }
-            }
-
-            subcatStatus = 0;
-
         }
-        let uniqueArray = Array.from(new Set(readySubcategories))
-        
+
+        readySubcategories = readySubcategories.concat(oldSubcategories)
+    
+        let uniqueArray = Array.from(new Set(readySubcategories));
+
         if (uniqueArray.length == 0) {
             return this.returnMethod(200, false, "An error occurred. The subcategory you chose already exists. Choose a different subcategory.")
         }
@@ -92,77 +82,55 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
     }
 
     checkIfSubcategoryExistsIncategory(subcategoryId, subcategoryArray) {
-    
+        
         for (let subcategory of subcategoryArray) {
+        
             if (subcategoryId == subcategory._id) {
                 return true
             }
         }
+
+        // it does not exist
         return false;
     }
 
-    async ChooseCategory (businessId, categoryId, businessSubcategoriesList) {
-        
-        if (businessId.length == 0) {
-            return this.returnMethod(200, false, "Your business details was not provided. Sign in and try again. If problem persists, contact the support team")
-        }
-
-        if (businessSubcategoriesList.length < 1) {
-            return this.returnMethod(500, false, 'Please choose a subcategory');
-        }
+    async ChooseCategory (businessId, categoryId, subcategoryList, userId) {
+     
+        if (businessId.length == 0) return this.returnMethod(200, false, "Your business details was not provided. Sign in and try again. If problem persists, contact the support team")
+        if (categoryId.length == 0) return this.returnMethod(200, false, "Choose a business your business category");
+        if (subcategoryList.length == 0) return this.returnMethod(200, false, "Choose one or more subacategories for your business");
 
         // check if business exists
-        let checkfiBusinessExists = await this.getBusinessData(businessId);
+        let businessData = await this.getBusinessData(businessId);
 
-        // if error occurred
-        if (checkfiBusinessExists.error == true) {
-            return this.returnMethod(500, false, 'Your business account is not recognised');
-        }
-
-        // if business does not  exist
-        if (checkfiBusinessExists.result ==  false) {
-            return this.returnMethod(200, false, 'Your business account is not recognised');
+        if (businessData.error == true) {
+            return this.returnMethod(200, false, "Your business is not recognised.")
+        } else {
+            // check if user is a valid business owner
+            if (businessData.result.owner != userId) {
+                return this.returnMethod(200, false, `You can not access this functionality. You do not own a business`)
+            }
         }
 
         // check if category exists in category document/table
-        let checkIfCategoryExistInCategoryDoc = await this.CategoryController.checkCategoryExists({_id: categoryId, status: 1});
+        let getCategoryDetails = await this.CategoryController.checkCategoryExists({_id: categoryId, status: 1});
+        if (getCategoryDetails.error) return this.returnMethod(200, false, "An error occurred. This category has been moved or deleted");
 
+        this.categorySubcategories = getCategoryDetails.result.subcategoryList
 
-        if (checkIfCategoryExistInCategoryDoc.error == true) {
-            //possible error is categoryId does not match in db
-            return this.returnMethod(500, false, `An error occurred: This category has been moved or deleted`)
-        }
+        // check if category exists in business
+        let businessCategoryCheck = await this.checkChoosenCategoryExist(categoryId, businessId);
 
-
-        if (checkIfCategoryExistInCategoryDoc.result[0].subcategoryList == undefined) {
-            //possible error is categoryId does not match in db
-            return this.returnMethod(500, false, `An error occurred: This subcategory has been moved or deleted`)
-        }
-
-
-        if (checkIfCategoryExistInCategoryDoc.error == false && checkIfCategoryExistInCategoryDoc.result.length > 0) {
-            this.categorySubcategories = checkIfCategoryExistInCategoryDoc.result[0].subcategoryList
-        }
-
-        // check if this category has been created by the business before now.
-        let checkIfCategoryHasBeenChosenByBusiness = await this.checkChoosenCategoryExist(categoryId, businessId);
- 
+        if (businessCategoryCheck == true) return this.returnMethod(200, false, `An error from our end occurred. Please try again`)
         
-        if (checkIfCategoryHasBeenChosenByBusiness.error == true) {
-            return this.returnMethod(500, false, `An error occurred: Do not worry, it was our fault`)
+        if (businessCategoryCheck.result != null) {
+            // update
+            return await this.addNewSubcategory(businessId, categoryId, subcategoryList, businessCategoryCheck.result)
         }
 
-        /**
-         * Update subcategory if category has been added to a business before now
-         */
-        if (checkIfCategoryHasBeenChosenByBusiness.result._id.length > 0 && checkIfCategoryHasBeenChosenByBusiness.error == false) {
-            // edit and add subacategory
-            return await this.addNewSubcategory(businessId, categoryId, businessSubcategoriesList, checkIfCategoryHasBeenChosenByBusiness)
-        }
-        
+        //create
+        let subcategoriesList = subcategoryList;
 
-        // check if selected subcategories exists
-        let subcategoriesList = businessSubcategoriesList;
         let failedSubcategories = 0
         let passedSubcatgories = [];
 
@@ -191,7 +159,8 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
 
         // create
         return await this.createCategoryForBusiness(businessId, categoryId, passedSubcatgories)
-        
+
+
     }   
 
     // this is used by product upload
@@ -199,19 +168,19 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
 
         // check if category exists in category document/table
         let categoryExists = await this.CategoryController.checkCategoryExists({_id: category, status: 1});
-
+  
         if (categoryExists.error == true) {
             return this.returnMethod(200, false, 'An error occurred. This category has either been moved or delete')
         }
 
-        if (categoryExists.error == false && categoryExists.result == false) return this.returnMethod(200, false, 'An error occurred. This category has either been moved or delete')
+        if (categoryExists.error == false && categoryExists.result == false) return this.returnMethod(200, false, 'An error occurred. This category has either been moved or delete');
 
-        if (categoryExists.result[0].subcategoryList == undefined) {
-            //possible error is categoryId does not match in db
+        if (categoryExists.result == null) {
+            //possible error if categoryId does not match in db
             return this.returnMethod(500, false, `An error occurred: This subcategory has been moved or deleted`)
         }
 
-        let subcategoriesList = categoryExists.result[0].subcategoryList
+        let subcategoriesList = categoryExists.result.subcategoryList
         let subcatCheck = 0;
 
         // check if subcategory exists in category

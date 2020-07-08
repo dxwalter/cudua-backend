@@ -22,8 +22,8 @@
 
     input chosenBusinessCategory {
         businessId: String!
-        categoryId: String!,
-        subcategories: [String!]!
+        categoryId: String!
+        subcategories: [String]!
     }
 
     input hideBusinessCategory{

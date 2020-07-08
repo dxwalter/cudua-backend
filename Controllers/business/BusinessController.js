@@ -12,21 +12,11 @@ module.exports = class BusinessController extends FunctionRepo {
 
     async checkUsernameExists (username) {
         try {
-            const findResult = await BusinessModel.findOne({
-                username: username
-            });   
-
-            if (findResult._id) {
+            const findResult = await BusinessModel.countDocuments({username: username});   
                 return {
                     error: false,
-                    result: true   
+                    result: findResult   
                 }
-            }
-    
-            return {
-                error: false,
-                result: false   
-            }
     
         } catch (error) {
             return {

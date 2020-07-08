@@ -388,9 +388,9 @@ mutation{
 
 mutation{
 	RemoveProductTag(input:{
-    tag: "tags 2",
-    productId: "5ef9b6e16ffa370878d3296f",
-    businessId: "5ef8b0907b9cec18b8e1495a"
+    tagId: "5f05b2780b31591e4c94b27a",
+    productId: "5f05a4bce2817e25801e089b",
+    businessId: "5f047023e1443207e4e80044"
   }) {
     code
     success
@@ -436,15 +436,16 @@ mutation{
 
 mutation{
 	RemoveProductColor(input:{
-    color: "#fff",
-    productId: "5ef9b6e16ffa370878d3296f",
-    businessId: "5ef8b0907b9cec18b8e1495a"
+    colorId: "5f05b695c34b790510b79952",
+    productId: "5f05a4bce2817e25801e089b",
+    businessId: "5f047023e1443207e4e80044"
   }) {
     code
     success
     message
   }
 }
+
 
 mutation  {
     MakePrimaryImage(input:{
