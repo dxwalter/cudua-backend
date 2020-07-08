@@ -79,11 +79,12 @@ module.exports = class EditProduct extends ProductController {
 
         let productArray = [];
 
-        for (let detail of details) {
+        for (const detail of details) {
             let data = {
                 images: detail.images.length > 0 ? detail.images : null,
-                colors: detail.colors.length > 0 ? detail.colors : null,
-                tags: detail.tags.length > 0 ? detail.tags : null,
+                colors: detail.colors.length > 0 ? [] : null,
+                tags: detail.tags.length > 0 ? [] : null,
+                sizes: detail.sizes.length > 0 ? [] : null,
                 id: detail._id,
                 name: detail.name,
                 price: detail.price,
@@ -99,10 +100,32 @@ module.exports = class EditProduct extends ProductController {
                 },
                 primaryImage: detail.primary_image
             }
+
+            for (let color of detail.colors) {
+                data.colors.push({
+                    colorId: color._id,
+                    color: color.color_codes
+                })
+            }
+
+            for (let tag of detail.tags) {
+                data.tags.push({
+                    tagId: tag._id,
+                    tagName: tag.tag_name
+                })
+            }
+
+            for (let size of detail.sizes) {
+                data.sizes.push({
+                    sizeId: size._id,
+                    sizeNumber: size.sizes
+                })
+            }
+
             productArray.push(data);
         }
 
-        return productArray;
+        return productArray
 
     }
 
@@ -112,7 +135,7 @@ module.exports = class EditProduct extends ProductController {
 
         let getProduct = await this.GetProductById(productId);
 
-        if (getProduct.error) return this.returnData(null, 500, false, `An error occurred. This product has been moved or deleted`)
+        if (getProduct.error ||  getProduct.result == null) return this.returnData(null, 500, false, `An error occurred. This product has been moved or deleted`)
 
         let productDetails = getProduct.result
 

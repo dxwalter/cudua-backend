@@ -27,9 +27,9 @@ type Product {
     id: String!
     name: String!
     price: Int!
-    tags: [String]
-    colors: [String]
-    sizes: [String]
+    tags: [Tag]
+    colors: [Color]
+    sizes: [Size]
     hide: Int!
     reviews: [ProductReview]
     reviewScore: Float!
@@ -37,6 +37,21 @@ type Product {
     subcategory: Subcategory!
     images: [String]
     primaryImage: String!
+}
+
+type Size {
+    sizeId: String
+    sizeNumber: String
+}
+
+type Tag {
+    tagId: String
+    tagName: String
+}
+
+type Color {
+    colorId: String
+    color: String
 }
 
 type createProductResponse implements ResponseType {
