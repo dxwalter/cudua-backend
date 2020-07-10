@@ -95,7 +95,7 @@ module.exports = class BusinessController extends FunctionRepo {
             }
         }
     }
-
+    
     async findOneAndUpdate(businessId, newDataObject) {
         try {
             let updateRecord = await BusinessModel.findOneAndUpdate({_id: businessId}, { $set:newDataObject }, {new : true });

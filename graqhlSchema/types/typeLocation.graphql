@@ -1,0 +1,27 @@
+
+type closeBy {
+    streetName: String,
+    streetId: String
+}
+
+type streetData {
+    streetName: String!,
+    streetId: String!
+    communityName: String
+    closeBy: [closeBy]
+}
+
+type returnStreetSearch implements responseType{
+    streetData: [streetData!],
+    code: Int!
+    success: Boolean!,
+    message: String!
+}
+
+input searchStreetInput{
+    keyword: String!
+}
+
+type Query {
+    GetStreet (input: searchStreetInput): returnStreetSearch
+}

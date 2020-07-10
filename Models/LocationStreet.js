@@ -18,7 +18,7 @@ const StreetSchema = mongoose.Schema({
     },
     community_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "location-lgas",
+        ref: "location-communities",
         required: true
     },
     street_ms_id: {

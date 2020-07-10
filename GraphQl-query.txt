@@ -736,3 +736,30 @@ query {
     message
   }
 }
+
+mutation {
+  moveData {
+    code
+    success
+    message
+  }
+}
+
+query {
+  GetStreet(input:{
+    keyword: "A clo"
+  }){
+    streetData {
+      communityName
+      streetName
+      streetId
+      closeBy {
+        streetName
+        streetId
+      }
+    }
+    code
+    success
+    message
+  }
+}

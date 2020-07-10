@@ -155,11 +155,13 @@ module.exports = class Movedata extends moveDataController{
 		for (const [index, d] of data.entries()) {
 			let lgaMongoId = await this.GetLgaMongoId(d.lga_id)
 
+			console.log(lgaMongoId)
+
 			if (lgaMongoId.error == false) {
 
 				commArray[index] = {
 					country_id: lgaMongoId.result.country_id,
-					state_id: lgaMongoId.result._id,
+					state_id: lgaMongoId.result.state_id,
 					lga_id: lgaMongoId.result._id,
 					name: d.community_name,
 					community_ms_id: d.id
@@ -254,7 +256,7 @@ module.exports = class Movedata extends moveDataController{
 					let getStreet_id = await this.getStreetDetails(xInt);
 
 					if (getStreet_id.error == false && getStreet_id.result != null) {
-						proxiObjectArray.push({proximity: getStreet_id.result._id})
+						proxiObjectArray.push({street: getStreet_id.result._id})
 					}
 		
 				}
