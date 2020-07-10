@@ -1,0 +1,10 @@
+
+type dataRes {
+    code: Int,
+    success: Boolean
+    message: String
+}
+
+type Mutation {
+    moveData:dataRes 
+}
