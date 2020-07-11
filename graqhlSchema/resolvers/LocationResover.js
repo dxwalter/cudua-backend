@@ -7,8 +7,15 @@ module.exports = {
 
             args = args.input.keyword
 
-            let findStreetSAction = new GetLocation();
-            return findStreetSAction.FindStreet(args);
+            let findLocation = new GetLocation();
+            return findLocation.FindStreet(args);
+
+        },
+        GetCommunity(_, args) {
+            
+            args = args.input.keyword
+            let findLocation = new GetLocation();
+            return findLocation.FindCommunity(args);
 
         }
     }

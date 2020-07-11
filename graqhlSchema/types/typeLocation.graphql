@@ -7,12 +7,52 @@ type closeBy {
 type streetData {
     streetName: String!,
     streetId: String!
-    communityName: String
+    community: CommunityData!
+    lga: LgaData!
+    state: StateData!
+    country: CountryId!
     closeBy: [closeBy]
+}
+
+type communityData {
+    communityName: String!
+    communityId: String!
+    lga: LgaData!
+    state: StateData!
+    country: CountryId!
+}
+
+
+
+type CountryId {
+    name: String!
+    countryId: String!
+}
+
+type StateData {
+    name: String!
+    stateId: String
+}
+
+type CommunityData {
+    name: String!
+    communityId: String!
+}
+
+type LgaData {
+    name: String!
+    lgaId: String!
 }
 
 type returnStreetSearch implements responseType{
     streetData: [streetData!],
+    code: Int!
+    success: Boolean!,
+    message: String!
+}
+
+type returnCommunitySearch implements responseType{
+    communityData: [communityData!],
     code: Int!
     success: Boolean!,
     message: String!
@@ -24,4 +64,5 @@ input searchStreetInput{
 
 type Query {
     GetStreet (input: searchStreetInput): returnStreetSearch
+    GetCommunity (input: searchStreetInput): returnCommunitySearch
 }

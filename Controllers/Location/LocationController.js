@@ -30,4 +30,26 @@ module.exports = class LocationController  {
             }
         }
     }
+
+    async SearchCommunity (keyword) {
+        try {
+
+            let findCommunity = await CommunityModel.find({name: { $regex: '.*' + keyword + '.*', $options: 'i'}})
+            .populate('country_id')
+            .populate('state_id')
+            .populate('lga_id')
+            .limit(5)
+
+            return {
+                error: false,
+                result: findCommunity
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
 }

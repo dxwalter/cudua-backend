@@ -747,12 +747,27 @@ mutation {
 
 query {
   GetStreet(input:{
-    keyword: "A clo"
+    keyword: "A close"
   }){
     streetData {
-      communityName
       streetName
       streetId
+      community {
+        name
+        communityId
+      }
+      lga{
+        name
+        lgaId
+      }
+			state {
+        name
+        stateId
+      }
+      country {
+        name
+        countryId
+      }
       closeBy {
         streetName
         streetId
