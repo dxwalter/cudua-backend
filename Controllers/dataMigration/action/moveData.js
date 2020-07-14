@@ -84,8 +84,9 @@ module.exports = class Movedata extends moveDataController{
 	}
 
 	async CreateCountries(data) {
+		
+		console.log("Creating countries for mongo");
 
-		console.log("Creating countries for mongo")
 		let countryDataArray = [];
 		for (const [index, d] of data.entries()) {
 			countryDataArray[index] = {

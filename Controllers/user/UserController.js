@@ -11,7 +11,7 @@ module.exports = class UserController extends FunctionRepo{
 
     async findOneEmail(email) {
         try {
-            let findResult = await UserModel.find({email: this.email}).populate('business_details').limit(1).exec();   
+            let findResult = await UserModel.findOne({email: this.email}).populate('business_details').exec();   
             return {
                 error: false,
                 result: findResult

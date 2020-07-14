@@ -61,7 +61,7 @@ mutation{
 }
 
 mutation {
-  createUser(user:{
+  createUser(input:{
     fullname: "Daniel Walter", email: "theceoforlife@gmail2.coma", password:"supermum"
   }) {
       fullname
@@ -89,7 +89,7 @@ mutation {
 
 mutation {
   # remember to pass accessToken in request header
-  CreateBusinessAccount(createInput:{ name: "name", username: "dxwalter" }) {
+  CreateBusinessAccount(input:{ name: "name", username: "dxwalter" }) {
   	businessDetails{
       businessname
       username
@@ -277,6 +277,18 @@ query{
   }
 }    
 
+
+mutation {
+  EditBusinessEmailAddress(input:{
+    email: "wala@gmail.com",
+    businessId: "5f0a5ad394b3161a343590e7",
+  }) {
+    code
+    success
+    message
+  }
+}
+
 mutation ($file: Upload!) {
   EditBusinesslogo(input: {
     file: $file,
@@ -324,10 +336,35 @@ mutation {
   }
 }
 
+mutation {
+  EditBusinessAddress(input:{
+    streetNumber: 10,
+   	streetId: "5f088765b0be4c0ba09f860b",	
+    businessId: "5f0a5ad394b3161a343590e7"
+  }) {
+    code
+    success
+    message
+  }
+}
+
 mutation ($file: Upload!) {
   EditBusinessCoverPhoto(input: {
     file: $file,
     businessId: "5eef76e8756c5c272880f144"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+
+mutation {
+  EditWhatsappContact(input:{
+    phoneNumber: "08037478690",
+    businessId: "5f0a5ad394b3161a343590e7",
+    notification: 1,
   }) {
     code
     success

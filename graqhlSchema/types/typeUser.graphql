@@ -129,7 +129,7 @@
 
     #This is the mutation type that will handle create account, forgot and recover pasword
     type Mutation {
-        createUser(user: CreateAccountInput): CreateAccountResponse
+        createUser(input: CreateAccountInput): CreateAccountResponse
         recoverPassword(email: String): DatalessResponse
         resetPassword(input: resetPassword): DatalessResponse
     }

@@ -141,13 +141,20 @@
         businessId: String!
     }
 
+    input editBusinessAddress {
+        streetNumber: Int!,
+        streetId: String!
+        businessId: String!
+    }
+
     type Query {
         GetSingleBusinessDetails:  BusinessAccount
         CheckUsernameExists(input: checkUsernameInput): checkUsernameInputResponse
     }
 
     type Mutation {
-        CreateBusinessAccount (createInput: CreateBusinessAccountInput ): CreateBusinessAccountResponse
+        CreateBusinessAccount (input: CreateBusinessAccountInput ): CreateBusinessAccountResponse
+
         EditBusinessBasicDetails(input: editBusinessDetails): editBasicDetailsResponse
 
         EditBusinessPhoneNumber(input: editbusinessPhoneNumberInput): editBasicDetailsResponse
@@ -158,4 +165,6 @@
         EditBusinessCoverPhoto(input: editBusinessLogo): editBasicDetailsResponse
 
         EditWhatsappContact(input: editWhatsappContact): editBasicDetailsResponse
+
+        EditBusinessAddress(input: editBusinessAddress): editBasicDetailsResponse
     }

@@ -32,17 +32,10 @@ module.exports = class BusinessController extends FunctionRepo {
                 'contact.email': email
             });   
 
-                if (findResult._id) {
-                   return {
-                       error: false,
-                       result: true   
-                   }
-                }
-       
-                return {
-                    error: false,
-                    result: false   
-                }
+            return {
+                error: false,
+                result: findResult   
+            }
     
     
         } catch (error) {

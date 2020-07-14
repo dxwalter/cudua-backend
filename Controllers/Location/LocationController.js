@@ -31,6 +31,31 @@ module.exports = class LocationController  {
         }
     }
 
+    async SearchStreetById(streetId) {
+
+        try {
+
+            let findStreet = await StreetModel.find({_id: streetId})
+            .populate('country_id')
+            .populate('state_id')
+            .populate('lga_id')
+            .populate('community_id')
+            .populate('proximity.street')
+            .limit(5)
+
+            return {
+                error: false,
+                result: findStreet
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async SearchCommunity (keyword) {
         try {
 

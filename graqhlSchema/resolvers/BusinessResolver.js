@@ -105,6 +105,18 @@ module.exports = {
             let coverPhoto = new EditBusinessProfile();
             return coverPhoto.changeBusinessCoverPhoto(args.input.businessId, args.input.file, userId);
            
+        },
+        EditBusinessAddress (parent, args, context, info) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+
+            args = args.input
+            let editAddress = new EditBusinessProfile();
+            return editAddress.changeBusinessAddress(args.streetNumber, args.streetId, args.businessId, userId)
         }
     }
 }

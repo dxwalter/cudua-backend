@@ -13,19 +13,19 @@ const BusinessSchema = mongoose.Schema({
         type: String, required: false, trim: true
     },
     address: {
-        number: { type: Number, default: ""},
-        street: { type: String, default: ""},
-        community: { type: String, default: ""},
-        lga: { type: String, default: ""},
-        state: {type: String, default: ""},
-        country: {type: String, default: ""}
+        number: { type: Number},
+        street: { type: mongoose.Schema.Types.ObjectId, ref: "location-streets"},
+        community: { type: mongoose.Schema.Types.ObjectId, ref: "location-communities"},
+        lga: { type: mongoose.Schema.Types.ObjectId, ref: "location-lgas"},
+        state: {  type: mongoose.Schema.Types.ObjectId, ref: "location-states"},
+        country: { type: mongoose.Schema.Types.ObjectId, ref: "location-countries"},
     },
     contact: {
-        email: {type: String, default: "", trim: true},
+        email: {type: String, trim: true},
         phone: [{type: String}],
         whatsapp: {
-            status: {type: Number, default: 0, required: false},
-            number: {type: String, default: ""}
+            status: {type: Number, default: 0},
+            number: {type: String}
         }
     },
     description: {

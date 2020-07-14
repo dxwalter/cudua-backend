@@ -1,20 +1,20 @@
 "use-strict";
 
 
-let BusinessController = require('../BusinessController')
-let UserController = require('../../user/UserController')
+let BusinessController = require('../BusinessController');
+let UserController = require('../../user/UserController');
+let LocationController = require('../../Location/LocationController');
 
 module.exports = class EditBusinessDetails extends BusinessController {
 
     constructor () {
         super();
         this.UserController = new UserController();
+        this.LocationController = new LocationController();
         this.businessLogoPath = 'uploads/logo/';
         this.businessCoverPhotoPath = 'uploads/coverPhoto/';
     }
 
-    
-    
     returnData (code, success, message) {
         return {
             code: code,
@@ -190,11 +190,13 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
         let checkIfEmailExists = await this.checkIfEmailExists(emailAddress);
 
+
+
         if (checkIfEmailExists.error == true) {
             return this.returnData(500, false, "An error occurred. Please try again")
         }
 
-        if (checkIfEmailExists.result == false) {
+        if (checkIfEmailExists.result == null) {
             // check if email exists as user email
             let emailInUser = await this.UserController.findUserByEmail(emailAddress);
 
@@ -412,6 +414,53 @@ module.exports = class EditBusinessDetails extends BusinessController {
         } else {
             return this.returnData(500, false, "An error occurred updating your business cover photo")
         }
+    }
+
+    async changeBusinessAddress (streetNumber, streetId, businessId, userId) {
+
+        if (streetNumber < 1) return this.returnData(200, false, 'Your street number is not provided')
+        if (streetId.length < 1) return this.returnData(200, false, 'Provide a street ID');
+
+        let businessData = await this.getBusinessData(businessId);
+
+        if (businessData.error == true) {
+            return this.returnData(500, false, "An error occurred. Please try again")
+        } else {
+            // check if user is a valid business owner
+            if (businessData.result.owner != userId) return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+        }
+
+        let findStreet = await this.LocationController.SearchStreetById(streetId);
+
+        if (findStreet.error) return this.returnData(500, false, `An error occurred. The street you chose has either been moved or deleted`)
+
+        findStreet = findStreet.result[0];
+
+        let street = findStreet._id;
+        let community = findStreet.community_id._id;
+        let lga = findStreet.lga_id._id;
+        let state = findStreet.state_id._id;
+        let country = findStreet.country_id._id
+
+        let newAddress = `${streetNumber}, ${findStreet.name} in ${findStreet.community_id.name} community`;
+
+        let newObject = {
+            number: streetNumber,
+            street: street,
+            community: community,
+            lga: lga,
+            state: state,
+            country: country
+        }
+
+        let updateStreet = await this.findOneAndUpdate(businessId, {address: newObject})
+        
+        if (updateStreet.error == false) {
+            return this.returnData(202, true, "Your address was saved successufully")
+        } else {
+            return this.returnData(500, false, "An error occurred updating your business address")
+        }
+
     }
 
 }

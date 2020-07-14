@@ -31,7 +31,5 @@ input createProductReview {
 }
 
 type Mutation {
-
     CreateProductReview(input: createProductReview): DatalessResponse
-
 }

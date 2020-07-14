@@ -5,7 +5,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
-require('dotenv/config');
+let { DbConnection, port } = require('./config');
+
 
 const app = express();
 
@@ -50,14 +51,12 @@ class startServer {
         mongoose.set('useFindAndModify', false);
         mongoose.set('useCreateIndex', true);
         mongoose.set('useUnifiedTopology', true);
-
-        // connect to db
-        mongoose.connect(process.env.DB_CONNECTION).then(
-            app.listen(3000, () => console.log('server starts @ port 3000')),  (err) => {
-                console.log(`An error occured while connecting to db ${err}`)
+        
+        mongoose.connect(DbConnection).then(
+            app.listen(3000, () => console.log(`server starts @ port 3000`)),  (err, result) => {
+                console.log(`An error occurred: ${err}`)
             }
-
-        )
+        )   
     }
 }
 

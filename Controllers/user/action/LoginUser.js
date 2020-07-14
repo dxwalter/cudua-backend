@@ -11,6 +11,7 @@ let UserController = require('../UserController');
 let UserModel = require('../../../Models/UserModel');
 let BusinessController = require('../../business/BusinessController');
 let BusinessCategoryController = require('../../businessCategory/BusinessCategoryController');
+let LocationController = require('../../Location/LocationController');
 
 module.exports = class LoginUser extends UserController{
 
@@ -20,6 +21,7 @@ module.exports = class LoginUser extends UserController{
         this.password = args.password.toLowerCase();
         this.model = UserModel;
         this.BusinessController = new BusinessController();
+        this.LocationController = new LocationController();
         this.BusinessCategoryInstance = new BusinessCategoryController();
     }
 
@@ -87,21 +89,36 @@ module.exports = class LoginUser extends UserController{
         return businessCategoryArray;
     }
 
+    async formatBusinessAddress (businessData) {
+
+        let streetId = businessData.address.street;
+        if (streetId == undefined) return null
+
+        let findStreet = await this.LocationController.SearchStreetById(streetId);
+
+        if (findStreet.error) return null
+
+        findStreet = findStreet.result[0];
+
+        return {
+            number: businessData.address.number,
+            street: findStreet.name,
+            community: findStreet.community_id.name,
+            lga: findStreet.lga_id.name,
+            state: findStreet.state_id.name,
+            country: findStreet.country_id.name
+        }
+
+    }
+
     async getBusinessDetails (businessDetails) {
 
-            
         // business data
-        let getBusinessData = businessDetails
+        let getBusinessData = businessDetails;
 
         // business address
-        let businessAddress = {
-            number: getBusinessData.address.number,
-            street: getBusinessData.address.street,
-            community: getBusinessData.address.community,
-            lga: getBusinessData.address.lga,
-            state: getBusinessData.address.state,
-            country: getBusinessData.address.country
-        }
+        let businessAddress = await this.formatBusinessAddress(getBusinessData)
+
 
         let businessId = getBusinessData._id;
 
@@ -121,7 +138,7 @@ module.exports = class LoginUser extends UserController{
         // business contact
         let businessContact =  {
             email: getBusinessData.contact.email,
-            phone: getBusinessData.contact.phone,
+            phone: getBusinessData.contact.phone.length > 0 ? getBusinessData.contact.phone: null,
             whatsapp: {
                 status: getBusinessData.contact.whatsapp.status,
                 number: getBusinessData.contact.whatsapp.number
@@ -156,9 +173,9 @@ module.exports = class LoginUser extends UserController{
     
                 findEmail = findEmail.result;
 
-                if (findEmail.length > 0) {
+                if (findEmail != null) {
                     
-                    let userDbDetails = findEmail[0];
+                    let userDbDetails = findEmail;
                     let userId = userDbDetails._id
                     let dbPassword = userDbDetails.password;
 
