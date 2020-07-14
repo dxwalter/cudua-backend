@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 module.exports = {
-    DbConnection : process.env.DB_CONNECTION,
+    MONGODB_URI : process.env.MONGODB_URI,
     AppSecret: process.env.SHARED_SECRET,
     SendGridApiKey: process.env.SENDGRID_API_KEY,
     port: process.env.PORT,

@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
-let { DbConnection, port } = require('./config');
+let { MONGODB_URI, port } = require('./config');
 
 require('heroku-self-ping').default(`https://${process.env.HEROKU_APP_NAME}.herokuapp.com`);
 
@@ -57,7 +57,7 @@ class startServer {
 
         const PORT = process.env.PORT || 3000;
 
-        mongoose.connect(DbConnection).then(
+        mongoose.connect(MONGODB_URI).then(
             app.listen(PORT, () => console.log(`server starts @ port ${PORT}`)),  (err, result) => {
                 console.log(`An error occurred: ${err}`)
             }
