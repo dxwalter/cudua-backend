@@ -17,7 +17,6 @@ module.exports = class CreateSubategory extends SubcategoryController {
         this.subcategoriesCount = this.subcategories.length; // the number of subcategories that was submitted
         this.subcategoriesExisting = 0; // the number of subcategories already existing
         this.subcategoriesAdded = 0; // the number of subcategories successfully added to the db
-
         this.categoryId = args.categoryId
     }
 
