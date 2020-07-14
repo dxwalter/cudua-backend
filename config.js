@@ -13,4 +13,4 @@ module.exports = {
     CloudinaryURL: process.env.CLOUDINARY_URL,
 }
 
-// mongodb+srv://test_user:<L9niF3NWwlQqnSmT>@test-cluster.86mbw.mongodb.net/<dbname>?retryWrites=true&w=majority
+// mongodb+srv://test_user:<L9niF3NWwlQqnSmT>@test-cluster.86mbw.mongodb.net/<cudua_test_db>?retryWrites=true&w=majority
