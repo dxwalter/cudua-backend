@@ -7,6 +7,8 @@ const path = require('path');
 
 let { DbConnection, port } = require('./config');
 
+require('heroku-self-ping').default(`https://${process.env.HEROKU_APP_NAME}.herokuapp.com`);
+
 
 const app = express();
 
@@ -19,6 +21,7 @@ const typeDefs = require('./graqhlSchema/types');
 const resolvers = require('./graqhlSchema/resolvers');
 
 const { makeExecutableSchema } = require('@graphql-tools/schema');
+const { prototype } = require('./Controllers/business/BusinessController');
 
 const schema = makeExecutableSchema({
     typeDefs,
@@ -51,9 +54,11 @@ class startServer {
         mongoose.set('useFindAndModify', false);
         mongoose.set('useCreateIndex', true);
         mongoose.set('useUnifiedTopology', true);
-        
+
+        const PORT = process.env.PORT || 3000;
+
         mongoose.connect(DbConnection).then(
-            app.listen(3000, () => console.log(`server starts @ port 3000`)),  (err, result) => {
+            app.listen(PORT, () => console.log(`server starts @ port ${PORT}`)),  (err, result) => {
                 console.log(`An error occurred: ${err}`)
             }
         )   
