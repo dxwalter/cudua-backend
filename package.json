@@ -40,6 +40,7 @@
     "graphql": "^15.0.0",
     "graphql-tools": "^6.0.1",
     "graphql-upload": "^11.0.0",
+    "heroku-self-ping": "^2.0.1",
     "image-size": "^0.8.3",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^7.1.1",
