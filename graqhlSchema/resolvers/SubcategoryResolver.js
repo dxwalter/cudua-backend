@@ -1,6 +1,6 @@
 
 
-const CreateSubCategory = require('../../Controllers/subcategories/action/CreateSubcategory');
+const CreateSubCategory = require('../../Controllers/subcategories/action/createSubcategory');
 const ActivateSubcategory = require('../../Controllers/subcategories/action/ActivateSubcategory');
 
 module.exports = {
