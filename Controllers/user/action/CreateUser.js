@@ -90,7 +90,7 @@ module.exports = class CreateUser extends UserController{
 
         let userId = data._id;
         let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });
-
+        
         return {
             userId : data._id,
             fullname: data.fullname,

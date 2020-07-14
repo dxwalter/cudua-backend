@@ -17,7 +17,7 @@ module.exports = {
     },
     Mutation: {
         createUser(parent, args, context, info) {
-            let createUser = new CreateUser(args.user)
+            let createUser = new CreateUser(args.input)
             return createUser.validateUserInput();   
         },
         recoverPassword (parent, args, context, info) {
