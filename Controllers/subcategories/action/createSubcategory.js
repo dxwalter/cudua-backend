@@ -8,7 +8,7 @@ let SubcategoryController = require('../SubcategoryController')
 const Subcategory = require('../../../Models/Subcategory');
 
 
-module.exports = class CreateCategory extends SubcategoryController {
+module.exports = class CreateSubategory extends SubcategoryController {
 
     constructor (args) { 
         super(); 
