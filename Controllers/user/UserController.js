@@ -146,22 +146,13 @@ module.exports = class UserController extends FunctionRepo{
 
     async findUsersById (userId) {
         try {
-            const findResult = await UserModel.find({
+            const findResult = await UserModel.findOne({
                 _id: userId
-            }).limit(1).exec();  
+            }).exec();  
             
-            if (findResult.length > 0) {
-                if (findResult[0]._id) {
-                   return {
-                       error: false,
-                       result: findResult[0]
-                   }
-                }
-            } else {
-                return {
-                    error: false,
-                    result: false   
-                }
+            return {
+                error: false,
+                result: findResult
             }
 
         } catch (error) {

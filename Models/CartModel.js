@@ -17,10 +17,12 @@ const SignedCart = mongoose.Schema({
         required: true
     },
     size: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "product.sizes"
     },
     color: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "product.colors"
     },
     quantity: {
         type: Number,

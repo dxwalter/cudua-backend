@@ -31,6 +31,14 @@ module.exports = class CreateBookmark extends BookmarkController {
             }
         }
 
+        if (getUserDetails.result == null) {
+            return {
+                code: 200,
+                success: false,
+                message: "An error occurred. Your account was not found"
+            }
+        }
+
 
         if (businessId == getUserDetails.result.business_id) {
             return {

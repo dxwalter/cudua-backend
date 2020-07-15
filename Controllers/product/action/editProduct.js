@@ -266,6 +266,8 @@ module.exports = class EditProduct extends ProductController {
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        
+        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result;
 
@@ -321,6 +323,9 @@ module.exports = class EditProduct extends ProductController {
         }
 
         let getProductDetails = await this.FindProductById(productId);
+        
+        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
+
         getProductDetails = getProductDetails.result
         
         let savedSizes = getProductDetails.sizes
@@ -372,7 +377,7 @@ module.exports = class EditProduct extends ProductController {
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
-        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
+        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result;
 
@@ -432,7 +437,7 @@ module.exports = class EditProduct extends ProductController {
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
-        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
+        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result
         
@@ -486,7 +491,7 @@ module.exports = class EditProduct extends ProductController {
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
-        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
+        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result;
 
@@ -575,7 +580,7 @@ module.exports = class EditProduct extends ProductController {
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
-        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
+        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result;
 
@@ -645,7 +650,7 @@ module.exports = class EditProduct extends ProductController {
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
-        if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
+        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result;
 

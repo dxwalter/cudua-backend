@@ -8,8 +8,20 @@ type DatalessResponse implements ResponseType {
     message: String!
 }
 
+type CartItemsResponse implements ResponseType {
+    cart: [CartItem]
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
 type CartItem {
+    # userId
     customer: String!
+    # product Details
     product: ProductCartInfo!
     business: BusinessCartInfo!
     size: Size
@@ -38,7 +50,9 @@ input addItemToCart {
     sizeId: String
 }
 
-
+type Query {
+    GetCartItems: CartItemsResponse
+}
 
 type Mutation {
     AddItemToCart(input: addItemToCart): DatalessResponse
