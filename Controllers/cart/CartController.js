@@ -45,4 +45,25 @@ module.exports = class CartController extends FunctionRepo {
             }
         }
     }
+
+    async findItemsByUserId(userId) {
+        
+        try {
+            let getItems = await CartModel.find({owner: userId})
+            .sort({_id: -1})
+            .populate('business')
+            .populate('product')
+
+            return {
+                error: false,
+                result: getItems
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
 }

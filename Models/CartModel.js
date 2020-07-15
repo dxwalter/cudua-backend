@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const SignedCart = mongoose.Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "business-accounts",
+        ref: "users",
         required: true
     },
     product: {
@@ -17,12 +17,10 @@ const SignedCart = mongoose.Schema({
         required: true
     },
     size: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "product.sizes"
+        type: String, trim: true
     },
     color: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "product.colors"
+        type: String, trim: true
     },
     quantity: {
         type: Number,

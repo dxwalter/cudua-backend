@@ -19,22 +19,22 @@ type CartItemsResponse implements ResponseType {
 }
 
 type CartItem {
+    itemId: String!
     # userId
     customer: String!
     # product Details
     product: ProductCartInfo!
     business: BusinessCartInfo!
-    size: Size
-    color: Color
+    size: String
+    color: String
     quantity: Int!
 }
 
 type ProductCartInfo {
-    id: String!
+    productId: String!
     price: Int!
     image: String!
-    size: [String!]
-    color: [String!]
+    review: Int!
 }
 
 type BusinessCartInfo {
