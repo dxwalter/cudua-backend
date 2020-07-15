@@ -1,0 +1,45 @@
+# # This is the response type that returns no data
+type DatalessResponse implements ResponseType {
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type CartItem {
+    customer: String!
+    product: ProductCartInfo!
+    business: BusinessCartInfo!
+    size: Size
+    color: Color
+    quantity: Int!
+}
+
+type ProductCartInfo {
+    id: String!
+    price: Int!
+    image: String!
+    size: [String!]
+    color: [String!]
+}
+
+type BusinessCartInfo {
+    businessId: String!
+    name: String!
+    address: AddressType
+}
+
+input addItemToCart {
+    businessId: String!,
+    productId: String!,
+    colorId: String
+    sizeId: String
+}
+
+
+
+type Mutation {
+    AddItemToCart(input: addItemToCart): DatalessResponse
+}

@@ -26,7 +26,7 @@ module.exports = {
                 userId = userId.message;
             }
 
-            let createBusinessObject = new CreateBusiness(args.createInput);
+            let createBusinessObject = new CreateBusiness(args.input);
             return createBusinessObject.validateBusinessInput(userId);
         },
         EditBusinessBasicDetails(parent, args, context, info) {

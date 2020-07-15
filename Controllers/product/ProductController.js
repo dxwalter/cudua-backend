@@ -181,20 +181,10 @@ module.exports = class ProductController extends BusinessController {
                 products: getProducts.length > 0 ? getProducts : null
             }
 
-            if (getProducts.length > 0) {
-
-                return {
-                    error: false,
-                    result: result
-                } 
-
-            } else {
-                
-                return {
-                    error: false,
-                    result: result
-                }
-            }
+            return {
+                error: false,
+                result: result
+            } 
 
         } catch (error) {
             return {

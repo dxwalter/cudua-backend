@@ -198,12 +198,13 @@ module.exports = class ChooseCategory extends BusinessCategoryController {
    
         if (checkCategoryByBusiness.error == false ) {
 
-            if (checkCategoryByBusiness.result == false) {
+            if (checkCategoryByBusiness.result == null) {
                 return await this.createCategoryForBusiness(businessId, category, [{subcategory_id: subcategory}])
             }
         }
         
         if (checkCategoryByBusiness.error == true) return this.returnMethod(200, false, 'An error occurred while checking if this category has been added to your business')
+
 
         let selectedBusinessSubcat = checkCategoryByBusiness.result.subcategories
         subcatCheck = 0;

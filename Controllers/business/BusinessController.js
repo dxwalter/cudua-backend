@@ -46,7 +46,7 @@ module.exports = class BusinessController extends FunctionRepo {
         }
     }
 
-    async createBusinessAccount (data, userId) {
+    async createBusinessAccount (data) {
         
         try {
             const create = await data.save();

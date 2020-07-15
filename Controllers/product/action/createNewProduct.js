@@ -48,6 +48,7 @@ module.exports = class CreateNewProduct extends ProductController {
         }
 
         let businessCategory = await this.BusinessCategory.addASingleCategoryOrSubcategory(businessId, category, subcategory)
+
         
         if (businessCategory.code == 500) {
             return this.returnData(null, 500, false, `An error occurred. The category or subcategory you chose is not recognised.`)
