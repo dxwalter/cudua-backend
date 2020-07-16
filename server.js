@@ -57,13 +57,15 @@ class startServer {
 
         const PORT = process.env.PORT || 3000;
 
-        mongoose.connect(MONGODB_URI, 
-            { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
-            ).then(
-            app.listen(PORT, () => console.log(`server starts @ port ${PORT}`)),  (err, result) => {
-                console.log(`An error occurred: ${err}`)
-            }
-        )   
+        mongoose.connect(MONGODB_URI, {
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useUnifiedTopology: true
+          }).then(res=>{
+                  console.log("DB Connected!")
+          }).catch(err => {
+            console.log(Error, err.message);
+          })  
     }
 }
 
