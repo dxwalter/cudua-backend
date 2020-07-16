@@ -54,6 +54,24 @@ input deleteItemFromCart {
     itemId: String!
 }
 
+input updateItemQuantity {
+    itemId: String!
+    quantity: Int!
+}
+
+input updateItemColor {
+    itemId: String!
+    colorId: String!
+}
+
+
+input updateItemSize {
+    itemId: String!
+    sizeId: String!
+}
+
+
+
 type Query {
     GetCartItems: CartItemsResponse
 }
@@ -61,4 +79,7 @@ type Query {
 type Mutation {
     AddItemToCart(input: addItemToCart): DatalessResponse
     DeleteItemFromCart(input: deleteItemFromCart): DatalessResponse
+    UpdateItemQuantity(input: updateItemQuantity): DatalessResponse
+    UpdateItemColor(input: updateItemColor): DatalessResponse
+    UpdateItemSize(input: updateItemSize): DatalessResponse
 }

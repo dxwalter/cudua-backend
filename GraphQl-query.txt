@@ -820,6 +820,7 @@ query {
   GetCartItems {
     cart {
       customer
+      itemId
       product{
         productId
         price
@@ -854,6 +855,51 @@ mutation{
     productId: "5f0e722b5cfb6e3494756d60",
     colorId: "5f0edfa384604217685696ae",
     sizeId: "5f0edfa384604217685696b4"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  DeleteItemFromCart(input: {
+    itemId: "5f0fb2e79728141268021a07"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+
+mutation {
+  UpdateItemQuantity(input:{
+    itemId: "5f104ad42cb1462c1ce9950f",
+    quantity: 21,
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  UpdateItemColor(input:{
+    itemId: "5f104ad42cb1462c1ce9950f",
+    colorId: "5f0edfa384604217685696ad",
+  }) {
+    code
+    success
+    message
+  }
+}
+
+
+mutation {
+  UpdateItemSize(input:{
+    itemId: "5f104ad42cb1462c1ce9950f",
+    sizeId: "5f0edfa384604217685696b6",
   }) {
     code
     success

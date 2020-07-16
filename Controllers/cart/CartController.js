@@ -46,6 +46,33 @@ module.exports = class CartController extends FunctionRepo {
         }
     }
 
+    async deleteItemInCartByUserIdAndItemId(userId, itemId) {
+        try {
+            
+            let deleteItem = await CartModel.deleteOne({
+                $and: [{ owner: userId, _id: itemId }]
+            })
+
+            if (deleteItem.ok == 1 && deleteItem.deletedCount == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
+            }
+           
+        } catch (error) {
+            return {
+                message: error.message,
+                error: true
+            }
+        }
+    }
+
     async findItemsByUserId(userId) {
         
         try {
@@ -59,6 +86,21 @@ module.exports = class CartController extends FunctionRepo {
                 result: getItems
             }
 
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+    async findOneAndUpdate (itemId, newObject) {
+        try {
+            let updateRecord = await CartModel.findOneAndUpdate({_id: itemId}, { $set:newObject }, {new : true });
+            return {
+                error: false,
+                result: updateRecord
+            }
         } catch (error) {
             return {
                 error: true,

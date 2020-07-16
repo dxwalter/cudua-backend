@@ -1,6 +1,7 @@
 
 let AddItemToCart = require('../../Controllers/cart/action/addItemToCart');
 let GetItemsInCart = require('../../Controllers/cart/action/getItemsInCart');
+let EditItemInCart = require('../../Controllers/cart/action/editItemInCart');
 
 
 module.exports = {
@@ -29,6 +30,8 @@ module.exports = {
                 userId = userId.message;
                 args = args.input
                 
+                console.log(args)
+
                 let addItem = new AddItemToCart();
                 return addItem.addToCart(args.businessId, args.productId, args.colorId, args.sizeId, userId)
             }
@@ -42,6 +45,51 @@ module.exports = {
                 // known user
                 userId = userId.message;
                 args = args.input
+                
+                let deleteCart = new EditItemInCart();
+                return deleteCart.deleteItemInCartSignIn(args.itemId, userId);
+            }
+        },
+        UpdateItemQuantity(parent, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                // anonymous user
+            } else {
+                // known user
+                userId = userId.message;
+                args = args.input
+                
+                let updateItemQuantity = new EditItemInCart();
+                return updateItemQuantity.updateQuantity(args.itemId, args.quantity);
+            }
+        },
+        UpdateItemColor(parent, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                // anonymous user
+            } else {
+                // known user
+                userId = userId.message;
+                args = args.input
+                
+                let updateItemQuantity = new EditItemInCart();
+                return updateItemQuantity.updateColor(args.itemId, args.colorId);
+            }
+        },
+        UpdateItemSize(parent, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                // anonymous user
+            } else {
+                // known user
+                userId = userId.message;
+                args = args.input
+                
+                let updateItemQuantity = new EditItemInCart();
+                return updateItemQuantity.updateSize(args.itemId, args.sizeId);
             }
         }
     }
