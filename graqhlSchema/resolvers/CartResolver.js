@@ -1,6 +1,7 @@
 
 let AddItemToCart = require('../../Controllers/cart/action/addItemToCart');
-let GetItemsInCart = require('../../Controllers/cart/action/getItemsInCart')
+let GetItemsInCart = require('../../Controllers/cart/action/getItemsInCart');
+
 
 module.exports = {
     Query: {

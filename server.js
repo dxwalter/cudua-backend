@@ -36,6 +36,7 @@ class startServer {
         app.use(bodyParser.json());
         
 
+
         app.use("/v1", 
         bodyParser.json(), 
         apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
@@ -53,17 +54,19 @@ class startServer {
         mongoose.set('useNewUrlParser', true);
         mongoose.set('useFindAndModify', false);
         mongoose.set('useCreateIndex', true);
-        mongoose.set('useUnifiedTopology', true);
+        // mongoose.set('useUnifiedTopology', true);
 
         const PORT = process.env.PORT || 3000;
 
         mongoose.connect(MONGODB_URI, 
-            { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
+            { useNewUrlParser: true, useCreateIndex: true}
             ).then(
             app.listen(PORT, () => console.log(`server starts @ port ${PORT}`)),  (err, result) => {
                 console.log(`An error occurred: ${err}`)
             }
-        )   
+        ) 
+
+
     }
 }
 
