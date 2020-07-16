@@ -54,13 +54,11 @@ class startServer {
         mongoose.set('useNewUrlParser', true);
         mongoose.set('useFindAndModify', false);
         mongoose.set('useCreateIndex', true);
-        mongoose.set('useUnifiedTopology', false);
+        mongoose.set('useUnifiedTopology', true);
 
         const PORT = process.env.PORT || 3000;
 
-        mongoose.connect(MONGODB_URI, 
-            { useNewUrlParser: true, useCreateIndex: true}
-            ).then(
+        mongoose.connect(MONGODB_URI).then(
             app.listen(PORT, () => console.log(`server starts @ port ${PORT}`)),  (err, result) => {
                 console.log(`An error occurred: ${err}`)
             }
