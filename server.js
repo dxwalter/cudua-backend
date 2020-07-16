@@ -54,7 +54,7 @@ class startServer {
         mongoose.set('useNewUrlParser', true);
         mongoose.set('useFindAndModify', false);
         mongoose.set('useCreateIndex', true);
-        // mongoose.set('useUnifiedTopology', true);
+        mongoose.set('useUnifiedTopology', true);
 
         const PORT = process.env.PORT || 3000;
 
