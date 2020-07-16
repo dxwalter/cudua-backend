@@ -50,10 +50,15 @@ input addItemToCart {
     sizeId: String
 }
 
+input deleteItemFromCart {
+    itemId: String!
+}
+
 type Query {
     GetCartItems: CartItemsResponse
 }
 
 type Mutation {
     AddItemToCart(input: addItemToCart): DatalessResponse
+    DeleteItemFromCart(input: deleteItemFromCart): DatalessResponse
 }

@@ -36,7 +36,7 @@ class startServer {
         app.use(bodyParser.json());
         
 
-        app.use("/graphql", 
+        app.use("/v1", 
         bodyParser.json(), 
         apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
         graphqlHTTP((req, res) => ({
@@ -57,7 +57,9 @@ class startServer {
 
         const PORT = process.env.PORT || 3000;
 
-        mongoose.connect(MONGODB_URI).then(
+        mongoose.connect(MONGODB_URI, 
+            { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
+            ).then(
             app.listen(PORT, () => console.log(`server starts @ port ${PORT}`)),  (err, result) => {
                 console.log(`An error occurred: ${err}`)
             }

@@ -31,6 +31,17 @@ module.exports = {
                 let addItem = new AddItemToCart();
                 return addItem.addToCart(args.businessId, args.productId, args.colorId, args.sizeId, userId)
             }
+        },
+        DeleteItemFromCart (parent, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                // anonymous user
+            } else {
+                // known user
+                userId = userId.message;
+                args = args.input
+            }
         }
     }
 }

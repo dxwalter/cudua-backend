@@ -26,9 +26,9 @@ module.exports = class UserController extends FunctionRepo{
 
     async findUserByEmail (email) {
         try {
-            const findResult = await UserModel.find({
+            const findResult = await UserModel.findOne({
                 email: email
-            }).limit(1).exec();  
+            }).exec();  
     
             return {
                 error: false,
@@ -45,16 +45,14 @@ module.exports = class UserController extends FunctionRepo{
 
     async emailExists (email) {
         try {
-            const findResult = await UserModel.find({
+            const findResult = await UserModel.findOne({
                 email: email
-            }).limit(1).exec();   
-    
-            if (findResult.length > 0) {
-                if (findResult[0]._id) {
-                   return {
-                       error: false,
-                       result: true   
-                   }
+            }).exec();   
+
+            if (findResult != null) {
+                return {
+                    error: false,
+                    result: true   
                 }
             } else {
                 return {
@@ -73,17 +71,16 @@ module.exports = class UserController extends FunctionRepo{
 
     async checkRecoverySecret (secret) {
         try {
-            const findResult = await RecoverPasswordModel.find({
+            const findResult = await RecoverPasswordModel.findOne({
                 secret: secret
-            }).limit(1).exec();   
+            }).exec();   
     
-            if (findResult.length > 0) {
-                if (findResult[0]._id) {
-                    return {
-                        error: false,
-                        result: true   
-                    }
+            if (findResult != null) {
+                return {
+                    error: false,
+                    result: true   
                 }
+
             } else {
                 return {
                     error: false,
@@ -101,16 +98,15 @@ module.exports = class UserController extends FunctionRepo{
 
     async emailExistsInForgotPassword (email) {
         try {
-            const findResult = await RecoverPasswordModel.find({
+            const findResult = await RecoverPasswordModel.findOne({
                 email: email
-            }).limit(1).exec();   
+            }).exec();   
     
-            if (findResult.length > 0) {
-                if (findResult[0]._id) {
-                    return {
-                        error: false,
-                        result: false   
-                    }
+            
+            if (findResult != null) {
+                return {
+                    error: false,
+                    result: false   
                 }
             } else {
                 return {

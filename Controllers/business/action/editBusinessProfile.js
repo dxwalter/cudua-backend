@@ -204,9 +204,9 @@ module.exports = class EditBusinessDetails extends BusinessController {
                 return this.returnData(500, false, "An error occurred. Please try again")
             } 
           
-            if (emailInUser.result.length > 0) {
+            if (emailInUser.result != null) {
                 
-                if (emailInUser.result[0]._id != userId) {
+                if (emailInUser.result._id != userId) {
                     return this.returnData(200, false, "The email address you chose already exists")
                 }
 
@@ -256,8 +256,8 @@ module.exports = class EditBusinessDetails extends BusinessController {
         // check if phone number exists in user 
         let userNumberCheck = await this.UserController.findUserByEmail(phoneNumber);
 
-        if (userNumberCheck.result.length > 0) {
-            if (userNumberCheck.result[0]._id != userId) {
+        if (userNumberCheck.result != null) {
+            if (userNumberCheck.result._id != userId) {
                 return this.returnData(200, false, "The phone number you chose already exists. Choose a different phone number")
             }
         }

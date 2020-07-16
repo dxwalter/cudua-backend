@@ -20,7 +20,6 @@ module.exports = class GetItemsInCart extends CartController {
     async getColor(id, colorArray) {
         for (let x of colorArray) {
             if (id == x._id) {
-                console.log(x.color_codes)
                 return x.color_codes;
             }
         }
@@ -56,7 +55,7 @@ module.exports = class GetItemsInCart extends CartController {
                 },
                 // get color and size from product's color and sizes array
                 size: item.size == undefined ? null : await  this.getSize(item.size, item.product.sizes),
-                // color: item.color == undefined ? null : await this.getColor(item.color, item.product.colors),
+                color: item.color == undefined ? null : await this.getColor(item.color, item.product.colors),
 
                 quantity: item.quantity
             }
@@ -126,7 +125,7 @@ module.exports = class GetItemsInCart extends CartController {
         
         if (getCartItems.error) return this.returnMethod(null, 500, false, `An error occurred from our end. Please refresh and try again`);
 
-        if (getCartItems.length == 0 || getCartItems == null) return this.returnMethod(null, 200, true, `You do not have any item in your cart`);
+        if (getCartItems.result.length == 0 || getCartItems == null) return this.returnMethod(null, 200, true, `You do not have any item in your cart`);
 
         let formatCartItems = await this.formatCartItems(getCartItems.result);
 

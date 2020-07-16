@@ -815,3 +815,48 @@ query {
     message
   }
 }
+
+{
+  GetCartItems {
+    cart {
+      customer
+      product{
+        productId
+        price
+        image
+      }
+      business {
+        businessId
+        name
+        address {
+          number
+          street
+          community
+          lga
+          state
+          country
+        }
+      }
+      size
+      color
+      quantity
+    }
+    code
+    success
+    message
+  }
+}
+
+
+mutation{
+  AddItemToCart(input:{
+    businessId:"5f0a5ad394b3161a343590e7",
+    productId: "5f0e722b5cfb6e3494756d60",
+    colorId: "5f0edfa384604217685696ae",
+    sizeId: "5f0edfa384604217685696b4"
+  }) {
+    code
+    success
+    message
+  }
+}
