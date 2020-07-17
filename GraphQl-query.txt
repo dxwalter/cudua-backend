@@ -138,14 +138,13 @@ mutation{
   }
 }
 
-  mutation {
-
-    ActivateSubcategory(input:{subcategoryId:"5ee52166e8b7eb2888a3a307"}) {
-      code
-      success
-      message
-    }
+mutation {
+  ActivateSubcategory(input:{subcategoryId:"5ee52166e8b7eb2888a3a307"}) {
+    code
+    success
+    message
   }
+}
 
 query {
   GetAllCategories {
@@ -823,8 +822,10 @@ query {
       itemId
       product{
         productId
+        name
         price
         image
+        review
       }
       business {
         businessId
@@ -847,6 +848,7 @@ query {
     message
   }
 }
+    
 
 
 mutation{

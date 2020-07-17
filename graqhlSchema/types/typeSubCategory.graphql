@@ -20,23 +20,29 @@
     }
 
     type Subcategory {
+        # this is the subcategory id
         subcategoryId: String!
+        # the name of the subcategory
         subcategoryName: String!
     }
 
     input CreateSubcategoryInput {
+        # this will be an array of ids of different subcategory that belongs to a category
         subcategories: [String!]!
+        # the category id of the subcategory to be created
         categoryId: String!
     }
 
     input ConfirmSubcategoryInput {
-        # This is the id of the category
+        # This is the id of the subcategory
         subcategoryId: String!
     }
 
 
     type CreateSubcategoryResponse implements ResponseType {
+        # this is the subcategory id
         subcategoryId: String!
+        # the name of the subcategory
         subcategoryName: String!
         # Response status code
         code: Int!
@@ -48,6 +54,8 @@
 
     #This is the mutation type that will handle create account, forgot and recover pasword
     type Mutation {
+        # create a subcategory
         createSubCategory(input: CreateSubcategoryInput): DatalessResponse
+        # activate a new subcategory
         ActivateSubcategory(input: ConfirmSubcategoryInput): DatalessResponse
     }

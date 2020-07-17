@@ -183,7 +183,6 @@ module.exports = class moveDataController {
             if (createMany.length > 0) return {error: false}
 
         } catch (error) {
-            console.log(error)
             return {
                 error: true
             }

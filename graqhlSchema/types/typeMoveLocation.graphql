@@ -5,6 +5,7 @@ type dataRes {
     message: String
 }
 
+# Do not worry about this feature. I used it to move the street data from mysql to mongodb
 type Mutation {
     moveData:dataRes 
 }

@@ -3,6 +3,13 @@ let AddItemToCart = require('../../Controllers/cart/action/addItemToCart');
 let GetItemsInCart = require('../../Controllers/cart/action/getItemsInCart');
 let EditItemInCart = require('../../Controllers/cart/action/editItemInCart');
 
+let tempResponse = () => {
+    return {
+        code: 200,
+        success: false,
+        message: "Your access token has either expired or not provided. This will supposed to work for anonymous users but I am yet to write that"
+    }
+}
 
 module.exports = {
     Query: {
@@ -10,7 +17,7 @@ module.exports = {
             let accessToken = context.accessToken;
             let userId = context.authFunction(accessToken);
             if (userId.error == true) {
-                // anonymous user
+                return tempResponse()
             } else {
                 // known user
                 userId = userId.message;
@@ -24,13 +31,11 @@ module.exports = {
             let accessToken = context.accessToken;
             let userId = context.authFunction(accessToken);
             if (userId.error == true) {
-                // anonymous user
+                return tempResponse()
             } else {
                 // known user
                 userId = userId.message;
                 args = args.input
-                
-                console.log(args)
 
                 let addItem = new AddItemToCart();
                 return addItem.addToCart(args.businessId, args.productId, args.colorId, args.sizeId, userId)
@@ -41,6 +46,7 @@ module.exports = {
             let userId = context.authFunction(accessToken);
             if (userId.error == true) {
                 // anonymous user
+                return tempResponse()
             } else {
                 // known user
                 userId = userId.message;
@@ -55,6 +61,7 @@ module.exports = {
             let userId = context.authFunction(accessToken);
             if (userId.error == true) {
                 // anonymous user
+                return tempResponse()
             } else {
                 // known user
                 userId = userId.message;
@@ -69,6 +76,7 @@ module.exports = {
             let userId = context.authFunction(accessToken);
             if (userId.error == true) {
                 // anonymous user
+                return tempResponse()
             } else {
                 // known user
                 userId = userId.message;
@@ -83,6 +91,7 @@ module.exports = {
             let userId = context.authFunction(accessToken);
             if (userId.error == true) {
                 // anonymous user
+                return tempResponse()
             } else {
                 // known user
                 userId = userId.message;

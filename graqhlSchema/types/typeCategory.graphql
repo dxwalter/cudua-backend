@@ -20,11 +20,14 @@
     }
 
     type Category {
+        # category id
         categoryId: String!
+        # category name
         categoryName: String
     }
 
     input CreateCategoryInput {
+        # categegory name
         categoryName: String!
     }
 
@@ -35,7 +38,9 @@
 
 
     type CreateCategoryResponse implements ResponseType {
+        # category id
         categoryId: String
+        # category name
         categoryName: String
         # Response status code
         code: Int!
@@ -46,13 +51,17 @@
     }
 
     type categoryData {
+        # category id
         id: ID!
+        # categor name
         name: String!
+        # an array of subcategories of this category
         subcategories: [Subcategory!]
     }
     
     # get all category response
     type GetAllCategoriesResponse implements ResponseType {
+        # an array of categories that includes corresponding subcategories
         category: [categoryData]!
         # Response status code
         code: Int!
@@ -64,6 +73,7 @@
 
     # get one category response
     type GetOneCategoryResponse implements ResponseType {
+        # category data. it includes an array of corresponding subcategories
         category: categoryData
         # Response status code
         code: Int!
@@ -75,12 +85,16 @@
 
     #This is the mutation type that will handle create category and activate category
     type Mutation {
+        # create category
         createCategory(input: CreateCategoryInput): CreateCategoryResponse
+        # activate category
         ActivateCategory(input: ConfirmCategoryInput): DatalessResponse
     }
 
     # This is the query type that will handle get category 
     type Query {
+        # Get all categories
         GetAllCategories: GetAllCategoriesResponse
+        # get one category
         GetOneCategory(input: ConfirmCategoryInput): GetOneCategoryResponse
     }

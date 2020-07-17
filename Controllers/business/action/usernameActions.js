@@ -14,7 +14,7 @@ module.exports = class UsernameActions extends BusinessController {
 
         if (username.length > 3) {
             let usernameCheck = await this.checkUsernameExists(username);
-            console.log(usernameCheck)
+            
             if (usernameCheck.error == true) {
                 return {
                     existence: 0,

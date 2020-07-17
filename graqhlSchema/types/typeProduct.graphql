@@ -1,6 +1,6 @@
 
 # This is the type file for products
-
+# this is the type for image upload
 scalar Upload
 
 # response type
@@ -24,33 +24,56 @@ type DatalessResponse implements ResponseType {
 }
 
 type Product {
+    # product id
     id: String!
+    # name of product
     name: String!
+    # price of product
     price: Int!
+    # An array of tags for a product ["tag1", "tag2", ...]
     tags: [Tag]
+    # An array of colors for a product ["color1", "color2", ...]
     colors: [Color]
+    # An array of sizes for a product ["size", "size1", ...]
     sizes: [Size]
+    # This is used to check if a product can be seen by customers.
+    # In a situation where the product is no longer in stock, a business owner can hide it and it will not be seen by customers
+    # Meanwhile, a business owner will always see it from their dashboard whether it is visible or not
+    # 0 means the product is visible to customers
+    # 1 means the product is not visible to customers
     hide: Int!
+    # An array of reviews written for this product
     reviews: [ProductReview]
+    # review score for this product. It is between 1 - 5
     reviewScore: Float!
+    # the category of this product. it is an object of {categoryId and categoryName}
     category: Category!
+    # the subcategory of this product. it is an object of {subcategoryId and subcategoryName}
     subcategory: Subcategory!
+    # this is an array of secondary images. this are the images that will show after the first (primary) image
     images: [String]
+    # Primary image is the image that will show first before other images can show in the slider
     primaryImage: String!
 }
 
 type Size {
+    # the size of a product has an Id
     sizeId: String
+    # size number can is either a string eg big and small or 12, 14, 15
     sizeNumber: String
 }
 
 type Tag {
+    # tag id
     tagId: String
+    # tag name
     tagName: String
 }
 
 type Color {
+    # color id
     colorId: String
+    # color name
     color: String
 }
 
@@ -65,64 +88,96 @@ type createProductResponse implements ResponseType {
 }
 
 input createProduct {
+    # name of product and the length must be greater than 2 characters
     name: String!
+    # the price must be greater that 0 and it is required
     price: Int!
+    # the category id of the category the business chose
     category: String!
+    # the subcategory id of the subcategory the business chose
     subcategory: String!
+    # the primary image (Image that will show first) of the product
     file: Upload!
+    # the business ID of the business that is uploading the product
     businessId: String!
 }
 
 
 input addDescription {
+    # A description of the product
     description: String!
+    # the product id
     productId: String!
+    # the business id
     businessId: String!
 }
 
 input editProductTags {
+    # an array of tags (strings). it must not be a null array
     tags: [String]!
+    # the product id that owns the tags
     productId: String!
+    # the id of the business that owns the product
     businessId: String!
 }
 
 input removeProductTag {
+    # the tag id and not the tag name
     tagId: String!
+    # the product id
     productId: String!
+    # the business id
     businessId: String!
 }
 
 input removeProductSize {
+    # the size id not the size name
     sizeId: String!
+    # product id
     productId: String!
+    # business id
     businessId: String!
 }
 
 input removeProductColor {
+    # the color id and not the color name
     colorId: String!
+    # product id
     productId: String!
+    # business
     businessId: String!
 }
 
 input createProductSize {
+    # an array of sizes (strings). it must not be a null array
     sizes: [String]!
+    # product id
     productId: String!
+    # business Id
     businessId: String!
 }
 
 input createProductColor {
+    # an array of colors (strings). it must not be a null array
     colors: [String]!
+    # product id
     productId: String!
+    # business id
     businessId: String!
 }
 
+# you can only add one photo at a time
 input addMorePhotos {
+    # image file
     file: Upload!
+    # product id
     productId: String!
+    # business id
     businessId: String!
 }
 
 type ImageArrayResponse implements ResponseType {
+    # an array of image names
     images: [String!]
     # Response status code
     code: Int!
@@ -133,26 +188,38 @@ type ImageArrayResponse implements ResponseType {
 }
 
 input makePrimaryInput {
+    # image name not id eg. Tammy.jpg
     imageName: String!
+    # product id
     productId: String!
+    # business details
     businessId: String!
 }
 
 input editBasicDetails {
+    # product id
     productId: String!
+    # business name
     businessId: String!
+    # new name of product
     productName: String
+    # new price
     productPrice: Int
+    # category id
     category: String
+    # subcategory id
     subcategory: String
 }
 
 input hideProduct {
+    # product id
     productId: String!
+    # business id
     businessId: String!
 }
 
 type SingleProductResponse {
+    #  a single product
     product: Product
     # Response status code
     code: Int!
@@ -163,6 +230,7 @@ type SingleProductResponse {
 }
 
 type MultipleProductResponse {
+    # an array of products
     products: [Product]
     # This is the total number of products a business has in a category
     # Not the total number of products returned from this route in a request
@@ -176,7 +244,9 @@ type MultipleProductResponse {
 }
 
 type BusinessSearchResultResponse {
+    # an array of products
     products: [Product]
+    # total number of results found.
     resultCount: Int
     # Response status code
     code: Int!
@@ -188,8 +258,9 @@ type BusinessSearchResultResponse {
 
 
 type MultipleProductResponseSubcategory {
+    # products from a subcategory
     products: [Product]
-    # This is the total number of products a business has in a category
+    # This is the total number of products a business has in a subcategory
     # Not the total number of products returned from this route in a request
     totalProductsInSubcategoryCount: Int
     # Response status code
@@ -201,16 +272,19 @@ type MultipleProductResponseSubcategory {
 }
 
 input productId {
+    # product id
     productId: String!
 }
 
 input businessGetProductByCategory {
+    # product id
     businessId: String!
+    # category id
     categoryId: String!
     """
     Page stands for pagination.
     For everytime a request is made to this route, 12 products are returned.
-    To get the next 12 products, page has to be set to 2.
+    To get the next 12 products, "page" has to be set to 2.
     Set page to 1 when making your query the first time since graphql does not support default values yet.
     Subsequently, page can be incremental by 1 for more results
     Note that page increases by 1
@@ -220,7 +294,9 @@ input businessGetProductByCategory {
 
 
 input businessGetProductBySubcategory {
+    # business id
     businessId: String!
+    # subcategory id
     subcategoryId: String!
     """
     Page stands for pagination.
@@ -234,7 +310,9 @@ input businessGetProductBySubcategory {
 }
 
 input businessSearchProduct {
+    # product search keyword.
     keyword: String!
+    # business id
     businessId: String!
 }
 
@@ -244,39 +322,56 @@ type Query {
 
     # A business can get all the products under a category
     BusinessGetProductByCategory (input: businessGetProductByCategory): MultipleProductResponse
-
+    
+    # A business can get all the products under a subcategory
     BusinessGetProductBysubCategory(input: businessGetProductBySubcategory): MultipleProductResponseSubcategory
 
+    # A business can search for a product she has uploaded. Please note that this search is basically a business searching for his/her product not all products uploaded to Cudua
     BusinessSearchProduct(input: businessSearchProduct): BusinessSearchResultResponse
 }
 
-#This is the mutation type that will handle create account, forgot and recover pasword
+
 type Mutation {
+    
+    # create product
     CreateProduct(input: createProduct): createProductResponse
 
+    # edit basic details of a product like name, price, category and subcategory
     EditBasicDetails(input: editBasicDetails): DatalessResponse
 
+    # add/edit product description
     EditDescription(input: addDescription): DatalessResponse
 
+    # add/edit product tags
     EditProductTags(input: editProductTags): DatalessResponse
 
+    # remove product tags
     RemoveProductTag(input: removeProductTag): DatalessResponse
 
+    # create/edit product sizes
     CreateProductSizes(input: createProductSize): DatalessResponse
 
+    # remove product sizes
     RemoveProductSize(input: removeProductSize): DatalessResponse
 
+    # add/edit product colors
     CreateProductColors(input: createProductColor): DatalessResponse
 
+    # remove product color
     RemoveProductColor(input: removeProductColor): DatalessResponse
 
+    # add more photos(secondary photos) to a product
     AddmorePhotos(input: addMorePhotos): DatalessResponse
 
+    # make an image a primary image
     MakePrimaryImage (input: makePrimaryInput): ImageArrayResponse
 
+    # remove an image from a product
     RemoveProductPicture(input: makePrimaryInput): DatalessResponse
 
+    # hide a product
     HideProduct(input: hideProduct): DatalessResponse
 
+    # show a product
     ShowProduct(input: hideProduct): DatalessResponse
 }   

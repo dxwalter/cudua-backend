@@ -1,3 +1,6 @@
+    # With this feature, a business can create their own list of categories and subcategories from either the
+    # existing list created by Cudua admins or other business people
+    
     # response type
     interface ResponseType {
         code: Int!
@@ -15,26 +18,38 @@
         message: String!
     }
     
+    # 
     input categoryMap {
         categoryId: String!,
         subcategories: [String!]!
     }
 
+    # This is the category choosen by a business
     input chosenBusinessCategory {
+        # business id
         businessId: String!
+        # category id
         categoryId: String!
+        # an array of subcategory ids not the subcategory names
         subcategories: [String]!
     }
 
+    # to hide a category
     input hideBusinessCategory{
+        # category id
         categoryId: String!
+        # business id
         businessId: String!
     }
 
+
+    # show a business category
     input showBusinessCategory{
+        # category id
         selectedCategoryId: String!
     }
 
+    # hide business subcategory
     input hideBusinessSubcategory {
         subcategoryId: String!
         businessId: String!
@@ -54,17 +69,23 @@
     type businessSubcategory {
         subcategoryId: String!
         subcategoryName: String!
+        # the number of products in a subcategory
         subcategoryProductCount: Int!
     }
 
+    # list of categories and corresponding subcatgories choosen by a business
     type businessCategory {
+        # category id
         categoryId: String!
+        # category name
         categoryName: String!
+        # an array of corresponding subcategories chosen under a category that has been chosen by a business
         subcategory: [businessSubcategory]
     }
 
-    type businessCategoryWithCountResponse implements ResponseType {
-
+    # A business can tell the total number of uploaded products in a subcategory under a category
+    type businessSubcategoryWithCountResponse implements ResponseType {
+        # an array of categories, subcategories and the number of products in a subcategory
         businessCategory: [businessCategory!]
         # Response status code
         code: Int!
@@ -75,15 +96,24 @@
     }
 
     type Query {
-        GetBusinessCategoriesWithSubcategory (input: getBusinessCategory): businessCategoryWithCountResponse
+        # get business categories, subcategories and the number of products in a subcategory
+        GetBusinessCategoriesWithSubcategory (input: getBusinessCategory): businessSubcategoryWithCountResponse
     }
 
     type Mutation {
+        # create business category
         CreateBusinessCategory(input: chosenBusinessCategory): DatalessResponse
 
+        # hide business category
         HideSelectedBusinessCategory(input: hideBusinessCategory): DatalessResponse
+        # show business catgory
         ShowSelectedBusinessCategory(input: hideBusinessCategory): DatalessResponse
 
+        # hide business subcategory
         HideSelectedBusinessSubcategory(input: hideBusinessSubcategory): DatalessResponse
+
+        # show business subcategory
         ShowSelectedBusinessSubcategory(input: showBusinessSubcategory): DatalessResponse
+
+        
     }

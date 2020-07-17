@@ -19,17 +19,24 @@ type DatalessResponse implements ResponseType {
 }
 
 type ProductReview {
+    # the author of the review is a user represented with a user id
     author: UserReview!
+    # review score by this user for a product
     rating: String!
+    # the message/feedback from the review written by the user
     description: String
 }
 
 input createProductReview {
+    # the product id to be reviewed
     productId: String!
+    # the message/feedback from review
     message: String!
+    # score rating between 1 - 5
     score: Int!
 }
 
 type Mutation {
+    # create a review for a product. A customer can write/create a review for a product
     CreateProductReview(input: createProductReview): DatalessResponse
 }

@@ -156,8 +156,6 @@ module.exports = class Movedata extends moveDataController{
 		for (const [index, d] of data.entries()) {
 			let lgaMongoId = await this.GetLgaMongoId(d.lga_id)
 
-			console.log(lgaMongoId)
-
 			if (lgaMongoId.error == false) {
 
 				commArray[index] = {
