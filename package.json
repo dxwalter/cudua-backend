@@ -51,7 +51,7 @@
     "reflect-metadata": "^0.1.13",
     "resize-optimize-images": "^1.1.0",
     "serverless": "^1.74.1",
-    "short-id": "0.1.0-1"
+    "shortid": "^2.2.15"
   },
   "devDependencies": {
     "@types/express": "github:types/express",
