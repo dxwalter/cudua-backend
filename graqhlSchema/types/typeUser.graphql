@@ -20,13 +20,18 @@
 
     # This "User" type defines the queryable fields for every user in our data source.
     type User {
+        # The fullname of the user must be greater than 2 characters
         fullname: String!
+        # The email of the user must be greater than 5 characters and must contain the @ symbol
   		email: String!
+        # This is used to check if a user is eligible to recieve email notification
   		email_notification: Int!
-        phone: String!
-    	displaPicture: String!
+        #  this is the user's password. it must be greater than 5 characters
+        phone: String
+        # the user display picture
+    	displaPicture: String
         # Business id represents the unique id of a business that was created by a user
-    	businessId: String!
+    	businessId: String
         # This user id represents a human account (personal account)
         userId: String!
     }
@@ -100,7 +105,7 @@
     input CreateAccountInput {
         """
         This is the fullname of the user. The user can choose to give only first or
-        lastname or both first and lastname
+        lastname or both first and lastname. The fullname must be greater than 2 characters
         """
         fullname: String!
         # This is the email address of the user and it must be unique
@@ -112,7 +117,6 @@
     input LoginInput {
         # this is the registered email address of the user
         email: String!
-
         # This is the user's login password
         password: String!
     }
@@ -122,15 +126,21 @@
     # case, the "books" query returns an array of zero or more Books (defined above).
 
     type Query {
+        # get a user
         getUser: User
+        # get multiple users
         getUsers: [User]
+        # log in a user
         userLogin(input: LoginInput): LoginResponse
     }
 
     #This is the mutation type that will handle create account, forgot and recover pasword
     type Mutation {
+        # create a new user
         createUser(input: CreateAccountInput): CreateAccountResponse
+        # recover a lost or forgotten password
         recoverPassword(email: String): DatalessResponse
+        # change to a new password
         resetPassword(input: resetPassword): DatalessResponse
     }
 

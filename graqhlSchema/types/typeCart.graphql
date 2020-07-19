@@ -19,67 +19,104 @@ type CartItemsResponse implements ResponseType {
 }
 
 type CartItem {
+    # Item id is the unique id of a product in cart
     itemId: String!
     # userId
     customer: String!
-    # product Details
+    # product Details. This includes product id, price, image, review
     product: ProductCartInfo!
+    # This is the business that owns the product that is in cart. this includes business id, name of business and address
     business: BusinessCartInfo!
+    # this is the size of the product selected by the customer
     size: String
+    # this is the color of the product selected by the customer
     color: String
+    # this is the quantity of the product the customer wants
     quantity: Int!
 }
 
 type ProductCartInfo {
+    # product id
     productId: String!
+    # name of product
+    name: String!
+    # price of the product
     price: Int!
+    # image of product
     image: String!
+    # this is the review score for the product between 1-5
     review: Int!
 }
 
+# this is the info of the business that owns the product
 type BusinessCartInfo {
+    # business id
     businessId: String!
+    # business name
     name: String!
+    # business address
     address: AddressType
 }
 
+# add item to cart
 input addItemToCart {
+    # business id
     businessId: String!,
+    # product id
     productId: String!,
+    # color id not color code or name
     colorId: String
+    # size id
     sizeId: String
 }
 
+# detele item from cart
 input deleteItemFromCart {
+    # this is the unique id of the item in cart. this is not product id
     itemId: String!
 }
 
+# update item quantity
 input updateItemQuantity {
+    # this is the unique id of the item in cart. this is not product id
     itemId: String!
+    # new quantity. The least/default is 1
     quantity: Int!
 }
 
+# update item color
 input updateItemColor {
+    # this is the unique id of the item in cart. this is not product id
     itemId: String!
+    # color id not color name
     colorId: String!
 }
 
 
 input updateItemSize {
+    # this is the unique id of the item in cart. this is not product id
     itemId: String!
+    # size id not size name
     sizeId: String!
 }
 
 
 
 type Query {
+    # get items from cart
+    # Please note that when the "accessToken" is not provided/expired, it will retrieve data for anonymous users
     GetCartItems: CartItemsResponse
 }
 
 type Mutation {
+    # add an item to cart
     AddItemToCart(input: addItemToCart): DatalessResponse
+    # delete an item from cart
     DeleteItemFromCart(input: deleteItemFromCart): DatalessResponse
+    # update the quantity of an item in cart
     UpdateItemQuantity(input: updateItemQuantity): DatalessResponse
+    # update the color of an item in cart
     UpdateItemColor(input: updateItemColor): DatalessResponse
+    # update the size of an item in cart
     UpdateItemSize(input: updateItemSize): DatalessResponse
 }

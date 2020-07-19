@@ -1,11 +1,7 @@
 "use-strict";
 
-const express = require('express');
-const router = express.Router();
-const app = express();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
 
 let UserController = require('../UserController');
 let UserModel = require('../../../Models/UserModel');
@@ -62,7 +58,7 @@ module.exports = class LoginUser extends UserController{
 
 
             let newData = {
-                id: arr._id,
+                itemId: arr._id,
                 categoryId: categoryDetails._id,
                 hide: arr.hide,
                 categoryName: categoryDetails.name,
@@ -137,7 +133,7 @@ module.exports = class LoginUser extends UserController{
 
         // business contact
         let businessContact =  {
-            email: getBusinessData.contact.email,
+            email: getBusinessData.contact.email.length < 1 ? getBusinessData.contact.email.length : null,
             phone: getBusinessData.contact.phone.length > 0 ? getBusinessData.contact.phone: null,
             whatsapp: {
                 status: getBusinessData.contact.whatsapp.status,
@@ -150,11 +146,11 @@ module.exports = class LoginUser extends UserController{
             id: getBusinessData._id,
             businessname: getBusinessData.businessname,
             username: getBusinessData.username,
-            description: getBusinessData.description,
+            description: getBusinessData.description.length > 0 ? getBusinessData.description : null,
             address: businessAddress,
             contact: businessContact,
-            logo: getBusinessData.logo,
-            coverPhoto: getBusinessData.coverPhoto,
+            logo: getBusinessData.logo.length > 0 ? getBusinessData.logo : null,
+            coverPhoto: getBusinessData.coverPhoto.length > 0 ? getBusinessData.coverPhoto : null,
             businessCategories: businessCategories
         }
 
@@ -209,8 +205,8 @@ module.exports = class LoginUser extends UserController{
                                 fullname: userDbDetails.fullname,
                                 email: userDbDetails.email,
                                 email_notification: userDbDetails.email_notification,
-                                phone: "",
-                                displaPicture: "",
+                                phone: userDbDetails.phone == null || undefined ? null : userDbDetails.phone,
+                                displaPicture: userDbDetails.profilePicture = null || undefined ? null : userDbDetails.profilePicture,
                                 businessId: businessId,
                             },
                             // business details

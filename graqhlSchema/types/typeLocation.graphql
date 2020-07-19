@@ -1,68 +1,106 @@
 
+# This are streets that are close by to another streets
+# Street A is a primary street and close by streets will be B, C, and D
 type closeBy {
+    # Name of street
     streetName: String,
+    # street id
     streetId: String
 }
 
+# the data of a street
 type streetData {
+    # street name
     streetName: String!,
+    # street id
     streetId: String!
+    # community data of the street
     community: CommunityData!
+    # LGA data of the street
     lga: LgaData!
+    # state data of the street
     state: StateData!
-    country: CountryId!
+    # country data of the street
+    country: CountryData!
+    # streets that are close to the streets
     closeBy: [closeBy]
 }
 
+# community data
 type communityData {
+    # community name
     communityName: String!
+    # community id
     communityId: String!
+    # lga data of the community
     lga: LgaData!
+    # state data of the community
     state: StateData!
-    country: CountryId!
+    # country data of the community
+    country: CountryData!
 }
 
 
 
-type CountryId {
+type CountryData {
+    # name of country
     name: String!
+    # country id
     countryId: String!
 }
 
 type StateData {
+    # name of state
     name: String!
+    # state id
     stateId: String
 }
 
 type CommunityData {
+    # name of community
     name: String!
+    # community id
     communityId: String!
 }
 
 type LgaData {
+    # name of LGA
     name: String!
+    # LGA id
     lgaId: String!
 }
 
+# this is what is returned when you search for a street
 type returnStreetSearch implements responseType{
+    # the data of the street which includes country, state, lga, community etc
     streetData: [streetData!],
+    # response status code
     code: Int!
+    # response status in boolean 
     success: Boolean!,
+    # response message
     message: String!
 }
 
+# this is what is returned when you search for a community
 type returnCommunitySearch implements responseType{
+    # the data of the community which includes country, state, lga
     communityData: [communityData!],
     code: Int!
     success: Boolean!,
     message: String!
 }
 
+
+# street search input
 input searchStreetInput{
+    # keyword
     keyword: String!
 }
 
 type Query {
+    # get street
     GetStreet (input: searchStreetInput): returnStreetSearch
+    # get community
     GetCommunity (input: searchStreetInput): returnCommunitySearch
 }

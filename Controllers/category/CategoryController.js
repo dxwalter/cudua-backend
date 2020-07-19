@@ -1,10 +1,7 @@
-const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
 
 const CategoryModel = require('../../Models/Categories'); 
 const Subcategory = require('../../Models/Subcategory'); 
 const FunctionRepo = require('../MainFunction');
-const res = require('express/lib/response');
 
 module.exports = class CategoryController extends FunctionRepo {
     constructor () { super(); }

@@ -3,26 +3,45 @@
 
     scalar Upload
 
+    # details of a business
     type BusinessAccount {
+        # unique business id
         id: ID,
+        # business name
         businessname: String
+        # business address. This includes country, state, lga, community and streets
         address: AddressType
+        # business contact
         contact: BusinessContact
+        # business categories
         businessCategories: [BusinessCategory]
+        # business logo
         logo: String
+        # business cover photo
         coverPhoto: String
+        # business description
         description: String
+        # business username
         username: String
     }
 
+    # This is a category choosen by  a business
     type BusinessCategory {
-        id: String
+        # 
+        itemId: String
+        # category id
         categoryId: String
+        # category name
         categoryName: String
+        # this is used to know if a category is hidden or visible
+        # 0 means visible
+        # 1 means hidden
         hide: Int
+        # An array of subcategories in this category
         subcategories: [BusinessSubcategory]
     }
 
+    # This is the subcategory chosen by a business under a category choosen by a business
     type BusinessSubcategory {
         itemId: String
         subcategoryId: String
@@ -40,24 +59,40 @@
         message: String!
     }
 
+    # this the business contact
     type BusinessContact {
+        # business email
         email: String
+        # since a business can have more than 1 phone number, this is an array of phone numbers
         phone: [String]
+        # business can integrate customer support by using their whatsapp application
+        # this is done providing the business's whatsapp number
         whatsapp: WhatsappType
     }
 
-
+    # this is the whatsapp data for customer support
     type WhatsappType {
+        # status is set to check if a business has setup a number
+        # 0 means it is not setup
+        # 1 means it is setup
         status: Int!,
+        # this is the whatsapp phone number
         number: String
     }
 
+    # this is the address of the business
     type AddressType {
+        # the business street number
         number: String
+        # business street
         street: String
+        # business community
         community: String
+        # business lga
         lga: String
+        # business state
         state: String
+        # business country
         country: String
     }
 
@@ -68,103 +103,156 @@
         message: String!
     }
 
-    # response type for CreateBusinessAccount mutation
+    # this is the response you will get when you create a business
     type CreateBusinessAccountResponse  {
+        # business details
         businessDetails: BusinessAccount
         code: Int!
         success: Boolean!
         message: String!
     }
 
-    # CreateBusinessAccount input type
-    input CreateBusinessAccountInput {
+    # these are the inputs needed to create a business
+    input CreateBusinessAccountInput {  
+        # business name
         name: String!
+        # business username
+        # a username must be greater than 2 characters
+        # it can have numbers, it can start with numbers
+        # it can start can not start with all special characters except underscore
+        # it can start with underscore
+        # "/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/ig" remove the quote around it
+        # visit this link to learn more "https://regexr.com/3cg7r"
         username: String!
     }
 
-    # username input
+    # Check if username exists
     input checkUsernameInput {
+        # check username string
         username: String!
     }
 
-    # the response type to check if username exists during registration
+    # this is the response you get when you check if a username exists
     type checkUsernameInputResponse implements responseType {
         code: Int!
         success: Boolean!
         message: String!
+        # this is either
+        # 0 means it does not exist
+        # 1 means it exists
         existence: Int!
     }
 
+    # a business can create a category and multiple subcategories at a time
     input categoryMap {
+        # category id
         categoryId: String!,
+        # an array of subcategory ids
         subcategories: [String!]!
     }
 
+    
     input chosenBusinessCategory {
         categoryId: String!
         dataObject: [categoryMap]
     }
 
+    # when you edit business details, this is the response you get
     type editBasicDetailsResponse implements responseType{
         code: Int!
         success: Boolean!
         message: String!
     }
 
+    # edit business details
     input editBusinessDetails {
+        # business id. Please note that it is required
         businessId: String!
+        # business name. Please note it is not required
         businessName: String,
+        # business username. Please note that it is not required
         businessUsername: String,
+        # business description. Please note that it is not required
         businessDescription: String
     }
 
+    # edit business phone number
     input editbusinessPhoneNumberInput {
-        phoneNumbers: String!
+        # this is an array of phone numbers
+        phoneNumbers: [String]!
+        # business id
         businessId: String!
     }
 
+    # edit business email
     input editbusinessEmailInput {
+        # business email
         email: String!
+        # business Id
         businessId: String!
+        # email notification
+        # 0 means notification is not set
+        # 1 means notification is set so a business can receive email notifications
         notification: Int
     }
 
-    
+    # a business can attach their whatsapp phone number to be used as customer support
     input editWhatsappContact {
+        # phone number
         phoneNumber: String!
+        # business if
         businessId: String!
+        # A business owner can decide to deactivate whatsapp an still retain the whatsapp number on the service
+        # 0 means whatsapp is not set
+        # 1 means whatsapp is set so a business can receive messages from customers
         notification: Int
     }
 
+    # edit business logo
     input editBusinessLogo {
         file: Upload!
         businessId: String!
     }
 
+    # edit business address
     input editBusinessAddress {
+        # This is the number the business is located on a street
         streetNumber: Int!,
+        # this is the street id
         streetId: String!
+        # this is the business id
         businessId: String!
     }
 
     type Query {
+        # get business details
         GetSingleBusinessDetails:  BusinessAccount
+        # check if username exists
         CheckUsernameExists(input: checkUsernameInput): checkUsernameInputResponse
     }
 
     type Mutation {
+        # create business account
         CreateBusinessAccount (input: CreateBusinessAccountInput ): CreateBusinessAccountResponse
 
+        # edit business basic details
         EditBusinessBasicDetails(input: editBusinessDetails): editBasicDetailsResponse
 
+        # edit business phone  numbers
         EditBusinessPhoneNumber(input: editbusinessPhoneNumberInput): editBasicDetailsResponse
+
+        # edit business email address
         EditBusinessEmailAddress(input: editbusinessEmailInput): editBasicDetailsResponse
 
+        # edit business logo
         EditBusinesslogo(input: editBusinessLogo): editBasicDetailsResponse
 
+        # edit business cover photo
         EditBusinessCoverPhoto(input: editBusinessLogo): editBasicDetailsResponse
 
+        # edit business whatsapp contact
         EditWhatsappContact(input: editWhatsappContact): editBasicDetailsResponse
 
+        # edit business address
         EditBusinessAddress(input: editBusinessAddress): editBasicDetailsResponse
     }

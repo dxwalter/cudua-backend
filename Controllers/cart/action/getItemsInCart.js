@@ -45,6 +45,7 @@ module.exports = class GetItemsInCart extends CartController {
                 customer: item.owner,
                 product: {
                     productId: item.product._id,
+                    name: item.product.name,
                     price: item.product.price,
                     image: item.product.primary_image,
                     review: item.product.score
