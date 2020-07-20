@@ -1,9 +1,5 @@
 "use-strict";
 
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
 let SubcategoryController = require('../SubcategoryController')
 const Subcategory = require('../../../Models/Subcategory');
 

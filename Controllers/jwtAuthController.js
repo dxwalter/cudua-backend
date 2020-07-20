@@ -1,3 +1,5 @@
+'use-strict'
+
 module.exports = function authentiCateUser (accessToken) {
 
     const jwt = require('jsonwebtoken');

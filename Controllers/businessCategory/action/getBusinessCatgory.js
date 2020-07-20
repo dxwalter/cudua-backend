@@ -1,9 +1,8 @@
+'use-strict'
 
 const BusinessCategoryController = require('../../businessCategory/BusinessCategoryController');
 const BusinessController = require('../../business/BusinessController');
-const Categories = require('../../../Models/Categories');
 const ProductController = require('../../product/ProductController');
-const { create } = require('../../../Models/Categories');
 
 module.exports = class GetBusinessCategories extends BusinessCategoryController {
     constructor () {

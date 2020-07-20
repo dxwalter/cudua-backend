@@ -1,0 +1,38 @@
+
+type Order {
+    customerName: String!
+    profilePicture: String
+    orderTime: String!
+    orderId: String!
+}
+
+input deleteItemInOrder {
+    orderId: String!
+    productId: String!    
+}
+
+input businessGetOrder {
+    businessId: String!
+}
+
+type OrderStatus {
+    newOrder: [Order]
+    pendingOrder: [Order]
+    clearedOrder: [Order]
+}
+
+type OrdersResponse implements ResponseType {
+    orders: OrderStatus
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+type Query {
+    BusinessGetOrders(input: businessGetOrder): OrdersResponse
+}
+
+type Mutation {
+    CreateOrder: DatalessResponse
+    CustomerDeleteProductInOrder (input: deleteItemInOrder): DatalessResponse
+}

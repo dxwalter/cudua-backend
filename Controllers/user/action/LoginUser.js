@@ -108,7 +108,7 @@ module.exports = class LoginUser extends UserController{
     }
 
     async getBusinessDetails (businessDetails) {
-
+        
         // business data
         let getBusinessData = businessDetails;
 
@@ -133,8 +133,8 @@ module.exports = class LoginUser extends UserController{
 
         // business contact
         let businessContact =  {
-            email: getBusinessData.contact.email.length < 1 ? getBusinessData.contact.email.length : null,
-            phone: getBusinessData.contact.phone.length > 0 ? getBusinessData.contact.phone: null,
+            email: getBusinessData.contact.email == undefined || getBusinessData.contact.email.length < 1 ? null : getBusinessData.contact.email,
+            phone: getBusinessData.contact.phone == undefined || getBusinessData.contact.phone.length < 1 ? null: getBusinessData.contact.phone,
             whatsapp: {
                 status: getBusinessData.contact.whatsapp.status,
                 number: getBusinessData.contact.whatsapp.number
@@ -146,11 +146,11 @@ module.exports = class LoginUser extends UserController{
             id: getBusinessData._id,
             businessname: getBusinessData.businessname,
             username: getBusinessData.username,
-            description: getBusinessData.description.length > 0 ? getBusinessData.description : null,
+            description: getBusinessData.description.length < 1 ||  getBusinessData.description == undefined ? getBusinessData.description : null,
             address: businessAddress,
             contact: businessContact,
-            logo: getBusinessData.logo.length > 0 ? getBusinessData.logo : null,
-            coverPhoto: getBusinessData.coverPhoto.length > 0 ? getBusinessData.coverPhoto : null,
+            logo: getBusinessData.logo.length < 1 || getBusinessData.logo == undefined ? null : getBusinessData.logo,
+            coverPhoto: getBusinessData.coverPhoto.length < 1 || getBusinessData.coverPhoto == undefined ? null :  getBusinessData.coverPhoto,
             businessCategories: businessCategories
         }
 
@@ -217,11 +217,11 @@ module.exports = class LoginUser extends UserController{
                             message: "Hurray! Your sign in was successfully"
                         };
                     } else {
-                       return this.returnType(200 , false, `Your sign in details is incorrect`)
+                       return this.returnType(200 , false, `Incorrect sign in details`)
                     }
                     
                 } else {
-                    return this.returnType(200 , false, `Your sign in details is incorrect`)
+                    return this.returnType(200 , false, `Incorrect sign in details`)
                 }
 
         } else {

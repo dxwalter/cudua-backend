@@ -1,5 +1,4 @@
-const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
+'use-strict'
 
 const BusinessCategoryModel = require('../../Models/BusinessCategory');
 const CategoryModel = require('../../Models/Categories');

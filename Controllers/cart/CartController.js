@@ -1,3 +1,4 @@
+'use-strict'
 
 const FunctionRepo = require('../MainFunction');
 const CartModel = require('../../Models/CartModel');
@@ -78,6 +79,7 @@ module.exports = class CartController extends FunctionRepo {
         try {
             let getItems = await CartModel.find({owner: userId})
             .sort({_id: -1})
+            .populate("owner")
             .populate('business')
             .populate('product')
 

@@ -1,6 +1,7 @@
+'use-strict'
 
 const CategoryModel = require('../../Models/Categories'); 
-const Subcategory = require('../../Models/Subcategory'); 
+ 
 const FunctionRepo = require('../MainFunction');
 
 module.exports = class CategoryController extends FunctionRepo {

@@ -1,3 +1,4 @@
+'use-strict'
 
 const ProductController = require('../ProductController');
 const ProductReviewController = require('../../productReview/ProductReviewController');

@@ -1,3 +1,4 @@
+'use-strict'
 
 const StreetModel = require('../../Models/LocationStreet');
 const CommunityModel = require('../../Models/LocationCommunity');

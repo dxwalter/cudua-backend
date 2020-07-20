@@ -1,3 +1,5 @@
+'use-strict'
+
 const Sengrid  = require('@sendgrid/mail');
 Sengrid.setApiKey(process.env.SENDGRID_API_KEY);
 const fs = require('fs');

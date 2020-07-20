@@ -1,3 +1,4 @@
+'use-strict'
 
 const BookmarkController = require('../BookmarkController');
 const BusinessController = require('../../business/BusinessController');

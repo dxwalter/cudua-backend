@@ -1,3 +1,5 @@
+'use-strict'
+
 const ProductModel = require('../../../Models/Product');
 const ProductController = require('../ProductController');
 const createBusinessCategory = require('../../businessCategory/action/createBusinessCategories');
@@ -598,7 +600,6 @@ module.exports = class EditProduct extends ProductController {
         let newArray = [fileName];
 
         newArray = newArray.concat(imageArray);
-
 
         let removeDuplicate =  Array.from(new Set(newArray))
 

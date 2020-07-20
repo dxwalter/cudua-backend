@@ -1,5 +1,4 @@
-const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
+'use-strict'
 
 const UserModel = require('../../Models/UserModel');
 const RecoverPasswordModel = require('../../Models/RecoverPassword');

@@ -1,5 +1,5 @@
 {
-  userLogin(input:{email: "theceoforlife@gmail.com", password: "walter99"}) {
+  userLogin(input:{email: "business@gmail.com", password: "walter99"}) {
     
     userDetails {
       fullname
@@ -33,7 +33,7 @@
         }
       }
       businessCategories{
-        id
+        itemId
         categoryId
         categoryName
         hide
@@ -903,6 +903,59 @@ mutation {
     itemId: "5f104ad42cb1462c1ce9950f",
     sizeId: "5f0edfa384604217685696b6",
   }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  CreateOrder {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  CustomerDeleteProductInOrder(input: {
+    orderId: "OFVDETFDC",
+    productId: "5f0e722b5cfb6e3494756d60"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+
+{
+  BusinessGetOrders(input:{
+    businessId: "5f0e73a9794b222e284a988a"
+  }){
+    orders {
+      new {
+        customerName
+        profilePicture
+        orderTime
+        orderId
+        orderStatus
+      }
+      pending {
+        customerName
+        profilePicture
+        orderTime
+        orderId
+        orderStatus
+      }
+      cleared {
+        customerName
+        profilePicture
+        orderTime
+        orderId
+        orderStatus
+      }
+    }
     code
     success
     message

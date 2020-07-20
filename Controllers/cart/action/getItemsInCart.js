@@ -1,4 +1,5 @@
-  
+'use-strict'
+
 const CartController = require('../CartController');
 const LocationController = require('../../Location/LocationController');
 

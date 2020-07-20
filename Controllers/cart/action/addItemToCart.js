@@ -1,3 +1,4 @@
+'use-strict'
 
 const CartController = require('../CartController'); 
 const BusinessController = require('../../business/BusinessController');
