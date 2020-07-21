@@ -102,7 +102,8 @@ module.exports = class LoginUser extends UserController{
             community: findStreet.community_id.name,
             lga: findStreet.lga_id.name,
             state: findStreet.state_id.name,
-            country: findStreet.country_id.name
+            country: findStreet.country_id.name,
+            busStop: businessData.address.bus_stop
         }
 
     }

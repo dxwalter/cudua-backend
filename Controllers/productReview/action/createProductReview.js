@@ -3,14 +3,14 @@
 let ProductReviewController = require('../ProductReviewController');
 let ProductController = require('../../product/ProductController');
 let BusinessController = require('../../business/BusinessController');
-let ProductReviewModel = require('../../../Models/productReview')
+let ProductReviewModel = require('../../../Models/productReview');
 
 module.exports = class CreateProductReview extends ProductReviewController {
 
     constructor () { 
         super();
         this.ProductController = new ProductController();
-        this.BusinessController = new BusinessController()
+        this.BusinessController = new BusinessController();
     }
 
     returnData (code, success, message) {
@@ -42,7 +42,7 @@ module.exports = class CreateProductReview extends ProductReviewController {
     async createReview (productId, message, score, userId) {
 
         if (productId.length == false) return this.returnData(200, false,  `The ID for this product was not provided`);
-        // if (message.length < 2) return this.returnData(200, false, `Type your feedback`)
+        
         if (score < 1 || score > 5) return this.returnData(200, false, `Choose a review score between 1 to 5 for this product`)
         
         let getProductDetails = await this.ProductController.FindProductById(productId);
@@ -58,7 +58,8 @@ module.exports = class CreateProductReview extends ProductReviewController {
 
         if (userId == getBusinessDetails.owner) return this.returnData(200, false, "You cannot write a review for your own product")
 
-        // check if user has reviewwed product before
+        // check if user has reviewed product before
+        // a user can only review a product once. If the user wants to review it again, the previous one will be updated
         let check = await this.CheckIfUserHasReviewedProduct(userId, productId);
         if (check.error == true) {
             return this.returnData(500, false, `An error occurred while checking your review status`)

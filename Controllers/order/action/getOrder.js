@@ -38,7 +38,7 @@ module.exports = class GetOrders extends OrderController {
                     })
                 }
 
-                if (orderItem.order_status == 1) {
+                if (orderItem.order_status &&  orderItem.delivery_status != 1) {
                     pendingOrder.push({
                         customerName: orderItem.customer.fullname,
                         profilePicture: orderItem.customer.profilePicture == undefined ? null : orderItem.customer.profilePicture,
@@ -89,7 +89,7 @@ module.exports = class GetOrders extends OrderController {
         let getOrdersForBusiness = await this.getOrdersForBusiness(businessId);
         let formatOrder = this.formartOrderData(getOrdersForBusiness.result);
 
-        console.log(formatOrder)
+        return this.returnMethod(formatOrder, 200, true, "Orders retrieved successfully")
 
 
     }

@@ -55,14 +55,14 @@
     }
 
     type CreateAccountResponse implements ResponseType {
-        fullname: String!
-  		email: String!
+        fullname: String
+  		email: String
         phone: String
     	displaPicture: String
         # Business id represents the unique id of a business that was created by a user
     	businessId: String
         # This user id represents a human account (personal account)
-        userId: String!
+        userId: String
 
         # Api http status code
         code: Int!

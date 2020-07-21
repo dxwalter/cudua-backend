@@ -18,7 +18,7 @@ module.exports = class createNotification extends NotificationController {
         }
     }
 
-    async createCustomerNotification (userId, actionId, message) {
+    async createCustomerNotification (userId, actionId, notificationType, message) {
         if (userId.length < 1) return this.returnMethod(200, false, "Your account is not recognised. Sign out and sign in to continue.")
 
         if (message.length < 10) return this.returnMethod(200, false, "Please provide a descriptive message of your notification");
@@ -27,7 +27,7 @@ module.exports = class createNotification extends NotificationController {
         let create = new CustomerNotificationModel({
             owner: userId,
             action_id: actionId,
-            type: "order",
+            type: notificationType,
             message: message
         });
 
@@ -38,7 +38,7 @@ module.exports = class createNotification extends NotificationController {
         return this.returnMethod(200, true, "Notification created successfully")
     }
 
-    async createBusinessNotification (businessId, actionId, message) {
+    async createBusinessNotification (businessId, actionId, notificationType, message) {
         if (businessId.length < 1) return this.returnMethod(200, false, "Your business account is not recognised. Sign out and sign in to continue.")
 
         if (message.length < 10) return this.returnMethod(200, false, "Please provide a descriptive message of your notification");
@@ -47,7 +47,7 @@ module.exports = class createNotification extends NotificationController {
         let create = new BusinessNotificationModel({
             owner: businessId,
             action_id: actionId,
-            type: "order",
+            type: notificationType,
             message: message
         });
 

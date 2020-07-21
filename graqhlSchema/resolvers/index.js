@@ -12,6 +12,7 @@ const MoveLocationResolver = require('./MoveLocationResolver');
 const LocationResover = require('./LocationResover');
 const CartResolver = require('./CartResolver');
 const OrderResolver = require('./OrderResolver');
+const CustomerReviewResolver = require('./CustomerReviewResolver');
 
 const resolvers = [
   UserResolver,
@@ -25,7 +26,8 @@ const resolvers = [
   MoveLocationResolver,
   LocationResover,
   CartResolver,
-  OrderResolver
+  OrderResolver,
+  CustomerReviewResolver
 ];
 
 module.exports = mergeResolvers(resolvers);

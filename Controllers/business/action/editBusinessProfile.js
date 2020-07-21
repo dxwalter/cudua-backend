@@ -416,10 +416,12 @@ module.exports = class EditBusinessDetails extends BusinessController {
         }
     }
 
-    async changeBusinessAddress (streetNumber, streetId, businessId, userId) {
+    async changeBusinessAddress (streetNumber, streetId, bustop, businessId, userId) {
 
         if (streetNumber < 1) return this.returnData(200, false, 'Your street number is not provided')
         if (streetId.length < 1) return this.returnData(200, false, 'Provide a street ID');
+
+        if (bustop.length < 1) return this.returnData(200, false, 'Provide the name of the closest bus stop to your business location');
 
         let businessData = await this.getBusinessData(businessId);
 
@@ -450,7 +452,8 @@ module.exports = class EditBusinessDetails extends BusinessController {
             community: community,
             lga: lga,
             state: state,
-            country: country
+            country: country,
+            bus_stop: bustop
         }
 
         let updateStreet = await this.findOneAndUpdate(businessId, {address: newObject})

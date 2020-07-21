@@ -41,7 +41,7 @@ module.exports = class CreateUser extends UserController{
         return {
             fullname: fullname,
             email: email,
-            userId: '',
+            userId: null,
             code: statusCode,
             success: status,
             message: statusMessage,
@@ -52,27 +52,27 @@ module.exports = class CreateUser extends UserController{
     async validateUserInput() {
         
         if (this.fullname.length < 3) {
-            return this.returnMethod('', '', false, "Your fullname must be greater than 2 characters", 200);
+            return this.returnMethod(null, null, false, "Your fullname must be greater than 2 characters", 200);
         }
 
         this.formatFullname(this.fullname);
 
         if (this.password.length < 6) {
-            return this.returnMethod('', '', false, "Your password must be greater than 6 characters",  200);
+            return this.returnMethod(null, null, false, "Your password must be greater than 6 characters",  200);
         } else {
             this.password = bcrypt.hashSync(this.password, 10)
         }
 
         if (this.email.length < 5) {
-            return this.returnMethod('', '', false, "Enter a valid email address",  200);
+            return this.returnMethod(null, null, false, "Enter a valid email address",  200);
         }
         
         let checkEmailExistence = await this.emailExists(this.email);
 
         if (checkEmailExistence.error == true) {
-            return this.returnMethod('', '', false, checkEmailExistence.message,  200);
+            return this.returnMethod(null, null, false, checkEmailExistence.message,  200);
         } else if (checkEmailExistence.result == true) {
-            return this.returnMethod('', '', false, `The email address: ${this.email}, already exists`,  200);   
+            return this.returnMethod(null, null, false, `The email address: ${this.email}, already exists`,  200);   
         }
 
         const createUser = new UserModel ({
@@ -81,9 +81,11 @@ module.exports = class CreateUser extends UserController{
             password: this.password
         });
 
+        createUser['reviews'] = createUser._id;
+
         let data = await this.createUserAccount(createUser);
         if (data.error == true) {
-            return this.returnMethod('', '', false, data.message,  200);
+            return this.returnMethod(null, null, false, "An error occurred while creating your account",  200);
         }
         
         data = data.result;

@@ -27,6 +27,24 @@ const UserSchema = mongoose.Schema({
         ref: "business-accounts",
         required: false
     },
+    reviews: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "customer-review",
+        required: false
+    },
+    review_score: {
+        type: Number,
+        default: 0
+    },
+    address: {
+        bus_stop: {type: String, trim: true},
+        number: { type: Number},
+        street: { type: mongoose.Schema.Types.ObjectId, ref: "location-streets"},
+        community: { type: mongoose.Schema.Types.ObjectId, ref: "location-communities"},
+        lga: { type: mongoose.Schema.Types.ObjectId, ref: "location-lgas"},
+        state: {  type: mongoose.Schema.Types.ObjectId, ref: "location-states"},
+        country: { type: mongoose.Schema.Types.ObjectId, ref: "location-countries"},
+    },
     created : {
         type : Date,
         default: Date.now()

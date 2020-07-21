@@ -1,0 +1,19 @@
+
+input createReview {
+    businessId: String!
+    customerId: String!
+    rating: Int!
+    description: String
+}
+
+type createReviewResponse implements ResponseType {
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+
+
+type Mutation {
+    createCustomerReview(input: createReview): createReviewResponse
+}

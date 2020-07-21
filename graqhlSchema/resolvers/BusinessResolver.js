@@ -116,7 +116,7 @@ module.exports = {
 
             args = args.input
             let editAddress = new EditBusinessProfile();
-            return editAddress.changeBusinessAddress(args.streetNumber, args.streetId, args.businessId, userId)
+            return editAddress.changeBusinessAddress(args.streetNumber, args.streetId, args.closestBusStop, args.businessId, userId)
         }
     }
 }

@@ -28,6 +28,19 @@ type OrdersResponse implements ResponseType {
     message: String!
 }
 
+type orderCustomer {
+    fullname: String!
+    profilePicture: String
+}
+
+type productsInOrder implements ResponseType {
+    # products: []
+    customerDetails: orderCustomer
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
 type Query {
     BusinessGetOrders(input: businessGetOrder): OrdersResponse
 }

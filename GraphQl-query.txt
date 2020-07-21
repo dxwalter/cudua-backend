@@ -339,6 +339,7 @@ mutation {
   EditBusinessAddress(input:{
     streetNumber: 10,
    	streetId: "5f088765b0be4c0ba09f860b",	
+    closestBusStop: "Artillery bus stop",
     businessId: "5f0a5ad394b3161a343590e7"
   }) {
     code

@@ -94,6 +94,8 @@
         state: String
         # business country
         country: String
+        # bus stop
+        busStop: String
     }
 
     # response type
@@ -220,6 +222,8 @@
         streetNumber: Int!,
         # this is the street id
         streetId: String!
+        # this is the closest bus stop to the business location
+        closestBusStop: String!
         # this is the business id
         businessId: String!
     }

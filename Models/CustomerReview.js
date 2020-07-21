@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
-const ProductReview = mongoose.Schema({
-    author: {
+const CustomerReview = mongoose.Schema({
+    customer_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
         required: true
     },
-    product_id: {
+    business_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "products",
+        ref: "business-accounts",
         required: true
     },
     rating: {type: Number, required: true},
@@ -19,4 +19,4 @@ const ProductReview = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('product-review', ProductReview);
+module.exports = mongoose.model('customer-review', CustomerReview);

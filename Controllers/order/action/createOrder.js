@@ -84,7 +84,7 @@ module.exports = class createOrder extends OrderController {
     async saveBusinessNotification(businessIdArray, orderId, message) {
 
         for (let id of businessIdArray) {
-            await this.notification.createBusinessNotification(id, orderId, message);
+            await this.notification.createBusinessNotification(id, orderId, "order", message);
         }
 
     }
@@ -151,7 +151,7 @@ module.exports = class createOrder extends OrderController {
 
         // create customer notification
         let notificationMessage = `Your order has been created successfully. Your order ID is ${orderId}`
-        let createCustomerNotification = await this.notification.createCustomerNotification(userId, orderId, notificationMessage);
+        let createCustomerNotification = await this.notification.createCustomerNotification(userId, orderId, "order", notificationMessage);
 
         // create business notification
         let businessNotificationMessage = `You have a new order and it is awaiting confirmation. The order ID is ${orderId}`;
