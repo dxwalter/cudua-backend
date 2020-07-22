@@ -34,45 +34,44 @@ module.exports = class CreateUser extends UserController{
             let newName = this.MakeFirstLetterUpperCase(element);
             formattedName = formattedName + " " + newName
         });
+        
         this.fullname = formattedName.toString().trim();
     }
 
-    returnMethod (fullname, email, status, statusMessage, statusCode) {
+    returnMethod (data, status, statusMessage, statusCode) {
+
         return {
-            fullname: fullname,
-            email: email,
-            userId: null,
+            userData: data,
             code: statusCode,
             success: status,
             message: statusMessage,
-            accessToken: ""
-        };
+        }
     }
 
     async validateUserInput() {
         
         if (this.fullname.length < 3) {
-            return this.returnMethod(null, null, false, "Your fullname must be greater than 2 characters", 200);
+            return this.returnMethod(null, false, "Your fullname must be greater than 2 characters", 200);
         }
 
         this.formatFullname(this.fullname);
 
         if (this.password.length < 6) {
-            return this.returnMethod(null, null, false, "Your password must be greater than 6 characters",  200);
+            return this.returnMethod(null, false, "Your password must be greater than 6 characters",  200);
         } else {
             this.password = bcrypt.hashSync(this.password, 10)
         }
 
         if (this.email.length < 5) {
-            return this.returnMethod(null, null, false, "Enter a valid email address",  200);
+            return this.returnMethod(null, false, "Enter a valid email address",  200);
         }
         
         let checkEmailExistence = await this.emailExists(this.email);
 
         if (checkEmailExistence.error == true) {
-            return this.returnMethod(null, null, false, checkEmailExistence.message,  200);
+            return this.returnMethod(null, false, checkEmailExistence.message,  200);
         } else if (checkEmailExistence.result == true) {
-            return this.returnMethod(null, null, false, `The email address: ${this.email}, already exists`,  200);   
+            return this.returnMethod(null, false, `The email address: ${this.email}, already exists`,  200);   
         }
 
         const createUser = new UserModel ({
@@ -85,15 +84,14 @@ module.exports = class CreateUser extends UserController{
 
         let data = await this.createUserAccount(createUser);
         if (data.error == true) {
-            return this.returnMethod(null, null, false, "An error occurred while creating your account",  200);
+            return this.returnMethod(null, false, "An error occurred while creating your account",  200);
         }
         
         data = data.result;
 
         let userId = data._id;
         let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });
-        
-        return {
+        let newData =  {
             userId : data._id,
             fullname: data.fullname,
             email: data.email,
@@ -101,9 +99,7 @@ module.exports = class CreateUser extends UserController{
             displaPicture: null,
             businessId: null,
             accessToken: accessToken,
-            code: 200,
-            success: true,
-            message: "Your account was created successfully"
         };
+        return this.returnMethod(newData, true, "Your account was created successfully",  200);
     }
 }

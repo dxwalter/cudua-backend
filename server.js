@@ -30,23 +30,27 @@ const schema = makeExecutableSchema({
 
 
 class startServer {
+
     constructor(app) {
 
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
 
         app.use("/v1", 
-        bodyParser.json(), 
-        apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
-        graphqlHTTP((req, res) => ({
-            schema,
-            graphiql: true,
-            context: {
-                accessToken: req.header("accessToken"),
-                authFunction: jwtAuthentication
-            },
-            tracing: true
-        })))
+            bodyParser.json(), 
+                apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+                    graphqlHTTP((req, res) => 
+                        ({
+                            schema,
+                            graphiql: true,
+                            context: {
+                                accessToken: req.header("accessToken"),
+                                authFunction: jwtAuthentication
+                            },
+                            tracing: true
+                        })
+                    )
+        )
 
         // mongoose config
         mongoose.set('useNewUrlParser', true);

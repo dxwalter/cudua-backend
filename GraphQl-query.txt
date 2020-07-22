@@ -7,6 +7,7 @@
       phone
     	userId
     	displaPicture
+      review
     }
      
     businessDetails {
@@ -957,6 +958,19 @@ mutation {
         orderStatus
       }
     }
+    code
+    success
+    message
+  }
+}
+
+mutation {
+	createCustomerReview(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    customerId: "5f1670ab9041bc122c994907",
+    rating: 5,
+    description: "Thi is so cool"
+  }) {
     code
     success
     message

@@ -34,6 +34,8 @@
     	businessId: String
         # This user id represents a human account (personal account)
         userId: String!
+        # This is the review score for this user
+        review: Float!
     }
 
     type UserReview {
@@ -54,7 +56,7 @@
         userId: String!
     }
 
-    type CreateAccountResponse implements ResponseType {
+    type UserData {
         fullname: String
   		email: String
         phone: String
@@ -63,7 +65,16 @@
     	businessId: String
         # This user id represents a human account (personal account)
         userId: String
+        """ 
+        this is the jwt access token generated when a user logs in successfully.
+        This is token is used to authenticate every logged in user. Therefore, it is attached 
+        in the header object of every request sent by a logged in user.
+        """
+        accessToken: String!
+    }
 
+    type CreateAccountResponse implements ResponseType {
+        userData: UserData
         # Api http status code
         code: Int!
         # This boolean value is used to check if an operation ran successfully
@@ -71,12 +82,6 @@
 
         # This is the message sent by the server about an operation
         message: String!
-        """ 
-        this is the jwt access token generated when a user logs in successfully.
-        This is token is used to authenticate every logged in user. Therefore, it is attached 
-        in the header object of every request sent by a logged in user.
-        """
-        accessToken: String!
     }
 
     type LoginResponse implements ResponseType {
@@ -121,6 +126,14 @@
         password: String!
     }
 
+    input editUserContact {
+        email: String
+        phone: String
+        streetNumber: Int
+        streetId: String
+        busStop: String
+    }
+
     # The "Query" type is special: it lists all of the available queries that
     # clients can execute, along with the return type for each. In this
     # case, the "books" query returns an array of zero or more Books (defined above).
@@ -134,6 +147,7 @@
         userLogin(input: LoginInput): LoginResponse
     }
 
+
     #This is the mutation type that will handle create account, forgot and recover pasword
     type Mutation {
         # create a new user
@@ -142,6 +156,9 @@
         recoverPassword(email: String): DatalessResponse
         # change to a new password
         resetPassword(input: resetPassword): DatalessResponse
+
+        # this is to edit basic info of the user
+        editUserContact(input: editUserContact): DatalessResponse
     }
 
 
