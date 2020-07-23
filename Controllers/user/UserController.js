@@ -158,6 +158,23 @@ module.exports = class UserController extends FunctionRepo{
         }
     }
 
+    async findUsersByField (fieldAndDataObject) {
+        try {
+            const findResult = await UserModel.findOne(fieldAndDataObject).exec();  
+            
+            return {
+                error: false,
+                result: findResult
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async createForgotPassword (forgotPasswordData) {
         try {
             const create = await forgotPasswordData.save();

@@ -36,7 +36,7 @@ module.exports = class LocationController  {
 
         try {
 
-            let findStreet = await StreetModel.find({_id: streetId})
+            let findStreet = await StreetModel.findOne({_id: streetId})
             .sort({_id: -1})
             .populate('country_id')
             .populate('state_id')

@@ -37,8 +37,8 @@ const UserSchema = mongoose.Schema({
         default: 0
     },
     address: {
-        bus_stop: {type: String, trim: true},
         number: { type: Number},
+        bus_stop: {type: String, trim: true},
         street: { type: mongoose.Schema.Types.ObjectId, ref: "location-streets"},
         community: { type: mongoose.Schema.Types.ObjectId, ref: "location-communities"},
         lga: { type: mongoose.Schema.Types.ObjectId, ref: "location-lgas"},

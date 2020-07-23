@@ -85,25 +85,25 @@ module.exports = class LoginUser extends UserController{
         return businessCategoryArray;
     }
 
-    async formatBusinessAddress (businessData) {
+    async formatAddress (addressObject) {
 
-        let streetId = businessData.address.street;
+        let streetId = addressObject.street
         if (streetId == undefined) return null
 
         let findStreet = await this.LocationController.SearchStreetById(streetId);
 
         if (findStreet.error) return null
 
-        findStreet = findStreet.result[0];
+        findStreet = findStreet.result;
 
         return {
-            number: businessData.address.number,
+            number: addressObject.number,
             street: findStreet.name,
             community: findStreet.community_id.name,
             lga: findStreet.lga_id.name,
             state: findStreet.state_id.name,
             country: findStreet.country_id.name,
-            busStop: businessData.address.bus_stop
+            busStop: addressObject.bus_stop
         }
 
     }
@@ -114,8 +114,8 @@ module.exports = class LoginUser extends UserController{
         let getBusinessData = businessDetails;
 
         // business address
-        let businessAddress = await this.formatBusinessAddress(getBusinessData)
 
+        let businessAddress = getBusinessData.address == null || getBusinessData.address == undefined ? null : await this.formatAddress(getBusinessData.address)
 
         let businessId = getBusinessData._id;
 
@@ -207,8 +207,9 @@ module.exports = class LoginUser extends UserController{
                                 email: userDbDetails.email,
                                 email_notification: userDbDetails.email_notification,
                                 phone: userDbDetails.phone == null || undefined ? null : userDbDetails.phone,
-                                displaPicture: userDbDetails.profilePicture = null || undefined ? null : userDbDetails.profilePicture,
-                                review: userDbDetails.review_score = null || undefined ? null : userDbDetails.review_score,
+                                displaPicture: userDbDetails.profilePicture == null || undefined ? null : userDbDetails.profilePicture,
+                                review: userDbDetails.review_score == null || undefined ? null : userDbDetails.review_score,
+                                address: userDbDetails.address == null || undefined ? null : await this.formatAddress(userDbDetails.address),
                                 businessId: businessId,
                             },
                             // business details

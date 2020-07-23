@@ -254,7 +254,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         }
 
         // check if phone number exists in user 
-        let userNumberCheck = await this.UserController.findUserByEmail(phoneNumber);
+        let userNumberCheck = await this.UserController.findUsersByField({phone: phoneNumber});
 
         if (userNumberCheck.result != null) {
             if (userNumberCheck.result._id != userId) {
@@ -436,7 +436,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
         if (findStreet.error) return this.returnData(500, false, `An error occurred. The street you chose has either been moved or deleted`)
 
-        findStreet = findStreet.result[0];
+        findStreet = findStreet.result;
 
         let street = findStreet._id;
         let community = findStreet.community_id._id;

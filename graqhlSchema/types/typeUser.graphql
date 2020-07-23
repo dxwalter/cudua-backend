@@ -36,6 +36,26 @@
         userId: String!
         # This is the review score for this user
         review: Float!
+        # user address
+        address: AddressType
+    }
+
+    # this is the address of the user
+    type AddressType {
+        # the user street number
+        number: String
+        # user street
+        street: String
+        # user community
+        community: String
+        # user lga
+        lga: String
+        # user state
+        state: String
+        # user country
+        country: String
+        # user bus stop
+        busStop: String
     }
 
     type UserReview {
@@ -129,9 +149,12 @@
     input editUserContact {
         email: String
         phone: String
-        streetNumber: Int
-        streetId: String
-        busStop: String
+    }
+
+    input editUserAddress {
+        streetNumber: Int!
+        streetId: String!
+        busStop: String!
     }
 
     # The "Query" type is special: it lists all of the available queries that
@@ -157,8 +180,11 @@
         # change to a new password
         resetPassword(input: resetPassword): DatalessResponse
 
-        # this is to edit basic info of the user
+        # this is to edit contact info of the user
         editUserContact(input: editUserContact): DatalessResponse
+        
+        # this is to edit user/customer's address
+        editCustomerAddress(input: editUserAddress): DatalessResponse
     }
 
 

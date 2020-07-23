@@ -36,7 +36,16 @@ module.exports = {
             args = args.input;
 
             let edit = new EditUserProfile();
-            return edit.editUserContact(args.email, args.phone, args.streetNumber, args.streetId, args.busStop, userId)
+            return edit.editUserContact(args.email, args.phone, userId)
+        },
+        editCustomerAddress(parent, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+            args = args.input;
+
+            let edit = new EditUserProfile();
+            return edit.editCustomerAddress(args.streetNumber, args.streetId, args.busStop, userId)
         }
     }
 }

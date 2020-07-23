@@ -1,5 +1,5 @@
 {
-  userLogin(input:{email: "business@gmail.com", password: "walter99"}) {
+  userLogin(input:{email: "theceoforlife@gmail.com", password: "supermum"}) {
     
     userDetails {
       fullname
@@ -8,6 +8,15 @@
     	userId
     	displaPicture
       review
+      address {
+        number
+        street
+        community
+        lga
+        state
+        country
+        busStop
+      }
     }
      
     businessDetails {
@@ -970,6 +979,29 @@ mutation {
     customerId: "5f1670ab9041bc122c994907",
     rating: 5,
     description: "Thi is so cool"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  editUserContact(input :{
+    email: "theceoforlife@gmail.com",
+    phone: "08104686729",
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  editCustomerAddress(input :{
+    streetNumber: 10,
+    streetId: "5f088765b0be4c0ba09f8610",
+    busStop: "Artillery bus stope"
   }) {
     code
     success

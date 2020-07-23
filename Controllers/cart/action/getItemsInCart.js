@@ -87,7 +87,7 @@ module.exports = class GetItemsInCart extends CartController {
                     } else {
                         // arrange and save to streetObject
 
-                        let locationDetails = getLocationDetails.result[0];
+                        let locationDetails = getLocationDetails.result;
 
                         streetObject[streetId] = {
                             street: locationDetails.name,
