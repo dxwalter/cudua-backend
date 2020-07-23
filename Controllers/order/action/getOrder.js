@@ -1,13 +1,17 @@
 "use-strict"
 
 const OrderController = require('../orderController');
-const BusinessController = require('../../business/BusinessController')
+const BusinessController = require('../../business/BusinessController');
+const CustomerReviews = require('../../customerReview/customerReviewController');
+const CustomerData = require('../../user/UserController')
 
 module.exports = class GetOrders extends OrderController {
 
     constructor () {
         super();
-        this.businessController = new BusinessController()
+        this.businessController = new BusinessController();
+        this.CustomerReviews = new CustomerReviews();
+        this.CustomerData = new CustomerData()
     }
 
     returnMethod (data, code, success, message) {
@@ -32,6 +36,7 @@ module.exports = class GetOrders extends OrderController {
                 if (orderItem.order_status == 0) {
                     newOrder.push({
                         customerName: orderItem.customer.fullname,
+                        customerId: orderItem.customer._id,
                         profilePicture: orderItem.customer.profilePicture == undefined ? null : orderItem.customer.profilePicture,
                         orderTime: orderItem.created,
                         orderId: orderItem.order_id,
@@ -41,6 +46,7 @@ module.exports = class GetOrders extends OrderController {
                 if (orderItem.order_status &&  orderItem.delivery_status != 1) {
                     pendingOrder.push({
                         customerName: orderItem.customer.fullname,
+                        customerId: orderItem.customer._id,
                         profilePicture: orderItem.customer.profilePicture == undefined ? null : orderItem.customer.profilePicture,
                         orderTime: orderItem.created,
                         orderId: orderItem.order_id,
@@ -51,6 +57,7 @@ module.exports = class GetOrders extends OrderController {
                 if (orderItem.order_status && orderItem.delivery_status) {
                     clearedOrder.push({
                         customerName: orderItem.customer.fullname,
+                        customerId: orderItem.customer._id,
                         profilePicture: orderItem.customer.profilePicture == undefined ? null : orderItem.customer.profilePicture,
                         orderTime: orderItem.created,
                         orderId: orderItem.order_id,
@@ -90,7 +97,73 @@ module.exports = class GetOrders extends OrderController {
         let formatOrder = this.formartOrderData(getOrdersForBusiness.result);
 
         return this.returnMethod(formatOrder, 200, true, "Orders retrieved successfully")
+    }
 
+    async businessGetProductsInOrder(businessId, customerId, orderId, userId) {
+
+        if (businessId.length < 1) return this.returnMethod(null, 200, false, "Your business credential was not provided.")  
+
+        // check if business exists
+        let businessData = await this.businessController.getBusinessData(businessId);
+
+        if (businessData.error == true) {
+            return this.returnMethod(null, 200, false, "Your business is not recognised.")
+        } else {
+            // check if user is a valid business owner
+            if (businessData.result.owner != userId) {
+                return this.returnMethod(null, 200, false, `You can not access this functionality. Sign out and sign in to continue`)
+            }
+        }
+
+        let findProductsInOrder = await this.findProductsInOrder(businessId, customerId, orderId);
+
+        if (findProductsInOrder.error) return this.returnMethod(null, 500, false, `An error occurred getting the products for order ${orderId}. Please try again`)
+
+        findProductsInOrder = findProductsInOrder.result
+
+        let customerReviews = findProductsInOrder.length < 1 || null ? null : await this.CustomerReviews.getCustomerReviews(customerId);
+
+        if (customerReviews.error) return this.returnMethod(null, 500, `An error occurred while getting this customer's reviews by other businesses`)
+
+        let customerData = await this.CustomerData.findUsersById(customerId)
+        if (customerData.error) return this.returnMethod(null, 500, `An error occurred while getting this customer's information`)
+
+        customerData = customerData.result;
+
+        // customer data
+        let customerObject = {
+            name: customerData.fullname,
+            phone: customerData.phone == undefined ? null : customerData.phone,
+            profilePicture: customerData.profilePicture == undefined ? null : customerData.profilePicture,
+            email: customerData.email,
+            address: customerData.address.street.length < 1 || customerData.address == undefined ? null: {
+                number: customerData.address.number,
+                busStop: customerData.address.bus_stop,
+                street: customerData.address.street.name,
+                community: customerData.address.community.name,
+                lga: customerData.address.community.name,
+                state: customerData.address.state.name,
+                country: customerData.address.country.name
+            }
+        }
+
+        // customer reviews
+        customerReviews = customerReviews.result;
+        if (customerReviews.length < 1) {
+            customerObject["reviews"] = null;
+        } else {
+            customerObject["reviews"] = [];
+            for (const [index, review] of customerReviews.entries()) {
+                customerObject.reviews[index] = {
+                    rating: review.rating,
+                    description: review.description,
+                    author: review.business_id.businessname,
+                    logo: review.business_id.logo.length < 1 || review.business_id.logo.undefined ? null : review.business_id.logo
+                }
+            }
+        }
+
+        console.log(customerObject)
 
     }
 

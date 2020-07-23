@@ -2,8 +2,10 @@ const CreateUser = require('../../Controllers/user/action/CreateUser');
 const LoginUser = require('../../Controllers/user/action/LoginUser');
 const RecoverPassword = require('../../Controllers/user/action/RecoverPassword');
 const EditUserProfile = require('../../Controllers/user/action/EditUserProfile');
+const { GraphQLUpload } = require('apollo-upload-server');
 
 module.exports = {
+    Upload: GraphQLUpload,
     Query: {
         getUser (parent, args, context, info) {
 
@@ -46,6 +48,35 @@ module.exports = {
 
             let edit = new EditUserProfile();
             return edit.editCustomerAddress(args.streetNumber, args.streetId, args.busStop, userId)
+        },
+        async editCustomerDP(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+            args = args.input;
+
+            const { filename, mimetype, createReadStream } = await args.file;
+
+            let edit = new EditUserProfile();
+            return edit.editUserDp(args.file, userId)
+        },
+        editCustomerName(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+            args = args.input;
+
+            let edit = new EditUserProfile();
+            return edit.editCustomerFullname(args.fullname, userId)
+        },
+        editCustomerPassword(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+            args = args.input;
+
+            let edit = new EditUserProfile();
+            return edit.editCustomerPassword(args.oldPassword, args.newPassword, userId)
         }
     }
 }

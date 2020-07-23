@@ -4,6 +4,9 @@ const UserController = require('../UserController');
 const BusinessController = require('../../business/BusinessController');
 const LocationController = require('../../Location/LocationController');
 
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 module.exports = class EditUserProfile extends UserController {
     constructor() {
         super();
@@ -142,6 +145,115 @@ module.exports = class EditUserProfile extends UserController {
 
         return this.returnMethod(202, true, "Your profile was updated successfully");
 
+
+    }
+
+    async editUserDp (file, userId) {
+        const { filename, mimetype, createReadStream } = await file;
+
+        if (filename.length < 1) return this.returnMethod(200, false, "Choose a profile display picture");
+
+        let userData = await this.findUsersById(userId);
+        if (userData.error) return this.returnMethod(500, false, "An error occurred. Please try again")
+        userData = userData.result
+
+        // encrypt file name
+        let encryptedName = this.encryptFileName(filename)
+        let newFileName = encryptedName + "." + mimetype.split('/')[1];
+
+        const stream = createReadStream();
+
+        let path = 'uploads/profilePicture/';
+
+        const pathObj = await this.uploadImageFile(stream, newFileName, path);
+        
+        if (pathObj.error == true) {
+            return this.returnMethod(500, false, "An error occurred uploading your business logo")
+        }
+
+        // This is used to remove data from cloudinary
+        let publicID = `cudua_commerce/customer/${userId}/profilePicture/${userData.profilePicture.split('.')[0]}`;
+        
+        // remove from cloudinary
+        let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+
+        //upload to cloudinary
+
+        let folder = "cudua_commerce/customer/"+userId+"/profilePicture/";
+        let publicId = encryptedName;
+        let tag = 'profile picture';
+        let imagePath = pathObj.path;
+
+        let moveToCloud = await this.moveToCloudinary(folder, imagePath, publicId, tag);
+
+        let deleteFile = await this.deleteFileFromFolder(imagePath)
+
+        if (moveToCloud.error == true) {
+            return this.returnMethod(500, false, `An error occurred uploading your profile picture`)
+        }
+
+
+        // update new file name
+        
+        let profilePicture = {'profilePicture': newFileName}
+        let updateLogo = await this.findOneAndUpdate(userId, profilePicture)
+        
+        if (updateLogo.error == false) {
+            return this.returnMethod(202, true, "Your profile picture was updated successfully")
+        } else {
+            return this.returnMethod(500, false, "An error occurred updating your profile pictre")
+        }
+
+
+    }
+
+    async editCustomerFullname(fullname, userId) {
+
+        if (fullname.length < 3) return this.returnMethod(200, false, "Your fullname must be greater than 2 characters");
+
+        let userData = await this.findUsersById(userId);
+
+        if (userData.error) return this.returnMethod(500, false, "An error occurred. Please try again")
+        userData = userData.result
+
+        fullname = this.formatFullname(fullname);
+
+        if (fullname != userData.fullname) {
+
+            let updateRecord = await this.findOneAndUpdate(userId, {fullname: fullname});
+
+            if (updateRecord.error) return this.returnMethod(500, false, "An error occurred updating your profile.")
+    
+            return this.returnMethod(202, true, "Your profile was updated successfully");
+        }
+        
+        return this.returnMethod(200, true, "No profile update was made. Enter new details to profile")
+
+    }
+
+    async editCustomerPassword (oldPassword, newPassword, userId) {
+        
+        if (newPassword.length < 6) return this.returnMethod(200, false, "Your password must be greater than 5 characters");
+
+        let userData = await this.findUsersById(userId);
+        if (userData.error) return this.returnMethod(500, false, "An error occurred. Please try again")
+        userData = userData.result
+
+        let comparePassword = await this.comparePassword(userData.password, oldPassword);
+        if (comparePassword.error == true) {
+            return this.returnMethod(500 , false, "An error occurred. Please try again")
+        }
+
+        if (comparePassword.result == false) return this.returnMethod(200, false, "Your old password is incorrect");
+
+        newPassword = await bcrypt.hashSync(newPassword, 10);
+
+        let updateRecord = await this.findOneAndUpdate(userId, {password: newPassword});
+
+        if (updateRecord.error) return this.returnMethod(500, false, "An error occurred updating your profile.")
+
+        return this.returnMethod(202, true, "Your profile was updated successfully");
+    
 
     }
 

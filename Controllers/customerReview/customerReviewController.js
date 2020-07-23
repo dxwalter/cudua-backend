@@ -80,5 +80,23 @@ module.exports = class CustomerReviewController extends FunctionRepository {
             }
         }
     }
+
+    async getCustomerReviews (customerId) {
+        try {
+            let findReview = await CustomerReviewModel.find({customer_id: customerId})
+            .populate('business_id')
+
+            return {
+                result: findReview,
+                error: false
+            }
+
+        } catch (error) {
+            return {
+                message: error.message,
+                error: true
+            }
+        }
+    }
     
 }

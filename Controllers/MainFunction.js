@@ -4,6 +4,7 @@ const Sengrid  = require('@sendgrid/mail');
 Sengrid.setApiKey(process.env.SENDGRID_API_KEY);
 const fs = require('fs');
 const crypto = require("crypto");
+const bcrypt = require('bcrypt');
 
 let cloudinary = require('cloudinary').v2;
 
@@ -107,4 +108,40 @@ module.exports = class FunctionRepo {
             }
         });
     }
+
+
+    formatFullname (name) {
+        // if name contains space, break name into two variables
+        name = name.toLowerCase();
+        let whitespacePosition = name.search(" ");
+        if (whitespacePosition == -1) {
+            // no whitespace exists
+            return this.MakeFirstLetterUpperCase(name);
+        }
+
+        let splitName = name.split(" ");
+        let formattedName = "";
+        splitName.forEach(element => {
+            let newName = this.MakeFirstLetterUpperCase(element);
+            formattedName = formattedName + " " + newName
+        });
+        
+        return formattedName.toString().trim();
+    }
+
+    async comparePassword (dbPassword, inputPassword) {
+        try {
+            let compare = await bcrypt.compare(inputPassword, dbPassword);
+            return {
+                error: false,
+                result: compare
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+    
 }

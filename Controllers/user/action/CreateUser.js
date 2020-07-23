@@ -18,26 +18,6 @@ module.exports = class CreateUser extends UserController{
 
     }
 
-    formatFullname (name) {
-        // if name contains space, break name into two variables
-        name = name.toLowerCase();
-        let whitespacePosition = name.search(" ");
-        if (whitespacePosition == -1) {
-            // no whitespace exists
-            this.fullname = this.MakeFirstLetterUpperCase(name)
-            return;
-        }
-
-        let splitName = name.split(" ");
-        let formattedName = "";
-        splitName.forEach(element => {
-            let newName = this.MakeFirstLetterUpperCase(element);
-            formattedName = formattedName + " " + newName
-        });
-        
-        this.fullname = formattedName.toString().trim();
-    }
-
     returnMethod (data, status, statusMessage, statusCode) {
 
         return {
@@ -54,12 +34,12 @@ module.exports = class CreateUser extends UserController{
             return this.returnMethod(null, false, "Your fullname must be greater than 2 characters", 200);
         }
 
-        this.formatFullname(this.fullname);
+        this.fullname = this.formatFullname(this.fullname);
 
         if (this.password.length < 6) {
-            return this.returnMethod(null, false, "Your password must be greater than 6 characters",  200);
+            return this.returnMethod(null, false, "Your password must be greater than 5 characters",  200);
         } else {
-            this.password = bcrypt.hashSync(this.password, 10)
+            this.password = await bcrypt.hashSync(this.password, 10)
         }
 
         if (this.email.length < 5) {

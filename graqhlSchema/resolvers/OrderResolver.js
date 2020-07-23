@@ -16,6 +16,18 @@ module.exports = {
 
             let getOrder = new GetOrders();
             return getOrder.getOrderListingForBusiness(args.businessId, userId)
+        },
+        BusinessGetProductsInOrder(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) {
+                return userId
+            } else {
+                userId = userId.message
+            }
+            args = args.input
+
+            let getOrder = new GetOrders();
+            return getOrder.businessGetProductsInOrder(args.businessId, args.customerId, args.orderId, userId)
         }
     },
     Mutation: {

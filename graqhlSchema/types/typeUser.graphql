@@ -1,3 +1,5 @@
+    scalar Upload
+
     # response type
     interface ResponseType {
         # Response status code
@@ -170,6 +172,21 @@
         userLogin(input: LoginInput): LoginResponse
     }
 
+    # edit user logo input
+    input editUserDp {
+        file: Upload!
+    }
+
+    # edit user's fullname
+    input editCustomerFullname {
+        fullname: String!
+    }
+
+    # edit users' password input
+    input editCustomerPassword {
+        oldPassword: String!
+        newPassword: String!
+    }
 
     #This is the mutation type that will handle create account, forgot and recover pasword
     type Mutation {
@@ -185,6 +202,15 @@
         
         # this is to edit user/customer's address
         editCustomerAddress(input: editUserAddress): DatalessResponse
+
+        # edit user Dp
+        editCustomerDP (input: editUserDp): DatalessResponse
+
+        # edit customer's name
+        editCustomerName (input: editCustomerFullname): DatalessResponse
+
+        # change customers' password
+        editCustomerPassword (input: editCustomerPassword): DatalessResponse
     }
 
 

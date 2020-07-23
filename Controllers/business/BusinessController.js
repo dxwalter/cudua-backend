@@ -66,7 +66,13 @@ module.exports = class BusinessController extends FunctionRepo {
         try {
             const findResult = await BusinessModel.findOne({
                 _id: businessId
-            });   
+            })            
+            .populate('address.street')
+            .populate('address.community')
+            .populate('address.lga')
+            .populate('address.state')
+            .populate('address.country')   
+            .exec()
 
             if (findResult._id) {
                 return {

@@ -29,21 +29,6 @@ module.exports = class LoginUser extends UserController{
         }
     }
 
-    async comparePassword (password) {
-        try {
-            let compare = await bcrypt.compare(this.password, password);
-            return {
-                error: false,
-                result: compare
-            }
-        } catch (error) {
-            return {
-                error: true,
-                message: error.message
-            }
-        }
-    }
-
     formatBusinessCategoryData(dataArray) {
 
 
@@ -85,6 +70,21 @@ module.exports = class LoginUser extends UserController{
         return businessCategoryArray;
     }
 
+
+    returnAddress(addressObject) {
+        
+        return {
+            number: addressObject.number,
+            street: addressObject.street.name,
+            community:  addressObject.community.name,
+            lga:  addressObject.lga.name,
+            state:  addressObject.state.name,
+            country: addressObject.country.name,
+            busStop: addressObject.bus_stop
+        }
+
+    }
+
     async formatAddress (addressObject) {
 
         let streetId = addressObject.street
@@ -114,7 +114,6 @@ module.exports = class LoginUser extends UserController{
         let getBusinessData = businessDetails;
 
         // business address
-
         let businessAddress = getBusinessData.address == null || getBusinessData.address == undefined ? null : await this.formatAddress(getBusinessData.address)
 
         let businessId = getBusinessData._id;
@@ -147,7 +146,7 @@ module.exports = class LoginUser extends UserController{
             id: getBusinessData._id,
             businessname: getBusinessData.businessname,
             username: getBusinessData.username,
-            description: getBusinessData.description.length < 1 ||  getBusinessData.description == undefined ? getBusinessData.description : null,
+            description: getBusinessData.description.length < 1 ||  getBusinessData.description == undefined ? null : getBusinessData.description,
             address: businessAddress,
             contact: businessContact,
             logo: getBusinessData.logo.length < 1 || getBusinessData.logo == undefined ? null : getBusinessData.logo,
@@ -176,12 +175,13 @@ module.exports = class LoginUser extends UserController{
                     let userId = userDbDetails._id
                     let dbPassword = userDbDetails.password;
 
-                    let comparePassword = await this.comparePassword(dbPassword)
+                    let comparePassword = await this.comparePassword(dbPassword, this.password)
                     if (comparePassword.error == true) {
-                        return this.returnType(200 , false, comparePassword.message)
+                        return this.returnType(500 , false, "An error occurred. Please try again")
                     }
 
                     comparePassword = comparePassword.result
+
                     if (comparePassword == true) {
                         let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });
 
@@ -209,7 +209,7 @@ module.exports = class LoginUser extends UserController{
                                 phone: userDbDetails.phone == null || undefined ? null : userDbDetails.phone,
                                 displaPicture: userDbDetails.profilePicture == null || undefined ? null : userDbDetails.profilePicture,
                                 review: userDbDetails.review_score == null || undefined ? null : userDbDetails.review_score,
-                                address: userDbDetails.address == null || undefined ? null : await this.formatAddress(userDbDetails.address),
+                                address: userDbDetails.address.street == null || undefined ? null : this.returnAddress(userDbDetails.address),
                                 businessId: businessId,
                             },
                             // business details

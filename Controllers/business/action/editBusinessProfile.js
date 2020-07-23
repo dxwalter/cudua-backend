@@ -5,6 +5,7 @@ let BusinessController = require('../BusinessController');
 let UserController = require('../../user/UserController');
 let LocationController = require('../../Location/LocationController');
 
+
 module.exports = class EditBusinessDetails extends BusinessController {
 
     constructor () {
@@ -306,12 +307,13 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let path = this.businessLogoPath;
 
         const pathObj = await this.uploadImageFile(stream, newFileName, path);
-        console.log(pathObj)
+        
         if (pathObj.error == true) {
             return this.returnData(500, false, "An error occurred uploading your business logo")
         }
 
-        // move to cloudinary
+
+        // public id used to remove data from cloudinary
         let publicID = `cudua_commerce/business/${businessId}/logo/${businessData.logo.split('.')[0]}`;
         
         // remove from cloudinary

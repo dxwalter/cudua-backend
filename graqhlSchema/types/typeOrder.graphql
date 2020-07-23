@@ -1,6 +1,7 @@
 
 type Order {
     customerName: String!
+    customerId: String!
     profilePicture: String
     orderTime: String!
     orderId: String!
@@ -41,8 +42,15 @@ type productsInOrder implements ResponseType {
     message: String!
 }
 
+input orderInput {
+    businessId: String!
+    customerId: String!
+    orderId: String
+}
+
 type Query {
     BusinessGetOrders(input: businessGetOrder): OrdersResponse
+    BusinessGetProductsInOrder(input: orderInput): DatalessResponse
 }
 
 type Mutation {

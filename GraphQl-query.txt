@@ -945,28 +945,37 @@ mutation {
     businessId: "5f0e73a9794b222e284a988a"
   }){
     orders {
-      new {
+      newOrder {
         customerName
         profilePicture
         orderTime
         orderId
-        orderStatus
       }
-      pending {
+      pendingOrder {
         customerName
         profilePicture
         orderTime
         orderId
-        orderStatus
       }
-      cleared {
+      clearedOrder {
         customerName
         profilePicture
         orderTime
         orderId
-        orderStatus
       }
     }
+    code
+    success
+    message
+  }
+}
+
+{
+  BusinessGetProductsInOrder(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    customerId: "5f0dbff90249e81488ee2149",
+    orderId: "O0FPBKM2U"
+  }) {
     code
     success
     message
@@ -1002,6 +1011,16 @@ mutation {
     streetNumber: 10,
     streetId: "5f088765b0be4c0ba09f8610",
     busStop: "Artillery bus stope"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation ($file: Upload!) {
+  editCustomerDP(input:{
+    file: $file,
   }) {
     code
     success

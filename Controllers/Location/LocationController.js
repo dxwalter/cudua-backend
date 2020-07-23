@@ -17,6 +17,7 @@ module.exports = class LocationController  {
             .populate('lga_id')
             .populate('community_id')
             .populate('proximity.street')
+            .sort({_id: -1})
             .limit(5)
 
             return {
@@ -43,7 +44,8 @@ module.exports = class LocationController  {
             .populate('lga_id')
             .populate('community_id')
             .populate('proximity.street')
-            .limit(5)
+            .sort({_id: -1})
+            .limit(5);
 
             return {
                 error: false,
@@ -66,6 +68,7 @@ module.exports = class LocationController  {
             .populate('country_id')
             .populate('state_id')
             .populate('lga_id')
+            .sort({_id: -1})
             .limit(5)
 
             return {
