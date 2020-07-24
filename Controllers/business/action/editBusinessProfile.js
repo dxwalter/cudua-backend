@@ -314,10 +314,11 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
 
         // public id used to remove data from cloudinary
-        let publicID = `cudua_commerce/business/${businessId}/logo/${businessData.logo.split('.')[0]}`;
-        
-        // remove from cloudinary
-        let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+        if (businessData.logo != null || businessData.logo != undefined) {
+            let publicID = `cudua_commerce/business/${businessId}/logo/${businessData.logo.split('.')[0]}`;
+            // remove from cloudinary
+            let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+        }
 
         //upload to cloudinary
 
@@ -382,16 +383,14 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnData(500, false, "An error occurred uploading your business cover photo")
         }
 
-        
-
         // delete old cover from cloudinary
-        let publicID = `cudua_commerce/business/${businessId}/cover/${businessData.coverPhoto.split('.')[0]}`;
-
-        // remove from cloudinary
-        let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+        if (businessData.coverPhoto != null || businessData.coverPhoto != undefined) {
+            let publicID = `cudua_commerce/business/${businessId}/cover/${businessData.coverPhoto.split('.')[0]}`;
+            // remove from cloudinary
+            let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+        }
 
         //upload to cloudinary
-
         let folder = "cudua_commerce/business/"+businessId+"/cover/";
         let publicId = encryptedName;
         let tag = 'cover';

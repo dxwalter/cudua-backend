@@ -1,0 +1,43 @@
+
+
+type Notification {
+    notificationId: String,
+    isRead: Int!
+    owner: String!
+    actionId: String!
+    type: String!
+    message: String!
+}
+
+type getNotificationResponse implements ResponseType {
+    notification: [Notification!]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+input getBusinessNotification {
+    businessId: String!
+    page: Int!
+}
+
+input getCustomerNotification {
+    page: Int!
+}
+
+input MarkAsReadInput {
+    notificationId: String!
+    # We have two types of notifications
+    # customer
+    # business
+    type: String!
+}
+
+type Query {
+    GetBusinessNotification(input: getBusinessNotification): getNotificationResponse
+    GetCustomerNotification(input: getCustomerNotification): getNotificationResponse
+}
+
+type Mutation {
+    MarkNotificationAsRead (input: MarkAsReadInput): DatalessResponse
+}

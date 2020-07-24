@@ -43,7 +43,9 @@ const OrderSchema = mongoose.Schema({
          * -1 means rejected
         */
         default: 0,
-
+    },
+    reject_order_reason: {
+        type: String, trim: true
     },
     delivery_status: {
         type: Number,
@@ -55,10 +57,10 @@ const OrderSchema = mongoose.Schema({
         default: 0,
 
     },
-    cancel_order: {
+    cancel_delivery_reason: {
         type: String, trim: true
     },
-    cancel_delivery: {
+    customer_cancel_order: {
         type: String, trim: true
     },
     created : {

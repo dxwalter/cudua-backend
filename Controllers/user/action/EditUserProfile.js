@@ -159,6 +159,7 @@ module.exports = class EditUserProfile extends UserController {
 
         // encrypt file name
         let encryptedName = this.encryptFileName(filename)
+
         let newFileName = encryptedName + "." + mimetype.split('/')[1];
 
         const stream = createReadStream();
@@ -172,10 +173,11 @@ module.exports = class EditUserProfile extends UserController {
         }
 
         // This is used to remove data from cloudinary
-        let publicID = `cudua_commerce/customer/${userId}/profilePicture/${userData.profilePicture.split('.')[0]}`;
-        
-        // remove from cloudinary
-        let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+        if (userData.profilePicture != null || userData.profilePicture != undefined) {
+            let publicID = `cudua_commerce/customer/${userId}/profilePicture/${userData.profilePicture.split('.')[0]}`;
+            // remove from cloudinary
+            let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+        }
 
         //upload to cloudinary
 

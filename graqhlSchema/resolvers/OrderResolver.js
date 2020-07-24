@@ -2,16 +2,15 @@
 const CreateOrder = require('../../Controllers/order/action/createOrder');
 const DeleteItem = require('../../Controllers/order/action/deleteItemInOrder');
 const GetOrders = require('../../Controllers/order/action/getOrder')
+const OrderState = require('../../Controllers/order/action/orderState')
 
 module.exports = {
     Query: {
         BusinessGetOrders(_, args, context) {
             let userId = context.authFunction(context.accessToken);
-            if (userId.error === true) {
-                return userId
-            } else {
-                userId = userId.message
-            }
+            if (userId.error === true) return userId
+            userId = userId.message
+
             args = args.input
 
             let getOrder = new GetOrders();
@@ -19,11 +18,9 @@ module.exports = {
         },
         BusinessGetProductsInOrder(_, args, context) {
             let userId = context.authFunction(context.accessToken);
-            if (userId.error === true) {
-                return userId
-            } else {
-                userId = userId.message
-            }
+            if (userId.error === true) return userId
+            userId = userId.message
+
             args = args.input
 
             let getOrder = new GetOrders();
@@ -33,27 +30,61 @@ module.exports = {
     Mutation: {
         CreateOrder (_, args, context) {
             let userId = context.authFunction(context.accessToken);
-            if (userId.error === true) {
-                return userId
-            } else {
-                userId = userId.message
-            }
+            if (userId.error === true) return userId
+            userId = userId.message
 
             let createOrder = new CreateOrder();
             return createOrder.create(userId)
         },
         CustomerDeleteProductInOrder (_, args, context) {
             let userId = context.authFunction(context.accessToken);
-            if (userId.error === true) {
-                return userId
-            } else {
-                userId = userId.message
-            }
+            if (userId.error === true) return userId
+            userId = userId.message
 
             args = args.input
 
             let deleteItemInOrder = new DeleteItem();
             return deleteItemInOrder.deleteItem(args.orderId, args.productId, userId)
+        },
+        ConfirmOrder(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+
+            let confirm = new OrderState();
+            return confirm.confirmOrder(args.businessId, args.customerId, args.orderId, args.deliveryCharge, userId)
+        },
+        RejectOrder(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+
+            let reject = new OrderState();
+            return reject.rejectOrder(args.businessId, args.customerId, args.orderId, args.reason, userId)
+        },
+        UpdateDeliveryCharge(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+
+            let updateDelivery = new OrderState();
+            return updateDelivery.updateDeliveryCharge(args.businessId, args.customerId, args.orderId, args.deliveryCharge, userId);
+        },
+        RejectOrderDelivery(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+
+            let reject = new OrderState();
+            return reject.RejectDelivery(args.businessId, args.orderId, userId)
         }
     }
 }

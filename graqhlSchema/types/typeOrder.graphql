@@ -31,29 +31,78 @@ type OrdersResponse implements ResponseType {
 
 type orderCustomer {
     fullname: String!
+    customerId: String!
+    phoneNumber: String
+    email: String!
+    ratingScore: Float!
+    address: AddressType
     profilePicture: String
+    reviews: [CustomerReview]
 }
 
-type productsInOrder implements ResponseType {
-    # products: []
+type CustomerReview {
+    rating: Int!
+    description: String
+    author: String!
+    logo: String
+}
+
+type orderProduct {
+    name: String!
+    productId: String!
+    avatar: String!
+    quantity: Int!
+    price: Int!
+    size: String
+    color: String
+}
+
+type productsInOrderResponse implements ResponseType {
+    orderDetails: [orderProduct]
+    deliveryCharge: Int!
     customerDetails: orderCustomer
     code: Int!
     success: Boolean!
     message: String!
 }
 
+
 input orderInput {
     businessId: String!
     customerId: String!
-    orderId: String
+    orderId: String!
+}
+
+input confirmOrderInput {
+    businessId: String!
+    customerId: String!
+    orderId: String!
+    deliveryCharge: Int
+}
+
+input rejectOrder {
+    businessId: String!
+    customerId: String!
+    orderId: String!
+    reason: String!
+}
+
+# A customer 
+input rejectDelivery {
+    businessId: String!
+    orderId: String!
 }
 
 type Query {
     BusinessGetOrders(input: businessGetOrder): OrdersResponse
-    BusinessGetProductsInOrder(input: orderInput): DatalessResponse
+    BusinessGetProductsInOrder(input: orderInput): productsInOrderResponse
 }
 
 type Mutation {
     CreateOrder: DatalessResponse
     CustomerDeleteProductInOrder (input: deleteItemInOrder): DatalessResponse
+    ConfirmOrder(input: confirmOrderInput): DatalessResponse
+    RejectOrder(input: rejectOrder): DatalessResponse
+    UpdateDeliveryCharge(input: confirmOrderInput): DatalessResponse
+    RejectOrderDelivery(input: rejectDelivery): DatalessResponse
 }

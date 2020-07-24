@@ -94,7 +94,7 @@ module.exports = class CreateCustomerReview extends CustomerReviewController {
         let notificationId = saveRecord.result._id
 
         // create customer notification
-        let createNotification = await this.customerNotification.createCustomerNotification(customerId, notificationId, "customerReview", `${businessData.result.businessname} wrote a review about you.`)
+        let createNotification = await this.customerNotification.createCustomerNotification(customerId, notificationId, "customerReview", "New review",`${businessData.result.businessname} wrote a review about you.`)
         
         this.updateReviewScore(customerId)
         

@@ -18,7 +18,7 @@ module.exports = class createNotification extends NotificationController {
         }
     }
 
-    async createCustomerNotification (userId, actionId, notificationType, message) {
+    async createCustomerNotification (userId, actionId, notificationType, header, message) {
         if (userId.length < 1) return this.returnMethod(200, false, "Your account is not recognised. Sign out and sign in to continue.")
 
         if (message.length < 10) return this.returnMethod(200, false, "Please provide a descriptive message of your notification");
@@ -28,6 +28,7 @@ module.exports = class createNotification extends NotificationController {
             owner: userId,
             action_id: actionId,
             type: notificationType,
+            header: header,
             message: message
         });
 
@@ -38,7 +39,7 @@ module.exports = class createNotification extends NotificationController {
         return this.returnMethod(200, true, "Notification created successfully")
     }
 
-    async createBusinessNotification (businessId, actionId, notificationType, message) {
+    async createBusinessNotification (businessId, actionId, notificationType, header, message) {
         if (businessId.length < 1) return this.returnMethod(200, false, "Your business account is not recognised. Sign out and sign in to continue.")
 
         if (message.length < 10) return this.returnMethod(200, false, "Please provide a descriptive message of your notification");
@@ -48,7 +49,8 @@ module.exports = class createNotification extends NotificationController {
             owner: businessId,
             action_id: actionId,
             type: notificationType,
-            message: message
+            message: message,
+            header: header
         });
 
         let save = await this.createNotificationAlert(create);

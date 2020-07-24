@@ -144,4 +144,40 @@ module.exports = class OrderController extends FunctionRepo {
 
     }
 
+    async confirmCustomerOrder (businessId, customerId, orderId, newObject) {
+
+        try {
+            
+            let confirm = await OrderModel.updateMany({
+                $and: [{
+                        order_id: orderId, 
+                        business: businessId,
+                        customer: customerId
+                    }]
+                }, { $set:newObject }, {new : true });
+
+                if (confirm.ok == 1) {
+                    return {
+                        error: false,
+                        result: true
+                    }
+                } else {
+                    return {
+                        error: false,
+                        result: false
+                    }
+                }
+
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+
+    }
+
 }

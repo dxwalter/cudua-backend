@@ -13,7 +13,13 @@ const UserNotificationSchema = mongoose.Schema({
     },
     type: {
         type: String,
-        required: true
+        required: true,
+        trim: true
+    },
+    header: {
+        type: String,
+        required: true,
+        trim: true
     },
     is_read: {
         type: Number,

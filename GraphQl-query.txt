@@ -971,10 +971,95 @@ mutation {
 }
 
 {
-  BusinessGetProductsInOrder(input:{
+  BusinessGetProductsInOrder(input: {
     businessId: "5f0e73a9794b222e284a988a",
     customerId: "5f0dbff90249e81488ee2149",
     orderId: "O0FPBKM2U"
+  }) {
+    orderDetails {
+      name
+      productId
+      avatar
+      quantity
+      price
+      size
+      color
+    }
+    deliveryCharge
+    customerDetails {
+      fullname
+      customerId
+      phoneNumber
+      email
+      ratingScore
+      profilePicture
+      address {
+        number
+        street
+        community
+        lga
+        state
+        country
+        busStop
+      }
+      reviews {
+        rating
+        description
+        author
+        logo
+      }
+    }
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  ConfirmOrder(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    customerId: "5f0dbff90249e81488ee2149",
+    orderId: "O0FPBKM2U",
+    deliveryCharge: 2000,
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  UpdateDeliveryCharge(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    customerId: "5f0dbff90249e81488ee2149",
+    orderId: "O0FPBKM2U",
+    deliveryCharge: 2000,
+  }) {
+    code
+    success
+    message
+  }
+}
+
+
+mutation {
+  RejectOrder(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    customerId: "5f0dbff90249e81488ee2149",
+    orderId: "O0FPBKM2U",
+    reason: "I dont deliver to your area"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+
+mutation {
+  RejectOrderDelivery(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    orderId: "O0FPBKM2U",
   }) {
     code
     success
@@ -1021,6 +1106,54 @@ mutation {
 mutation ($file: Upload!) {
   editCustomerDP(input:{
     file: $file,
+  }) {
+    code
+    success
+    message
+  }
+}
+
+{
+  GetBusinessNotification(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    page: 1
+  }) {
+    notification {
+      notificationId
+      isRead
+      owner
+      actionId
+      type
+      message
+    }
+    code
+    success
+    message
+  }
+}
+
+{
+  GetCustomerNotification(input:{
+    page: 1
+  }) {
+    notification {
+      notificationId
+      isRead
+      owner
+      actionId
+      type
+      message
+    }
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  MarkNotificationAsRead(input:{
+    notificationId: "5f1ad239dac929311c47cb46",
+    type: "business"
   }) {
     code
     success
