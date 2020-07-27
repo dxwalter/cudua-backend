@@ -104,4 +104,44 @@ module.exports = class NotificationController extends FunctionRepo {
         }
 
     }
+
+    async getUnreadCustomerNotification (userId) {
+
+        try {
+            let getNotification = await CustomerNotificationModel.countDocuments({
+                $and: [{ owner: userId, is_read: 0 }]
+            })
+
+            return {
+                result: getNotification,
+                error: false
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
+    async getUnreadBusinessNotification (businessId) {
+
+        try {
+            let getNotification = await BusinessNotificationModel.countDocuments({
+                $and: [{ owner: businessId, is_read: 0 }]
+            })
+
+            return {
+                result: getNotification,
+                error: false
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
 }

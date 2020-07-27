@@ -39,11 +39,13 @@ module.exports = class GetItemsInCart extends CartController {
         let cartArray = [];
         let streetObject = {};
 
+        
+
         for (const [index, item] of getCartItems.entries()) {
 
             cartArray[index] = {
                 itemId: item._id,
-                customer: item.owner,
+                customer: item.owner._id,
                 product: {
                     productId: item.product._id,
                     name: item.product.name,

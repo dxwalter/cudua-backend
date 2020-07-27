@@ -180,4 +180,24 @@ module.exports = class OrderController extends FunctionRepo {
 
     }
 
+    async newOrderCount (businessId) {
+        try {
+            
+            let getOrderCount = await OrderModel.countDocuments({
+                $and: [{ business: businessId, order_status: 0 }]
+            })
+
+            
+            return {
+                result: getOrderCount,
+                error: false
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
 }

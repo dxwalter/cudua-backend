@@ -16,6 +16,13 @@ type getNotificationResponse implements ResponseType {
     message: String!
 }
 
+type notificationCountResponse implements ResponseType {
+    count: Int!
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
 input getBusinessNotification {
     businessId: String!
     page: Int!
@@ -33,9 +40,17 @@ input MarkAsReadInput {
     type: String!
 }
 
+input businessNotificationCountInput {
+    businessId: String!
+}
+
 type Query {
     GetBusinessNotification(input: getBusinessNotification): getNotificationResponse
     GetCustomerNotification(input: getCustomerNotification): getNotificationResponse
+
+    GetCustomerNotificationCount:notificationCountResponse
+
+    GetBusinessNotificationCount(input: businessNotificationCountInput): notificationCountResponse
 }
 
 type Mutation {

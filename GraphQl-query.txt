@@ -1067,6 +1067,17 @@ mutation {
   }
 }
 
+{
+  GetNewOrderCount (input: {
+    businessId: "5f0e73a9794b222e284a988a"
+  }){
+    count
+    code
+    success
+    message
+  }
+}
+
 mutation {
 	createCustomerReview(input:{
     businessId: "5f0e73a9794b222e284a988a",
@@ -1150,11 +1161,67 @@ mutation ($file: Upload!) {
   }
 }
 
+{
+  GetCustomerNotificationCount {
+    count
+    code
+    success
+    message
+  }
+}
+
+{
+  GetBusinessNotificationCount (input: {
+    businessId: "5f0e73a9794b222e284a988a"
+  }){
+    count
+    code
+    success
+    message
+  }
+}
+
 mutation {
-  MarkNotificationAsRead(input:{
-    notificationId: "5f1ad239dac929311c47cb46",
-    type: "business"
+  SaveProductForLater(input:{
+    productId: "5f0e759a2c5c1f2bfce2c822"
   }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  RemoveProductFromSavedProducts(input:{
+    productId: "5f0e759a2c5c1f2bfce2c822"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  MoveToCart(input:{
+    productId: "5f0e722b5cfb6e3494756d60"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+{
+  GetSavedItems(input: {
+    page: 1
+  }) {
+    products {
+      productId
+      name
+      image
+      review
+    }
+    count
     code
     success
     message

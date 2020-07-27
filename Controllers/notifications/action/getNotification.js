@@ -22,6 +22,15 @@ module.exports = class GetNotification extends NotificationController {
         }
     }
 
+    returnCount (count, code, success, message) {
+        return {
+            count: count,
+            code: code,
+            success: success, 
+            message: message
+        }
+    }
+
     formatNotification (data) {
 
         let notificationArray = [];
@@ -81,6 +90,18 @@ module.exports = class GetNotification extends NotificationController {
         let formatNotification = this.formatNotification(get.result);
 
         return this.returnMethod(formatNotification, 200, true, "Notification retrieved successfully");
+    }
+
+    async getCustomerNotificationCount(userId) {
+        let getCount = await this.getUnreadCustomerNotification(userId);
+        if (getCount.error) return this.returnCount(0, 500, false, "An error occurred");
+        return this.returnCount(getCount.result, 200, true, "Successful")
+    }
+
+    async getBusinessNotificationCount(businessId) {
+        let getCount = await this.getUnreadBusinessNotification(businessId);
+        if (getCount.error) return this.returnCount(0, 500, false, "An error occurred");
+        return this.returnCount(getCount.result, 200, true, "Successful")
     }
 
 }

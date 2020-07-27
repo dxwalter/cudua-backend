@@ -161,8 +161,9 @@ module.exports = class createOrder extends OrderController {
 
         // send emails to customer and business owners
         let getBusinessEmails = await this.getBusinessEmails(newBusinessId, getItemsInCart.result)
+        
         // send business email
-        console.log(getBusinessEmails)
+
 
         // get customer email and email_notification
 
@@ -173,12 +174,9 @@ module.exports = class createOrder extends OrderController {
             // send this customer an email
         }
 
-        console.log(customerEmailSetting)
-        console.log(customerEmail)
-
-        // remove items from cart
-
         // delete items from cart
+        this.cartController.deleteAllCartItemsByUserId(userId)
+        
         return this.returnMethod(200, true, notificationMessage)
         
 

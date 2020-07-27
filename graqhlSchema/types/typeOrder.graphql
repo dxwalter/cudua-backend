@@ -29,6 +29,13 @@ type OrdersResponse implements ResponseType {
     message: String!
 }
 
+type orderCountResponse implements ResponseType {
+    count: Int!
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
 type orderCustomer {
     fullname: String!
     customerId: String!
@@ -96,6 +103,8 @@ input rejectDelivery {
 type Query {
     BusinessGetOrders(input: businessGetOrder): OrdersResponse
     BusinessGetProductsInOrder(input: orderInput): productsInOrderResponse
+
+    GetNewOrderCount(input: businessGetOrder): orderCountResponse
 }
 
 type Mutation {

@@ -34,6 +34,15 @@ module.exports = class GetOrders extends OrderController {
         }
     }
 
+    returnCount (count, code, success, message) {
+        return {
+            count: count,
+            code: code,
+            success: success, 
+            message: message
+        }
+    }
+
     getOrderSize(orderOptionData, productOptionArray) {
         for(let x of productOptionArray) {
             if (x._id == orderOptionData) return x.sizes
@@ -224,4 +233,11 @@ module.exports = class GetOrders extends OrderController {
 
     }
 
+    async getOrderCount(businessId) {
+        
+        let newOrderCount = await this.newOrderCount(businessId);
+        if (newOrderCount.error) return this.returnCount(0, 500, false, "An error occurred");
+        return this.returnCount(newOrderCount.result, 200, true, "Successful")
+
+    }
 }

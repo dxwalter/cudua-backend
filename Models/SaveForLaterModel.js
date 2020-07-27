@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-const ProductReview = mongoose.Schema({
-    author: {
+const SaveForLater = mongoose.Schema({
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users",
         required: true
@@ -11,12 +11,10 @@ const ProductReview = mongoose.Schema({
         ref: "product",
         required: true
     },
-    rating: {type: Number, required: true},
-    description: {type: String, trim: true, required: false},
     created : {
         type : Date,
         default: Date.now()
     }
 })
 
-module.exports = mongoose.model('product-review', ProductReview);
+module.exports = mongoose.model('save-for-later', SaveForLater);
