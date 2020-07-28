@@ -41,7 +41,7 @@ module.exports = class AddItemToCart extends CartController {
         if (findUserData.result == null || findUserData.result.business_details == userId) return this.returnMethod(200, false, `You cannot add your poduct to cart.`)
 
         // check if this item has been added to cart before
-        let checkIfExists = await this.findItemInCart(businessId, productId);
+        let checkIfExists = await this.findItemInCart(businessId, productId, userId);
 
         if (checkIfExists.error) return this.returnMethod(500, false, 'An error occurred. Please try again')
 
@@ -66,5 +66,6 @@ module.exports = class AddItemToCart extends CartController {
 
         return this.returnMethod(200, true, `${findProduct.result.name} was successfully added to your cart.`)
     }
+
 
 }

@@ -6,6 +6,11 @@ const fs = require('fs');
 const crypto = require("crypto");
 const bcrypt = require('bcrypt');
 
+const shortId = require('shortid');
+shortId.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ- ');
+
+
+
 let cloudinary = require('cloudinary').v2;
 
 cloudinary.config({ 
@@ -24,6 +29,21 @@ module.exports = class FunctionRepo {
         } catch (error) {  
             console.log(error)            
         }
+    }
+
+    async generateId () {
+        let orderId = shortId.generate();
+
+        if (orderId.search(" ") > -1 ){
+            orderId = orderId.replace(" ", "")
+        } 
+        
+        if (orderId.search("-") > -1 ) {
+            orderId = orderId.replace("-", "")
+        }
+
+        return orderId.toUpperCase();
+
     }
 
     MakeFirstLetterUpperCase (string) {

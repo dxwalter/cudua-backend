@@ -1,11 +1,11 @@
 "use-strict";
 
-const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-let UserController = require('../UserController')
-let UserModel = require('../../../Models/UserModel')    
+const UserController = require('../UserController')
+const UserModel = require('../../../Models/UserModel')    
+const MoveToOnymousCart = require('../../anonymousCart/action/anonymousAddItemToCart')
 
 module.exports = class CreateUser extends UserController{
 
@@ -14,7 +14,10 @@ module.exports = class CreateUser extends UserController{
         this.fullname = args.fullname;
         this.email = args.email.toLowerCase();
         this.password = args.password.toLowerCase();
+        this.anonymousId = args.anonymousId
         this.model = UserModel;
+
+        this.MoveToOnymousCart = new MoveToOnymousCart()
 
     }
 
@@ -66,8 +69,11 @@ module.exports = class CreateUser extends UserController{
         if (data.error == true) {
             return this.returnMethod(null, false, "An error occurred while creating your account",  200);
         }
-        
         data = data.result;
+
+        if(this.anonymousId != null && this.anonymousId.length > 0) {
+            this.MoveToOnymousCart.MoveAnonymousCartToOnymousCart(this.anonymousId, data._id)
+        }
 
         let userId = data._id;
         let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });

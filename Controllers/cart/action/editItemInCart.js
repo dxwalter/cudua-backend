@@ -19,9 +19,7 @@ module.exports = class EditItemsInCart extends CartController {
 
     async deleteItemInCartSignIn(itemId, userId) {
 
-        if (userId.length < 1)  return this.returnMethod(401, false, `Invalid access token. Sign out and sign into your account again`);
         if (itemId.length < 1)  return this.returnMethod(500, false, `An error occurred from our end. Refresh and try again`);
-
 
         let deleteItem = await this.deleteItemInCartByUserIdAndItemId(userId, itemId) 
 

@@ -23,14 +23,14 @@
     }
 
     # create bookmark
-    input createBookmarkInput {
+    input followBusinessInput {
         # the business id of the business to be bookmarked
         businessId: String!
     }
 
 
     # the response gotten when a bookmark is created
-    type createBookmarkResponse  implements responseType{
+    type followBusinessResponse  implements responseType{
         code: Int!
         success: Boolean!
         message: String!
@@ -73,12 +73,12 @@
         # get bookmarks. Only a signed in user can get this data
         getBookmarks: getBookmarksResponse
         # a business can get all the people that bookmarked a business
-        getBookmakers(input: createBookmarkInput): getBookmarkersResponse  
+        getBookmakers(input: followBusinessInput): getBookmarkersResponse  
     }
 
     type Mutation {
         # bookmark a business
-        createBookmark(input: createBookmarkInput!): createBookmarkResponse
+        FollowBusiness(input: followBusinessInput!): followBusinessResponse
         # remove business from bookmarks
-        deleteBookmark(input: createBookmarkInput!): createBookmarkResponse
+        deleteBookmark(input: followBusinessInput!): followBusinessResponse
     }

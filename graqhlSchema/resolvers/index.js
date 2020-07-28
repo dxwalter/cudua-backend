@@ -6,7 +6,7 @@ const CategoryResolver = require('./CategoryResolver');
 const SubcategoryResolver = require('./SubcategoryResolver'); 
 const BusinessCategoryResolver = require('./BusinessCategoryResolver');
 const ProductResolver = require('./ProductResolver');
-const BookmarkResolver = require('./BookmarkResolver');
+const FollowResolver = require('./FollowResolver');
 const ProductReviewResolver = require('./ProductReviewResolver');
 const MoveLocationResolver = require('./MoveLocationResolver');
 const LocationResover = require('./LocationResover');
@@ -15,6 +15,7 @@ const OrderResolver = require('./OrderResolver');
 const CustomerReviewResolver = require('./CustomerReviewResolver');
 const NotificationResolver = require('./NotificationResolver');
 const SaveForLaterResolver = require('./SaveForLaterResolver');
+const AnonymousUserResolver = require('./AnonymousUserResolver');
 
 const resolvers = [
   UserResolver,
@@ -23,7 +24,7 @@ const resolvers = [
   SubcategoryResolver,
   BusinessCategoryResolver,
   ProductResolver,
-  BookmarkResolver,
+  FollowResolver,
   ProductReviewResolver,
   MoveLocationResolver,
   LocationResover,
@@ -31,7 +32,8 @@ const resolvers = [
   OrderResolver,
   CustomerReviewResolver,
   NotificationResolver,
-  SaveForLaterResolver
+  SaveForLaterResolver,
+  AnonymousUserResolver
 ];
 
 module.exports = mergeResolvers(resolvers);

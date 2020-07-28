@@ -128,6 +128,14 @@
         accessToken: String,
     }
 
+    # anonymous login response
+    type AnonymousLoginResponse {
+        anonymousId: String
+        code: String!
+        success: Boolean!
+        message: String!
+    }
+
     # This is the input type for that will for an account to be created
     input CreateAccountInput {
         """
@@ -139,6 +147,8 @@
         email: String!
         # This is the password of the user. It must be of at least 6 or more character length 
         password: String!
+        # This is the anonymous ID of the user if it exists
+        anonymousId: String
     }
 
     input LoginInput {
@@ -146,6 +156,8 @@
         email: String!
         # This is the user's login password
         password: String!
+        # This is the anonymous ID of the user if it exists
+        anonymousId: String
     }
 
     input editUserContact {
@@ -157,19 +169,6 @@
         streetNumber: Int!
         streetId: String!
         busStop: String!
-    }
-
-    # The "Query" type is special: it lists all of the available queries that
-    # clients can execute, along with the return type for each. In this
-    # case, the "books" query returns an array of zero or more Books (defined above).
-
-    type Query {
-        # get a user
-        getUser: User
-        # get multiple users
-        getUsers: [User]
-        # log in a user
-        userLogin(input: LoginInput): LoginResponse
     }
 
     # edit user logo input
@@ -212,6 +211,19 @@
         # change customers' password
         editCustomerPassword (input: editCustomerPassword): DatalessResponse
     }
-
-
     
+    # The "Query" type is special: it lists all of the available queries that
+    # clients can execute, along with the return type for each. In this
+    # case, the "books" query returns an array of zero or more Books (defined above).
+
+    type Query {
+        # get a user
+        getUser: User
+        # get multiple users
+        getUsers: [User]
+        # log in a user
+        userLogin(input: LoginInput): LoginResponse
+
+        # get anonymous id
+        GetAnonymousId: AnonymousLoginResponse
+    }

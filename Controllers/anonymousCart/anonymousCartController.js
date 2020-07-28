@@ -1,7 +1,7 @@
 'use-strict'
 
 const FunctionRepo = require('../MainFunction');
-const CartModel = require('../../Models/CartModel');
+const AnonymousCartModel = require('../../Models/AnonymousCartModel');
 
 module.exports = class CartController extends FunctionRepo {
     constructor () { super() }
@@ -21,16 +21,16 @@ module.exports = class CartController extends FunctionRepo {
         }
     }
 
-    async findItemInCart(businessId, productId, userId) {
+    async findItemInCart(businessId, productId, owner) {
         try {
             
-            let getItem = await CartModel
+            let getItem = await AnonymousCartModel
             .findOne({
                 $and: [
                     {
                         business: businessId, 
                         product: productId,
-                        owner: userId
+                        owner: owner
                     }
                 ]
             })
@@ -51,7 +51,7 @@ module.exports = class CartController extends FunctionRepo {
     async deleteItemInCartByUserIdAndItemId(userId, itemId) {
         try {
             
-            let deleteItem = await CartModel.deleteOne({
+            let deleteItem = await AnonymousCartModel.deleteOne({
                 $and: [{ owner: userId, _id: itemId }]
             })
 
@@ -78,7 +78,7 @@ module.exports = class CartController extends FunctionRepo {
     async deleteAllCartItemsByUserId(userId) {
         try {
             
-            let deleteItem = await CartModel.deleteMany({owner: userId})
+            let deleteItem = await AnonymousCartModel.deleteMany({owner: userId})
 
             if (deleteItem.ok == 1 && deleteItem.deletedCount == 1) {
                 return {
@@ -101,11 +101,10 @@ module.exports = class CartController extends FunctionRepo {
     }
 
     async findItemsByUserId(userId) {
-        
+
         try {
-            let getItems = await CartModel.find({owner: userId})
+            let getItems = await AnonymousCartModel.find({owner: userId})
             .sort({_id: -1})
-            .populate("owner")
             .populate('business')
             .populate('product')
 
@@ -124,7 +123,7 @@ module.exports = class CartController extends FunctionRepo {
 
     async findOneAndUpdate (itemId, newObject) {
         try {
-            let updateRecord = await CartModel.findOneAndUpdate({_id: itemId}, { $set:newObject }, {new : true });
+            let updateRecord = await AnonymousCartModel.findOneAndUpdate({_id: itemId}, { $set:newObject }, {new : true });
             return {
                 error: false,
                 result: updateRecord
@@ -137,22 +136,28 @@ module.exports = class CartController extends FunctionRepo {
         }
     }
 
-    async saveMultipleCart(cart) {
+    async deleteAllFromAnonymousCart(anonymousId) {
         try {
             
-            let saveData = await CartModel.insertMany(cart);
+            let deleteItem = await AnonymousCartModel.deleteMany({owner: anonymousId})
 
-            return {
-                error: false,
-                result: saveData
+            if (deleteItem.ok == 1 && deleteItem.deletedCount == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
             }
-
+           
         } catch (error) {
             return {
-                error: true,
-                messgae: error.message
+                message: error.message,
+                error: true
             }
         }
     }
-
 }

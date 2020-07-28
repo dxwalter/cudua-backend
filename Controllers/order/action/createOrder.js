@@ -25,21 +25,6 @@ module.exports = class createOrder extends OrderController {
         }
     }
 
-    async generateOrderId () {
-        let orderId = shortId.generate();
-
-        if (orderId.search(" ") > -1 ){
-            orderId = orderId.replace(" ", "")
-        } 
-        
-        if (orderId.search("-") > -1 ) {
-            orderId = orderId.replace("-", "")
-        }
-
-        return orderId.toUpperCase();
-
-    }
-
     async checkOrder(orderId) {
 
         let check = await this.checkIfOrderIdExists(orderId);
@@ -132,7 +117,7 @@ module.exports = class createOrder extends OrderController {
         if (getItemsInCart.result.length == 0) return this.returnMethod(200, false, "You do not have any item in your cart");
 
         // get orderID
-        let orderId = await this.generateOrderId()
+        let orderId = await this.generateId();
 
         // check if orderId exists
         let checkOrderStatus = await this.checkOrder(orderId);

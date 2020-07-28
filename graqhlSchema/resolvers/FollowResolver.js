@@ -1,8 +1,8 @@
 
-let CreateBookmark = require('../../Controllers/bookmarks/action/createBookmark');
-let DeleteBookmark = require('../../Controllers/bookmarks/action/removeBookmark');
-let GetBookmark = require('../../Controllers/bookmarks/action/getBookmarks');
-let GetBookmarkers = require('../../Controllers/bookmarks/action/getBookmarkers');
+// let FollowBusiness = require('../../Controllers/followBusiness/action/createFollow');
+// let DeleteBookmark = require('../../Controllers/bookmarks/action/removeBookmark');
+// let GetBookmark = require('../../Controllers/bookmarks/action/getBookmarks');
+// let GetBookmarkers = require('../../Controllers/bookmarks/action/getBookmarkers');
 
 module.exports = {
     Query: {
@@ -34,7 +34,7 @@ module.exports = {
         }
     },
     Mutation: {
-        createBookmark (parent, args, context, info) {
+        FollowBusiness (parent, args, context, info) {
             let accessToken = context.accessToken;
             let userId = context.authFunction(accessToken);
             if (userId.error == true) {
@@ -43,8 +43,8 @@ module.exports = {
                 userId = userId.message;
             }
 
-            let create = new CreateBookmark();
-            return create.createBookmark(args.input.businessId, userId);
+            let create = new FollowBusiness();
+            return create.followBusiness(args.input.businessId, userId);
 
         },
         deleteBookmark (parent, args, context, info) {

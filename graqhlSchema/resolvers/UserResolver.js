@@ -2,6 +2,9 @@ const CreateUser = require('../../Controllers/user/action/CreateUser');
 const LoginUser = require('../../Controllers/user/action/LoginUser');
 const RecoverPassword = require('../../Controllers/user/action/RecoverPassword');
 const EditUserProfile = require('../../Controllers/user/action/EditUserProfile');
+
+const GeneralFunction = require('../../Controllers/MainFunction')
+
 const { GraphQLUpload } = require('apollo-upload-server');
 
 module.exports = {
@@ -16,6 +19,16 @@ module.exports = {
         userLogin (parent, args, context, info) {
             let UserLogin = new LoginUser(args.input);
             return UserLogin.AuthenticateUser();
+        },
+        async GetAnonymousId(_) {
+            let getId = new GeneralFunction();
+            let id = await getId.generateId()
+            return {
+                anonymousId: id.length > 0 ? id : null,
+                code: 200,
+                success: true,
+                message: "Successfull"
+            }
         }
     },
     Mutation: {

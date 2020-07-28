@@ -1,5 +1,6 @@
 {
-  userLogin(input:{email: "theceoforlife@gmail.com", password: "supermum"}) {
+  userLogin(input:{email: "theceoforlife@gmail.com", password: "supermum", 
+    anonymousId: "LU04ZK2IY"}) {
     
     userDetails {
       fullname
@@ -72,15 +73,18 @@ mutation{
 
 mutation {
   createUser(input:{
-    fullname: "Daniel Walter", email: "theceoforlife@gmail2.coma", password:"supermum"
+    fullname: "Daniel Walter", email: "anonymous@gmail2.coma", password:"supermum",
+    anonymousId: "YC3DILWB"
   }) {
-      fullname
+     userData{
+       fullname
   		email
       phone
     	userId
     	displaPicture
     	businessId
       accessToken
+    }
       code
       success
       message
@@ -249,7 +253,7 @@ mutation {
 }
 
 mutation {
-  createBookmark(input: {businessId: "5ee77d93a35c6f1bf43fe43a"}){
+  FollowBusiness(input: {businessId: "5ee77d93a35c6f1bf43fe43a"}){
     code
     success
     message
@@ -862,6 +866,67 @@ query {
     
 
 
+{
+  AnonymousGetCartItems(input: {
+    anonymousId: "LU04ZK2IY"
+  }){
+    cart {
+      customer
+      itemId
+      product{
+        productId
+        name
+        price
+        image
+        review
+      }
+      business {
+        businessId
+        name
+        address {
+          number
+          street
+          community
+          lga
+          state
+          country
+        }
+      }
+      size
+      color
+      quantity
+    }
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  AnonymousAddItemToCart(input:{
+    anonymousId: "LU04ZK2IY",
+    businessId:"5f0a5ad394b3161a343590e7",
+    productId: "5f0e722b5cfb6e3494756d60",
+    colorId: "5f0edfa384604217685696ae",
+    sizeId: "5f0edfa384604217685696b4"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  AnonymousDeleteItemFromCart(input: {
+    anonymousId: "LU04ZK2IY",
+    itemId: "5f0fb2e79728141268021a07"
+  }) {
+    code
+    success
+    message
+  }
+}
+
 mutation{
   AddItemToCart(input:{
     businessId:"5f0a5ad394b3161a343590e7",
@@ -1222,6 +1287,15 @@ mutation {
       review
     }
     count
+    code
+    success
+    message
+  }
+}
+
+{
+  GetAnonymousId{
+    anonymousId
     code
     success
     message

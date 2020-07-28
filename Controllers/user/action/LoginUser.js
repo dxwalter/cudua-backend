@@ -3,11 +3,12 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-let UserController = require('../UserController');
-let UserModel = require('../../../Models/UserModel');
-let BusinessController = require('../../business/BusinessController');
-let BusinessCategoryController = require('../../businessCategory/BusinessCategoryController');
-let LocationController = require('../../Location/LocationController');
+const UserController = require('../UserController');
+const UserModel = require('../../../Models/UserModel');
+const BusinessController = require('../../business/BusinessController');
+const BusinessCategoryController = require('../../businessCategory/BusinessCategoryController');
+const LocationController = require('../../Location/LocationController');
+const MoveToOnymousCart = require('../../anonymousCart/action/anonymousAddItemToCart')
 
 module.exports = class LoginUser extends UserController{
 
@@ -15,10 +16,12 @@ module.exports = class LoginUser extends UserController{
         super();
         this.email = args.email.toLowerCase();
         this.password = args.password.toLowerCase();
+        this.anonymousId = args.anonymousId;
         this.model = UserModel;
         this.BusinessController = new BusinessController();
         this.LocationController = new LocationController();
         this.BusinessCategoryInstance = new BusinessCategoryController();
+        this.MoveToOnymousCart = new MoveToOnymousCart()
     }
 
     returnType (code, success, message) {
@@ -198,6 +201,10 @@ module.exports = class LoginUser extends UserController{
                             businessId = businessDetails._id
                         }
 
+                        // check if anonymous Id exists
+                        if(this.anonymousId != null && this.anonymousId.length > 0) {
+                            this.MoveToOnymousCart.MoveAnonymousCartToOnymousCart(this.anonymousId, userId)
+                        }
 
                         return {
                             // user object
