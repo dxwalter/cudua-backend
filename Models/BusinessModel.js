@@ -37,13 +37,15 @@ const BusinessSchema = mongoose.Schema({
     logo: {type: String, default: ""},
     coverPhoto: {type: String, default: ""},
     description: {type: String, default: ""},
-    review_details: {
-        reviews: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "business-review",
-            required: false
-        },
-        score: Number
+    reviews: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "business-review",
+        required: true
+    },
+    review_score: {
+        type: Number,
+        required: true,
+        default: 0
     },
     created : {
         type : Date,

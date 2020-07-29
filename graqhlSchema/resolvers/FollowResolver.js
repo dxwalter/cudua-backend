@@ -1,22 +1,20 @@
 
-// let FollowBusiness = require('../../Controllers/followBusiness/action/createFollow');
-// let DeleteBookmark = require('../../Controllers/bookmarks/action/removeBookmark');
-// let GetBookmark = require('../../Controllers/bookmarks/action/getBookmarks');
-// let GetBookmarkers = require('../../Controllers/bookmarks/action/getBookmarkers');
+'use-strict'
+
+const FollowBusiness = require('../../Controllers/follow/action/FollowBusiness')
+const GetFollow = require('../../Controllers/follow/action/GetFollowing')
 
 module.exports = {
     Query: {
-        getBookmarks (parent, args, context, info) {
+        Getfollowing (parent, args, context, info) {
             let accessToken = context.accessToken;
-            let userId = context.authFunction(accessToken);
-            if (userId.error == true) {
-                return userId
-            } else {
-                userId = userId.message;
-            }
 
-            let getBookmark = new GetBookmark();
-            return getBookmark.getMyBookmarks(userId);
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+
+            let getFollow = new GetFollow();
+            return getFollow.CustomerGetFollowing(args.input.page, userId);
             
         },
         getBookmakers(parent, args, context, info) {
@@ -44,10 +42,10 @@ module.exports = {
             }
 
             let create = new FollowBusiness();
-            return create.followBusiness(args.input.businessId, userId);
+            return create.createFollow(args.input.businessId, userId);
 
         },
-        deleteBookmark (parent, args, context, info) {
+        UnfollowBusiness (parent, args, context, info) {
             let accessToken = context.accessToken;
             let userId = context.authFunction(accessToken);
             if (userId.error == true) {
@@ -56,8 +54,8 @@ module.exports = {
                 userId = userId.message;
             }
 
-            let deleteBookmark = new DeleteBookmark();
-            return deleteBookmark.removeBookmark(args.input.businessId, userId);
+            let deleteFollow = new FollowBusiness();
+            return deleteFollow.deleteFollow(args.input.businessId, userId);
 
         }
     }

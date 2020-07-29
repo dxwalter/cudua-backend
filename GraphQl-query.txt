@@ -1301,3 +1301,46 @@ mutation {
     message
   }
 }
+
+mutation {
+  FollowBusiness(input: {
+    businessId: "",
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation{
+  UnfollowBusiness(input: {
+    businessId: ""
+  }) {
+    code
+    success
+    message
+  }
+}
+
+{
+  Getfollowing(input:{
+    page: 1
+  }) {
+    following{
+      businessId
+      username
+      businessName
+      logo
+      review
+      businessCategory {
+        itemId
+        categoryId
+        categoryName
+        hide
+      }
+    }
+    code
+    success
+    message
+  }
+}

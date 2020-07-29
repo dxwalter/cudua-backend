@@ -1,4 +1,4 @@
-    # This is the businesses bookmarked by a customer 
+    # This is the businesses followed by a customer 
     
     # Business details of the bookmark
     type BusinessDetails {
@@ -12,6 +12,8 @@
         businessCategory: [BusinessCategory]
         # logo of the business. eg. Tammy.jpg
         logo: String
+        # business review score
+        review: Int!
     }
 
     # business category
@@ -24,7 +26,7 @@
 
     # create bookmark
     input followBusinessInput {
-        # the business id of the business to be bookmarked
+        # the business id of the business to be followed
         businessId: String!
     }
 
@@ -44,15 +46,15 @@
     }
 
     # this is the response you get when you retrieve bookmarks
-    type getBookmarksResponse implements responseType {
+    type getFollowResponse implements responseType {
         # an array of bookmarks from a user
-        bookmarks: [BusinessDetails]
+        following: [BusinessDetails]
         code: Int!
         success: Boolean!
         message: String!
     }
 
-    # this is the person that bookmarked a business
+    # this is the person that followed a business
     type bookmarker{
         # name of the user
         name: String,
@@ -60,7 +62,7 @@
         profilePhoto: String,
     }
 
-    # this is the list og people that bookmarked a business
+    # this is the list og people that followed a business
     type getBookmarkersResponse {
         # an array of bookmarkers
         customerData: [bookmarker],
@@ -69,16 +71,20 @@
         message: String!
     }
 
+    input getFollowingInput {
+        page: Int!
+    }
+
     type Query {
-        # get bookmarks. Only a signed in user can get this data
-        getBookmarks: getBookmarksResponse
-        # a business can get all the people that bookmarked a business
+        # get following. Only a signed in user can get this data
+        Getfollowing(input: getFollowingInput): getFollowResponse
+        # a business can get all the people that followed a business
         getBookmakers(input: followBusinessInput): getBookmarkersResponse  
     }
 
     type Mutation {
         # bookmark a business
-        FollowBusiness(input: followBusinessInput!): followBusinessResponse
+        FollowBusiness(input: followBusinessInput): followBusinessResponse
         # remove business from bookmarks
-        deleteBookmark(input: followBusinessInput!): followBusinessResponse
+        UnfollowBusiness (input: followBusinessInput): followBusinessResponse
     }
