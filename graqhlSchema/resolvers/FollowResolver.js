@@ -17,18 +17,15 @@ module.exports = {
             return getFollow.CustomerGetFollowing(args.input.page, userId);
             
         },
-        getBookmakers(parent, args, context, info) {
+        GetFollowers(parent, args, context, info) {
 
             let accessToken = context.accessToken;
             let userId = context.authFunction(accessToken);
-            if (userId.error == true) {
-                return userId
-            } else {
-                userId = userId.message;
-            }
+            if (userId.error == true) return userId
+            userId = userId.message;
 
-            let getBookmarkers = new GetBookmarkers();
-            return getBookmarkers.myBookmarkers(args.input.businessId, userId);
+            let getFollowers = new GetFollow();
+            return getFollowers.BusinessGetFollowers(args.input.page, args.input.businessId, userId);
         }
     },
     Mutation: {

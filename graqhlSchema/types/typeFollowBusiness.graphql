@@ -55,17 +55,19 @@
     }
 
     # this is the person that followed a business
-    type bookmarker{
+    type Follower{
         # name of the user
         name: String,
         # profile photo of the user
         profilePhoto: String,
+        # This is the customer review score
+        reviewScore: Int!
     }
 
     # this is the list og people that followed a business
-    type getBookmarkersResponse {
+    type getFollowersResponse {
         # an array of bookmarkers
-        customerData: [bookmarker],
+        customerData: [Follower],
         code: Int!
         success: Boolean!
         message: String!
@@ -75,11 +77,16 @@
         page: Int!
     }
 
+    input getFollowersBusinessInput {
+        page: Int!
+        businessId: String!
+    }
+
     type Query {
         # get following. Only a signed in user can get this data
         Getfollowing(input: getFollowingInput): getFollowResponse
         # a business can get all the people that followed a business
-        getBookmakers(input: followBusinessInput): getBookmarkersResponse  
+        GetFollowers(input: getFollowersBusinessInput): getFollowersResponse  
     }
 
     type Mutation {

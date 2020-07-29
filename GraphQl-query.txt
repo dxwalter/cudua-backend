@@ -279,18 +279,21 @@ query{
 }
 
 {
-  getBookmakers(input: {businessId: "5ef1e8ab4b38312320f56ada"}) {
+  GetFollowers(input: {
+    businessId: "5f0e73a9794b222e284a988a",
+ 		page: 1
+  }) {
     customerData {
       name
       profilePhoto
+      reviewScore
     }
     code
     success
     message
   }
-}    
-
-
+}       
+   
 mutation {
   EditBusinessEmailAddress(input:{
     email: "wala@gmail.com",

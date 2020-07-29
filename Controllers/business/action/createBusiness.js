@@ -1,9 +1,11 @@
 "use-strict";
 
-let BusinessController = require('../BusinessController')
+let BusinessController = require('../BusinessController');
 let BusinessModel = require('../../../Models/BusinessModel');
 
-let UserController = require('../../user/UserController')
+let UserController = require('../../user/UserController');
+
+const CreateNotification = require('../../notifications/action/createNotification')
 
 module.exports = class CreateBusiness extends BusinessController {
 
@@ -12,7 +14,8 @@ module.exports = class CreateBusiness extends BusinessController {
         this.name = args.name.toLowerCase();
         this.username = args.username.toLowerCase();
         this.model = BusinessModel;
-        this.UserController = new UserController()
+        this.UserController = new UserController();
+        this.CreateNotification = new CreateNotification()
     }
 
     returnRequestStatus (code, success, message) {
@@ -69,11 +72,13 @@ module.exports = class CreateBusiness extends BusinessController {
 
         data = data.result
 
-        let UserController = this.UserController.findOneAndUpdate(userId, {business_details: data._id});
+        let UserController = await this.UserController.findOneAndUpdate(userId, {business_details: data._id});
 
         if (UserController.error == true) {
             return this.returnRequestStatus(200, false, `An error occurred updating your personal account as a business owner. More details: ${UserController.message}`);
         }
+        await this.CreateNotification.createBusinessNotification(data._id, data._id, "business_profile", "Online store created", "Congratulations! Your online store is up and running.");
+        await this.CreateNotification.createBusinessNotification(data._id, data._id, "business_profile", "Update business profile", "Update your business profile to help customers find you.");
 
         return {
             businessDetails : {

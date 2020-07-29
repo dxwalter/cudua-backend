@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 
 const UserController = require('../UserController')
 const UserModel = require('../../../Models/UserModel')    
-const MoveToOnymousCart = require('../../anonymousCart/action/anonymousAddItemToCart')
+const MoveToOnymousCart = require('../../anonymousCart/action/anonymousAddItemToCart');
+const CreateNotification = require('../../notifications/action/createNotification')
 
 module.exports = class CreateUser extends UserController{
 
@@ -17,7 +18,9 @@ module.exports = class CreateUser extends UserController{
         this.anonymousId = args.anonymousId
         this.model = UserModel;
 
-        this.MoveToOnymousCart = new MoveToOnymousCart()
+        this.MoveToOnymousCart = new MoveToOnymousCart();
+
+        this.CreateNotification = new CreateNotification()
 
     }
 
@@ -77,6 +80,10 @@ module.exports = class CreateUser extends UserController{
 
         let userId = data._id;
         let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });
+
+        await this.CreateNotification.createCustomerNotification(userId, userId, "customer_profile", "Account created", "Congratulations! Your account is up and running.")
+        await this.CreateNotification.createCustomerNotification(userId, userId, "customer_profile", "Update profile", "Update your profile to see products and businesses around you")
+
         let newData =  {
             userId : data._id,
             fullname: data.fullname,

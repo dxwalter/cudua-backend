@@ -101,4 +101,28 @@ module.exports = class FollowContoller extends MainFunctions {
         }
     }
 
+    async GetBusinessFollowers(page, businessId) {
+        try {
+            
+            let limit = 12;
+
+            let findFollowers = await FollowModel.find({business_id: businessId})
+            .populate('customer_id')
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+
+            return {
+                error: false,
+                result: findFollowers
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
 }

@@ -63,6 +63,7 @@ module.exports = class BusinessController extends FunctionRepo {
     }
 
     async getBusinessData (businessId) {
+
         try {
             const findResult = await BusinessModel.findOne({
                 _id: businessId
