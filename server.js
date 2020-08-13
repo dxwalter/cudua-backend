@@ -14,14 +14,17 @@ require('heroku-self-ping').default(`https://${process.env.HEROKU_APP_NAME}.hero
 
 const app = express();
 
+app.use(function(req, res, next) {
+    req.headers.origin = req.headers.origin || req.headers.host;
+    next()
+})
+
 let whitelist = ['http://localhost:3000', 'https://www.cudua.com'];
 let corsOptions = {
     origin: function (origin, callback) {
       if (whitelist.indexOf(origin) !== -1) {
         callback(null, true)
       } else {
-        console.log(origin)
-        console.log(whitelist)
         callback(new Error('Not allowed by CORS'))
       }
     }
@@ -40,7 +43,6 @@ const typeDefs = require('./graqhlSchema/types');
 const resolvers = require('./graqhlSchema/resolvers');
 
 const { makeExecutableSchema } = require('@graphql-tools/schema');
-const { prototype } = require('./Controllers/business/BusinessController');
 
 const schema = makeExecutableSchema({
     typeDefs,
