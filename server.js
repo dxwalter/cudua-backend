@@ -15,9 +15,7 @@ require('heroku-self-ping').default(`https://${process.env.HEROKU_APP_NAME}.hero
 const app = express();
 
 app.use(function(req, res, next) {
-    req.headers.origin = req.headers.origin || req.headers.host;
-    console.log(req.headers.host)
-    console.log(req.headers.origin)
+    console.log(JSON.stringify(req.headers))
     next()
 })
 
