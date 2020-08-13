@@ -26,7 +26,6 @@ let corsOptions = {
     }
   }
 
-app.use(cors(corsOptions))
 
 const graphqlHTTP = require('express-graphql');
 const {apolloUploadExpress}  = require('apollo-upload-server');
@@ -53,7 +52,18 @@ class startServer {
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
 
-        app.use("/v1", 
+        app.use("/v1", function (req, res, next) {
+            res.header('Access-Control-Allow-Origin', '*');
+            res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+            if (req.method === 'OPTIONS') {
+                res.sendStatus(200);
+            } else {
+                next();
+            }
+        });
+
+        app.use("/v1",
+            cors(corsOptions), 
             bodyParser.json(), 
                 apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
                     graphqlHTTP((req, res) => 
