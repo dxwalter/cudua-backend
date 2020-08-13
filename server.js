@@ -20,11 +20,12 @@ let corsOptions = {
       if (whitelist.indexOf(origin) !== -1) {
         callback(null, true)
       } else {
-        callback(new Error(origin))
         callback(new Error('Not allowed by CORS'))
       }
     }
-  }
+}
+
+app.options('*', cors(corsOptions))
 
 
 const graphqlHTTP = require('express-graphql');
@@ -48,22 +49,10 @@ class startServer {
 
     constructor(app) {
         
-
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
 
-        app.use("/v1", function (req, res, next) {
-            res.header('Access-Control-Allow-Origin', '*');
-            res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-            if (req.method === 'OPTIONS') {
-                res.sendStatus(200);
-            } else {
-                next();
-            }
-        });
-
         app.use("/v1",
-            cors(corsOptions), 
             bodyParser.json(), 
                 apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
                     graphqlHTTP((req, res) => 
