@@ -18,6 +18,8 @@ let whitelist = ['http://localhost:3000', 'https://www.cudua.com'];
 let corsOptions = {
     origin: function (origin, callback) {
       if (whitelist.indexOf(origin) !== -1) {
+          console.log(origin)
+          console.log(whitelist)
         callback(null, true)
       } else {
         callback(new Error('Not allowed by CORS'))
