@@ -5,6 +5,21 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
+const cors = require('cors')
+
+let whitelist = ['http://localhost:3000', 'https://www.cudua.com'];
+let corsOptions = {
+    origin: function (origin, callback) {
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    }
+  }
+
+app.use(cors(corsOptions))
+
 let { MONGODB_URI, port } = require('./config');
 
 require('heroku-self-ping').default(`https://${process.env.HEROKU_APP_NAME}.herokuapp.com`);
@@ -32,6 +47,7 @@ const schema = makeExecutableSchema({
 class startServer {
 
     constructor(app) {
+        
 
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
