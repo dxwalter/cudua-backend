@@ -16,18 +16,18 @@ const app = express();
 
 
 let whitelist = ['http://localhost:3000', 'https://www.cudua.com'];
-let corsOptions = {
-    origin: function (origin, callback) {
-      if (whitelist.indexOf(origin) !== -1) {
-        callback(null, true)
-      } else {
-        callback(new Error('Not allowed by CORS'))
-      }
+let corsOptionsDelegate = function (req, callback) {
+    let corsOptions;
+    if (whitelist.indexOf(req.header('Origin')) !== -1) {
+      corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
+    } else {
+      corsOptions = { origin: false } // disable CORS for this request
     }
-}
+    callback(null, corsOptions) // callback expects two parameters: error and options
+} 
 
 app.options('*', cors());
-// app.use(cors(corsOptions))
+app.use(cors(corsOptionsDelegate))
 
 
 const graphqlHTTP = require('express-graphql');
@@ -54,7 +54,6 @@ class startServer {
         app.use(bodyParser.json());
 
         app.use("/v1",
-            cors(corsOptions),
             bodyParser.json(), 
                 apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
                     graphqlHTTP((req, res) => 
