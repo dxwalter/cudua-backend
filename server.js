@@ -25,7 +25,7 @@ let corsOptions = {
     }
 }
 
-app.options('*', cors(corsOptions))
+app.use(cors(corsOptions))
 
 
 const graphqlHTTP = require('express-graphql');
