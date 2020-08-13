@@ -14,10 +14,6 @@ require('heroku-self-ping').default(`https://${process.env.HEROKU_APP_NAME}.hero
 
 const app = express();
 
-app.use(function(req, res, next) {
-    console.log(JSON.stringify(req.headers))
-    next()
-})
 
 let whitelist = ['http://localhost:3000', 'https://www.cudua.com'];
 let corsOptions = {
@@ -31,7 +27,7 @@ let corsOptions = {
 }
 
 app.options('*', cors());
-app.use(cors(corsOptions))
+// app.use(cors(corsOptions))
 
 
 const graphqlHTTP = require('express-graphql');
@@ -58,6 +54,7 @@ class startServer {
         app.use(bodyParser.json());
 
         app.use("/v1",
+            cors(corsOptions),
             bodyParser.json(), 
                 apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
                     graphqlHTTP((req, res) => 
