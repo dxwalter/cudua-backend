@@ -5,7 +5,14 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
-const cors = require('cors')
+const cors = require('cors');
+
+let { MONGODB_URI, port } = require('./config');
+
+require('heroku-self-ping').default(`https://${process.env.HEROKU_APP_NAME}.herokuapp.com`);
+
+
+const app = express();
 
 let whitelist = ['http://localhost:3000', 'https://www.cudua.com'];
 let corsOptions = {
@@ -19,13 +26,6 @@ let corsOptions = {
   }
 
 app.use(cors(corsOptions))
-
-let { MONGODB_URI, port } = require('./config');
-
-require('heroku-self-ping').default(`https://${process.env.HEROKU_APP_NAME}.herokuapp.com`);
-
-
-const app = express();
 
 const graphqlHTTP = require('express-graphql');
 const {apolloUploadExpress}  = require('apollo-upload-server');
