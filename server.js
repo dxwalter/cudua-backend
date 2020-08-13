@@ -20,6 +20,7 @@ let corsOptions = {
       if (whitelist.indexOf(origin) !== -1) {
         callback(null, true)
       } else {
+        callback(new Error(origin))
         callback(new Error('Not allowed by CORS'))
       }
     }
