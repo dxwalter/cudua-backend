@@ -73,13 +73,19 @@ module.exports = class EditBusinessDetails extends BusinessController {
         // business username
         if (username != businessData.result.username) {
             //update
+            
+            if (username == "cudua") {
+                return this.returnRequestStatus(200, false, "Cudua is a reserved name. Enter a different username");
+            }
+            
+
             if (username.length <= 3) {
                 return this.returnData(200, false, "Your business username must be greater than three characters");
             }
     
             // regex username
             
-            let checkUsername = new RegExp(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/ig).test(username)
+            let checkUsername = new RegExp(/^(?!.*\.\.\s)(?!.*\.$)[^\W][\w.]{0,29}$/ig).test(username)
     
             if (checkUsername == false) {
                 return this.returnData(200, false, "Enter a valid username. Username must not contain any space or special character");

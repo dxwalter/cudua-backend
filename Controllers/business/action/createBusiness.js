@@ -41,6 +41,9 @@ module.exports = class CreateBusiness extends BusinessController {
         }
 
         // regex username
+        if (username == "cudua") {
+            return this.returnRequestStatus(200, false, "Cudua is a reserved name. Enter a different username");
+        }
         
         let checkUsername = new RegExp(/^(?!.*\.\.\s)(?!.*\.$)[^\W][\w.]{0,29}$/ig).test(username)
 
