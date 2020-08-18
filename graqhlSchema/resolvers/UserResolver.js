@@ -1,4 +1,5 @@
 const CreateUser = require('../../Controllers/user/action/CreateUser');
+const CreateUserAndBusiness = require('../../Controllers/user/action/CreateUserAndBusiness');
 const LoginUser = require('../../Controllers/user/action/LoginUser');
 const RecoverPassword = require('../../Controllers/user/action/RecoverPassword');
 const EditUserProfile = require('../../Controllers/user/action/EditUserProfile');
@@ -27,7 +28,7 @@ module.exports = {
                 anonymousId: id.length > 0 ? id : null,
                 code: 200,
                 success: true,
-                message: "Successfull"
+                message: "Successful"
             }
         }
     },
@@ -35,6 +36,10 @@ module.exports = {
         createUser(parent, args, context, info) {
             let createUser = new CreateUser(args.input)
             return createUser.validateUserInput();   
+        },
+        createUserAndBusiness(parent, args, context, info) {
+            let createUserAndBusiness = new CreateUserAndBusiness(args.input);
+            return createUserAndBusiness.create()
         },
         recoverPassword (parent, args, context, info) {
             let recoverPassword = new RecoverPassword();

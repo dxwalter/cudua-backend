@@ -7,7 +7,7 @@
   		email
       phone
     	userId
-    	displaPicture
+    	displayPicture
       review
       address {
         number
@@ -121,6 +121,33 @@ mutation {
       }
       logo
       description 
+    }
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  createUserAndBusiness(input:{
+    fullname: "New Daniel Walter",
+    email: "newemail@gmail.com",
+    password: "walter99",
+    anonymousId: "",
+    name: "New business name",
+    username: "newDanielWalter"
+  }) {
+    userData {
+      fullname
+      email
+      businessId
+      userId
+      accessToken
+    }
+    businessDetails {
+      id
+      businessname
+      username
     }
     code
     success

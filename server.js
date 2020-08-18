@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
+const corsOptionsDelegate = require('./cors.config')
+
 const cors = require('cors');
 
 let { MONGODB_URI, port } = require('./config');
@@ -15,16 +17,6 @@ require('heroku-self-ping').default(`https://${process.env.HEROKU_APP_NAME}.hero
 const app = express();
 
 
-let whitelist = ['http://localhost:3000', 'https://www.cudua.com'];
-let corsOptionsDelegate = function (req, callback) {
-    let corsOptions;
-    if (whitelist.indexOf(req.header('Origin')) !== -1) {
-      corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
-    } else {
-      corsOptions = { origin: false } // disable CORS for this request
-    }
-    callback(null, corsOptions) // callback expects two parameters: error and options
-} 
 
 app.options('*', cors());
 app.use(cors(corsOptionsDelegate))
@@ -75,7 +67,7 @@ class startServer {
         mongoose.set('useCreateIndex', true);
         mongoose.set('useUnifiedTopology', true);
 
-        const PORT = process.env.PORT || 3000;
+        const PORT = process.env.PORT || 4000;
 
         mongoose.connect(MONGODB_URI).then(
             app.listen(PORT, () => console.log(`server starts @ port ${PORT}`)),  (err, result) => {

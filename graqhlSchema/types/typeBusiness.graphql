@@ -123,7 +123,7 @@
         # it can have numbers, it can start with numbers
         # it can start can not start with all special characters except underscore
         # it can start with underscore
-        # "/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/ig" remove the quote around it
+        # "/^(?!.*\.\.\s)(?!.*\.$)[^\W][\w.]{0,29}$/ig" remove the quote around it
         # visit this link to learn more "https://regexr.com/3cg7r"
         username: String!
     }

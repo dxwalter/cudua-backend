@@ -31,7 +31,7 @@
         #  this is the user's password. it must be greater than 5 characters
         phone: String
         # the user display picture
-    	displaPicture: String
+    	displayPicture: String
         # Business id represents the unique id of a business that was created by a user
     	businessId: String
         # This user id represents a human account (personal account)
@@ -185,12 +185,55 @@
     input editCustomerPassword {
         oldPassword: String!
         newPassword: String!
+    } 
+
+    type createUserAndBusinessResponse {
+        # userData
+        userData: UserData
+        # business details
+        businessDetails: BusinessAccount
+        # Api http status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
+    # create user and business input
+    input createUserAndBusinessInput {
+        """
+        This is the fullname of the user. The user can choose to give only first or
+        lastname or both first and lastname. The fullname must be greater than 2 characters
+        """
+        fullname: String!
+        # This is the email address of the user and it must be unique
+        email: String!
+        # This is the password of the user. It must be of at least 6 or more character length 
+        password: String!
+        # This is the anonymous ID of the user if it exists
+        anonymousId: String
+        # business name
+        name: String!
+        # business username
+        # a username must be greater than 2 characters
+        # it can have numbers, it can start with numbers
+        # it can start can not start with all special characters except underscore
+        # it can start with underscore
+        # "/^(?!.*\.\.\s)(?!.*\.$)[^\W][\w.]{0,29}$/ig" remove the quote around it
+        # visit this link to learn more "https://regexr.com/3cg7r"
+        username: String!
     }
 
     #This is the mutation type that will handle create account, forgot and recover pasword
     type Mutation {
         # create a new user
         createUser(input: CreateAccountInput): CreateAccountResponse
+
+        # create a user and a business at the same time
+        createUserAndBusiness(input: createUserAndBusinessInput): createUserAndBusinessResponse
+
         # recover a lost or forgotten password
         recoverPassword(email: String): DatalessResponse
         # change to a new password

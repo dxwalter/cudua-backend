@@ -26,22 +26,23 @@ module.exports = class CreateBusiness extends BusinessController {
         }
     }
 
+    // order scripts are tied to this function. you should have written test but you chose not to
     async validateBusinessInput (userId) {
         
         let name = this.MakeFirstLetterUpperCase(this.name);
         let username = this.username;
 
         if (name.length <= 3) {
-            return this.returnRequestStatus(200, false, "Your business name must be greater than three characters");
+            return this.returnRequestStatus(200, false, "Your business name must be greater than 3 characters");
         }
 
         if (username.length <= 3) {
-            return this.returnRequestStatus(200, false, "Your business username must be greater than three characters");
+            return this.returnRequestStatus(200, false, "Your business username must be greater than 3 characters");
         }
 
         // regex username
         
-        let checkUsername = new RegExp(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/ig).test(username)
+        let checkUsername = new RegExp(/^(?!.*\.\.\s)(?!.*\.$)[^\W][\w.]{0,29}$/ig).test(username)
 
         if (checkUsername == false) {
             return this.returnRequestStatus(200, false, "Enter a valid username. Username must not contain any space or special character");
@@ -64,10 +65,10 @@ module.exports = class CreateBusiness extends BusinessController {
             reviews: userId
         });
 
-        let data = await this.createBusinessAccount(createBusiness, userId);
+        let data = await this.createBusinessAccount(createBusiness);
 
         if (data.error == true) {
-            return this.returnMethod('', '', false, data.message,  200);
+            return this.returnRequestStatus(500, false, data.message);
         }
 
         data = data.result

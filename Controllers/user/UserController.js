@@ -242,4 +242,12 @@ module.exports = class UserController extends FunctionRepo{
     }
 
 
+    async deleteUserFromDB(userId) {
+        try {
+            await UserModel.findOneAndDelete({_id: userId})   
+        } catch (error) {
+            
+        }
+    }
+
 }
