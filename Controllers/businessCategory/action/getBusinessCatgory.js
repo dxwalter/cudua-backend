@@ -39,7 +39,7 @@ module.exports = class GetBusinessCategories extends BusinessCategoryController 
             return {
                 businessCategory: null,
                 code: 200, 
-                success: false,
+                success: true,
                 message: 'No business category or subcategory has been added to your business'
             }
         }
@@ -52,6 +52,9 @@ module.exports = class GetBusinessCategories extends BusinessCategoryController 
 
             let catData = categoryData.category_id;
             categoriesArray[index] = {
+                itemId: categoryData._id, // this is not the category id
+                hide: categoryData.hide,
+
                 categoryId: catData._id,
                 categoryName: catData.name,
                 subcategory: []
@@ -60,8 +63,10 @@ module.exports = class GetBusinessCategories extends BusinessCategoryController 
             
             for (let [subcatIndex, subcat] of categoryData.subcategories.entries()) {
                 let subcatData = subcat.subcategory_id
-                
+
                 categoriesArray[index].subcategory[subcatIndex] = {
+                    hide: subcat.hide,
+                    itemId: subcat._id, // this is not this subcategories array
                     subcategoryId: subcatData._id,
                     subcategoryName: subcatData.name,
                     subcategoryProductCount: await this.productController.countBusinessProducts({business_id: businessId, subcategory: subcatData._id.toString()})
@@ -69,6 +74,8 @@ module.exports = class GetBusinessCategories extends BusinessCategoryController 
             }
 
         }
+
+        console.log(categoriesArray[0].subcategory)
 
         return {
             businessCategory: categoriesArray,
