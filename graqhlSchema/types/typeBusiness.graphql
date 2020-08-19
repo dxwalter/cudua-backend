@@ -17,6 +17,8 @@
         businessCategories: [BusinessCategory]
         # business logo
         logo: String
+        # business review
+        review: Int
         # business cover photo
         coverPhoto: String
         # business description

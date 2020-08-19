@@ -64,13 +64,19 @@ module.exports = class LoginUser extends UserController{
                 })
             }
 
+            // format subcategories in alphabetical order using their names
+            let subcategorytoFormat = this.SortSubcategories(newData.subcategories);
+
+            newData.subcategories = subcategorytoFormat;
+
             businessCategoryArray[categoryCount] = newData;
             
             categoryCount = categoryCount + 1;
 
         }
 
-        return businessCategoryArray;
+        return this.SortCategories(businessCategoryArray);
+
     }
 
 
@@ -120,6 +126,7 @@ module.exports = class LoginUser extends UserController{
         let businessAddress = getBusinessData.address == null || getBusinessData.address == undefined ? null : await this.formatAddress(getBusinessData.address)
 
         let businessId = getBusinessData._id;
+        let businessReview = getBusinessData.review_score;
 
         let businessCategories = await this.BusinessCategoryInstance.getbusinessCategories(businessId);
     
@@ -152,6 +159,7 @@ module.exports = class LoginUser extends UserController{
             description: getBusinessData.description.length < 1 ||  getBusinessData.description == undefined ? null : getBusinessData.description,
             address: businessAddress,
             contact: businessContact,
+            review: businessReview,
             logo: getBusinessData.logo.length < 1 || getBusinessData.logo == undefined ? null : getBusinessData.logo,
             coverPhoto: getBusinessData.coverPhoto.length < 1 || getBusinessData.coverPhoto == undefined ? null :  getBusinessData.coverPhoto,
             businessCategories: businessCategories
@@ -186,7 +194,7 @@ module.exports = class LoginUser extends UserController{
                     comparePassword = comparePassword.result
 
                     if (comparePassword == true) {
-                        let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });
+                        let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '720h' });
 
                         let businessDetails = userDbDetails.business_details;
 

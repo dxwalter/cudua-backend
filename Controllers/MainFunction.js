@@ -163,5 +163,63 @@ module.exports = class FunctionRepo {
             }
         }
     }
+
+    SortSubcategories(data) {
+        let subcategoryNames = [];
+
+        // set name
+        Array.from(data, x => {
+            subcategoryNames.push(x.subcategoryName)
+        });
+
+        // sort names 
+        let sortedNames = subcategoryNames.sort();
+
+        let newSortedsubcategories = [];
+
+        // from the sorted names
+        for (let sortedName of sortedNames) {
+
+            // from unsorted subcategories
+            for (let unsortedsubCategory of data) {
+
+                if (sortedName == unsortedsubCategory.subcategoryName) {
+                    newSortedsubcategories.push(unsortedsubCategory)
+                }
+            }
+        }
+
+        return newSortedsubcategories
+
+    }
+
+
+    SortCategories (categories) {
+        let categoryNames = [];
+        
+        // set name
+        Array.from(categories, x => {
+            categoryNames.push(x.categoryName)
+        });
+
+        
+        let sortCategoryNames = categoryNames.sort();
+
+        let newSortedCategories = [];
+
+        // from the sorted names
+        for (let sortedName of sortCategoryNames) {
+
+            // from unsorted categories
+            for (let unsortedCategory of categories) {
+
+                if (sortedName == unsortedCategory.categoryName) {
+                    newSortedCategories.push(unsortedCategory)
+                }
+            }
+        }
+        return newSortedCategories
+
+    }
     
 }

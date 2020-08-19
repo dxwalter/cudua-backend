@@ -79,7 +79,7 @@ module.exports = class CreateUser extends UserController{
         }
 
         let userId = data._id;
-        let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });
+        let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '720h' });
 
         await this.CreateNotification.createCustomerNotification(userId, userId, "customer_profile", "Account created", "Congratulations! Your account is up and running.")
         await this.CreateNotification.createCustomerNotification(userId, userId, "customer_profile", "Update profile", "Update your profile to see products and businesses around you")
@@ -88,6 +88,7 @@ module.exports = class CreateUser extends UserController{
             userId : data._id,
             fullname: data.fullname,
             email: data.email,
+            review: data.review_score,
             phone: null,
             displaPicture: null,
             businessId: null,

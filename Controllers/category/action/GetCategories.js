@@ -36,7 +36,7 @@ module.exports = class AllCategories extends CategoryController {
         for (let [index, data] of resultArray.entries()) {
             newDataArray[index] = {
                 id: data._id,
-                name: data.name,
+                categoryName: data.name,
                 subcategories: []
             }
 
@@ -48,10 +48,12 @@ module.exports = class AllCategories extends CategoryController {
                     })  
                 } 
             }
+
+            newDataArray[index].subcategories = this.SortSubcategories(newDataArray[index].subcategories)
         }
 
         return {
-            category: newDataArray,
+            category: this.SortCategories(newDataArray),
             code: 200,
             success: true,
             message: `Categories successfully retrieved` 

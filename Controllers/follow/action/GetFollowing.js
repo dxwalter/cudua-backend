@@ -44,28 +44,7 @@ module.exports = class GetFollowing extends FollowController {
 
         if (categoriesArray.length < 1) return null
 
-        let categoriesNameArray = []
-
-        Array.from(categoriesArray, x => {
-            categoriesNameArray.push(x.categoryName)
-        })
-
-        // sort categories
-        let sortedNames = categoriesNameArray.sort();
-        let SortedCateories = [];
-        // rearrange categories
-        for (let sortedName of sortedNames) {
-
-            // compare from first arranged array of categories
-            for (let unsortedCategory of categoriesArray) {
-                if (sortedName == unsortedCategory.categoryName) {
-                    SortedCateories.push(unsortedCategory)
-                }
-            }
-
-        }
-
-        return SortedCateories;
+        return this.SortCategories(categoriesArray);
     }
 
     async FormatData(data) {

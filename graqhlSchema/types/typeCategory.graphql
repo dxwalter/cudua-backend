@@ -54,7 +54,7 @@
         # category id
         id: ID!
         # categor name
-        name: String!
+        categoryName: String!
         # an array of subcategories of this category
         subcategories: [Subcategory!]
     }

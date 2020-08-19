@@ -27,6 +27,7 @@
       logo
       coverPhoto
       description
+      review
       address {
         number
         street
@@ -191,7 +192,7 @@ query {
   GetAllCategories {
     category{
       id
-      name
+      categoryName
       subcategories {
         subcategoryId
         subcategoryName
