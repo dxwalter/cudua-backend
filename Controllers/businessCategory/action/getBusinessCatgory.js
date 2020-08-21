@@ -73,12 +73,13 @@ module.exports = class GetBusinessCategories extends BusinessCategoryController 
                 }
             }
 
+            categoriesArray[index].subcategory = this.SortSubcategories(categoriesArray[index].subcategory)
+
         }
 
-        console.log(categoriesArray[0].subcategory)
 
         return {
-            businessCategory: categoriesArray,
+            businessCategory: this.SortCategories(categoriesArray),
             code: 200, 
             success: true,
             message: 'Your business categories and sucategories were retrieved successfully'

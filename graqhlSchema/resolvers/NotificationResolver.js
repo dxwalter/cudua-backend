@@ -2,7 +2,10 @@
 const GetNotification = require('../../Controllers/notifications/action/getNotification');
 const MarkNotification = require('../../Controllers/notifications/action/markAsRead');
 
+const { GraphQLDateTime } = require('graphql-iso-date') ;
+
 module.exports = {
+    DateTime: GraphQLDateTime,
     Query: {
         GetBusinessNotification (_, args, context) {
             let userId = context.authFunction(context.accessToken);

@@ -1,4 +1,5 @@
 
+scalar DateTime
 
 type Notification {
     notificationId: String,
@@ -7,6 +8,7 @@ type Notification {
     actionId: String!
     type: String!
     message: String!
+    timeStamp: DateTime!
 }
 
 type getNotificationResponse implements ResponseType {

@@ -1278,6 +1278,17 @@ mutation ($file: Upload!) {
 }
 
 mutation {
+  MarkNotificationAsRead (input: {
+    notificationId:"",
+    type: "business"
+  }) {
+    code
+    success
+    message
+  }
+} 
+
+mutation {
   SaveProductForLater(input:{
     productId: "5f0e759a2c5c1f2bfce2c822"
   }) {

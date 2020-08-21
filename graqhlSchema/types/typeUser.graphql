@@ -87,6 +87,8 @@
     	businessId: String
         # This user id represents a human account (personal account)
         userId: String
+        # user review
+        review: Int!
         """ 
         this is the jwt access token generated when a user logs in successfully.
         This is token is used to authenticate every logged in user. Therefore, it is attached 

@@ -38,6 +38,7 @@
     "express-session": "^1.17.0",
     "express-validator": "^6.4.0",
     "graphql": "^15.0.0",
+    "graphql-iso-date": "^3.6.1",
     "graphql-tools": "^6.0.1",
     "graphql-upload": "^11.0.0",
     "heroku-self-ping": "^2.0.1",

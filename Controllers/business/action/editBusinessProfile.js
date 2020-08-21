@@ -115,7 +115,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
             //update
 
             if (businessDescription.length < 10) {
-                return this.returnData(200, false, "Describe your business to your customers");
+                return this.returnData(200, false, "Your business description must be greater than 10 words");
             }
 
             let newBusinessDescriptionObject = {description: businessDescription}

@@ -42,7 +42,8 @@ module.exports = class GetNotification extends NotificationController {
                 owner: notification.owner,
                 actionId: notification.action_id,
                 type: notification.type,
-                message: notification.message
+                message: notification.message,
+                timeStamp: notification.created
             }
         }
 
