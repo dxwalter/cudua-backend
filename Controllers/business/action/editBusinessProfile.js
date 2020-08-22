@@ -148,7 +148,8 @@ module.exports = class EditBusinessDetails extends BusinessController {
             }
         }
 
-        let newphoneNumbers = phoneNumbers.split(',')
+
+        let newphoneNumbers = phoneNumbers;
 
         if (newphoneNumbers.length < 1) {
             return this.returnData(200, false, `Add at least one or multiple phone numbers seperated by comma`)

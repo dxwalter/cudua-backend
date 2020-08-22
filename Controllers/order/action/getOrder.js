@@ -225,8 +225,6 @@ module.exports = class GetOrders extends OrderController {
             deliveryPrice = orderProduct.delivery_charge;
         }
 
-        console.log(deliveryPrice)
-
         return this.returnProductMethod(productList, customerObject, deliveryPrice, 200, true, "ordered products retrieved successfully")
 
         

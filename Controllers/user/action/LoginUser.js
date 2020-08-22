@@ -214,6 +214,8 @@ module.exports = class LoginUser extends UserController{
                             this.MoveToOnymousCart.MoveAnonymousCartToOnymousCart(this.anonymousId, userId)
                         }
 
+                        console.log(userDbDetails)
+
                         return {
                             // user object
                             userDetails: {

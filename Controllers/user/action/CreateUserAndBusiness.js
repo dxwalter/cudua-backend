@@ -60,8 +60,6 @@ module.exports = class CreateUserAndBusiness extends UserController{
 
         let business = createBusiness.businessDetails;
 
-        console.log(business)
-
         userData.businessId = business.id;
 
         let businessData = {
