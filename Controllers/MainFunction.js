@@ -164,6 +164,35 @@ module.exports = class FunctionRepo {
         }
     }
 
+    SortLocationAlphabetically(dataArray) {
+        let dataNames = [];
+
+        // set name
+        Array.from(dataArray, x => {
+            dataNames.push(x.name);
+        });
+
+        let sortedNames = dataNames.sort();
+
+        let newSortedLocation  = [];
+
+        // from the sorted names
+        for (let sortedName of sortedNames) {
+
+            // from unsorted subcategories
+            for (let unsortedLocation of dataArray) {
+
+                if (sortedName == unsortedLocation.name) {
+                    newSortedLocation.push(unsortedLocation)
+                }
+            }
+        }
+
+        return newSortedLocation
+        
+
+    }
+
     SortSubcategories(data) {
         let subcategoryNames = [];
 

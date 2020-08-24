@@ -44,14 +44,14 @@ type communityData {
 
 type CountryData {
     # name of country
-    name: String!
+    name: String
     # country id
-    countryId: String!
+    countryId: String
 }
 
 type StateData {
     # name of state
-    name: String!
+    name: String
     # state id
     stateId: String
 }
@@ -82,10 +82,41 @@ type returnStreetSearch implements responseType{
     message: String!
 }
 
-# this is what is returned when you search for a community
+type newLocationResponse implements responseType {
+    # response status code
+    code: Int!
+    # response status in boolean 
+    success: Boolean!,
+    # response message
+    message: String!
+}
+
+# this is what is returned when you search for a lga
 type returnCommunitySearch implements responseType{
     # the data of the community which includes country, state, lga
     communityData: [communityData!],
+    code: Int!
+    success: Boolean!,
+    message: String!
+}
+
+type searchLgaData {
+    lga: LgaData!
+    state: StateData
+}
+
+# this is what is returned when you search for a community
+type returnLgaSearch implements responseType{
+    # the data of the community which includes country, state, lga
+    lgaData: [searchLgaData],
+    code: Int!
+    success: Boolean!,
+    message: String!
+}
+
+type returnAllStates implements responseType {
+    states: [StateData]
+    country: CountryData
     code: Int!
     success: Boolean!,
     message: String!
@@ -98,9 +129,27 @@ input searchStreetInput{
     keyword: String!
 }
 
+input addNewLocation {
+    userId: String!
+    state: String!
+    lga: String!
+    community: String!
+    street: String!
+    proximity: String
+}
+
 type Query {
     # get street
     GetStreet (input: searchStreetInput): returnStreetSearch
     # get community
-    GetCommunity (input: searchStreetInput): returnCommunitySearch
+    GetCommunity (input: searchStreetInput): returnCommunitySearch,
+
+    # get
+    GetLga (input: searchStreetInput): returnLgaSearch,
+
+    GetAllStates: returnAllStates
+}
+
+type Mutation {
+    AddNewUserLocation (input: addNewLocation): newLocationResponse
 }

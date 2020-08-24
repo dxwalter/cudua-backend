@@ -24,6 +24,15 @@ module.exports = class EditBusinessDetails extends BusinessController {
         }
     }
 
+    returnDataImageFileName (imagePath, code, success, message) {
+        return {
+            imagePath: imagePath,
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
     async basicDetails (args, userId) {
 
         let businessId = args.businessId;
@@ -252,14 +261,14 @@ module.exports = class EditBusinessDetails extends BusinessController {
         if (phoneNumber.length < 5) {
             return this.returnData(200, false, `Enter a valid phone number`)
         }
+        // check if whatsapp number exists for a business
+        
+        if (phoneNumber == businessData.result.contact.whatsapp.number && notification == businessData.result.contact.whatsapp.status) {
+            return this.returnData(200, false, "No update was made. Enter a new Whatsapp phone number for your business")
+        }
 
         let updateNotification = await this.findOneAndUpdate(businessId, {'contact.whatsapp.status': notification});
 
-        // check if whatsapp number exists for a business
-        
-        if (phoneNumber == businessData.result.contact.whatsapp.number) {
-            return this.returnData(200, false, "No update was made. Enter a new Whatsapp phone number for your business")
-        }
 
         // check if phone number exists in user 
         let userNumberCheck = await this.UserController.findUsersByField({phone: phoneNumber});
@@ -287,11 +296,11 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let businessData = await this.getBusinessData(businessId);
         
         if (businessData.error == true) {
-            return this.returnData(500, false, "An error occurred. Please try again")
+            return this.returnDataImageFileName(null, 500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
             if (businessData.result.owner != userId) {
-                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+                return this.returnDataImageFileName(null, 200, false, `You can not access this functionality. You do not own a business`)
             }
         }
 
@@ -300,7 +309,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         const { filename, mimetype, createReadStream } = await file;
 
         if (filename.length < 1) {
-            return this.returnData(200, false, "Choose a logo for your business")
+            return this.returnDataImageFileName(null, 200, false, "Choose a logo for your business")
         }
 
         // delete old logo from cloudinary
@@ -316,7 +325,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         const pathObj = await this.uploadImageFile(stream, newFileName, path);
         
         if (pathObj.error == true) {
-            return this.returnData(500, false, "An error occurred uploading your business logo")
+            return this.returnDataImageFileName(null, 500, false, "An error occurred uploading your business logo")
         }
 
 
@@ -339,7 +348,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let deleteFile = await this.deleteFileFromFolder(imagePath)
 
         if (moveToCloud.error == true) {
-            return this.returnData(500, false, `An error occurred uploading your business logo`)
+            return this.returnDataImageFileName(null, 500, false, `An error occurred uploading your business logo`)
         }
 
 
@@ -349,9 +358,9 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let updateLogo = await this.findOneAndUpdate(businessId, newLogo)
         
         if (updateLogo.error == false) {
-            return this.returnData(202, true, "Your business logo was updated successfully")
+            return this.returnDataImageFileName(newFileName, 202, true, "Your business logo was updated successfully")
         } else {
-            return this.returnData(500, false, "An error occurred updating your business logo")
+            return this.returnDataImageFileName(null, 500, false, "An error occurred updating your business logo")
         }
     }
 
@@ -360,11 +369,11 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let businessData = await this.getBusinessData(businessId);
 
         if (businessData.error == true) {
-            return this.returnData(500, false, "An error occurred. Please try again")
+            return this.returnDataImageFileName(null,500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
             if (businessData.result.owner != userId) {
-                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+                return this.returnDataImageFileName(null, 500, false, `You can not access this functionality. You do not own a business`)
             }
         }
 
@@ -373,7 +382,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         const { filename, mimetype, createReadStream } = await file;
 
         if (filename.length < 1) {
-            return this.returnData(200, false, "Choose a cover photo for your business")
+            return this.returnDataImageFileName(null, 200, false, "Choose a cover photo for your business")
         }
 
         // encrypt file name
@@ -387,7 +396,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         const pathObj = await this.uploadImageFile(stream, newFileName, path);
 
         if (pathObj.error == true) {
-            return this.returnData(500, false, "An error occurred uploading your business cover photo")
+            return this.returnDataImageFileName(null, 500, false, "An error occurred uploading your business cover photo")
         }
 
         // delete old cover from cloudinary
@@ -408,7 +417,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let deleteFile = await this.deleteFileFromFolder(imagePath)
 
         if (moveToCloud.error == true) {
-            return this.returnData(500, false, `An error occurred uploading your business logo`)
+            return this.returnDataImageFileName(null, 500, false, `An error occurred uploading your business logo`)
         }
 
 
@@ -418,9 +427,9 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let updateCover = await this.findOneAndUpdate(businessId, newCover)
         
         if (updateCover.error == false) {
-            return this.returnData(202, true, "Your business cover photo was updated successfully")
+            return this.returnDataImageFileName(null, 202, true, "Your business cover photo was updated successfully")
         } else {
-            return this.returnData(500, false, "An error occurred updating your business cover photo")
+            return this.returnDataImageFileName(null, 500, false, "An error occurred updating your business cover photo")
         }
     }
 

@@ -1386,3 +1386,19 @@ mutation{
     message
   }
 }
+
+{
+  GetAllStates {
+    states {
+      name
+      stateId
+    }
+    country {
+      name
+      countryId
+    }
+    code
+    success
+    message
+  }
+}

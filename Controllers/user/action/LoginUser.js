@@ -79,9 +79,8 @@ module.exports = class LoginUser extends UserController{
 
     }
 
-
+    
     returnAddress(addressObject) {
-        
         return {
             number: addressObject.number,
             street: addressObject.street.name,
@@ -214,15 +213,13 @@ module.exports = class LoginUser extends UserController{
                             this.MoveToOnymousCart.MoveAnonymousCartToOnymousCart(this.anonymousId, userId)
                         }
 
-                        console.log(userDbDetails)
-
                         return {
                             // user object
                             userDetails: {
                                 userId : userDbDetails._id,
                                 fullname: userDbDetails.fullname,
                                 email: userDbDetails.email,
-                                email_notification: userDbDetails.email_notification,
+                                email_notification: userDbDetails.email_notification == null || undefined ? 1 : userDbDetails.email_notification,
                                 phone: userDbDetails.phone == null || undefined ? null : userDbDetails.phone,
                                 displayPicture: userDbDetails.profilePicture == null || undefined ? null : userDbDetails.profilePicture,
                                 review: userDbDetails.review_score == null || undefined ? null : userDbDetails.review_score,

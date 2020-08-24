@@ -167,6 +167,13 @@
         success: Boolean!
         message: String!
     }
+    # when you edit business details, this is the response you get
+    type editBasicLogoResponse implements responseType{
+        imagePath: String
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
 
     # edit business details
     input editBusinessDetails {
@@ -221,7 +228,7 @@
     # edit business address
     input editBusinessAddress {
         # This is the number the business is located on a street
-        streetNumber: Int!,
+        streetNumber: String!,
         # this is the street id
         streetId: String!
         # this is the closest bus stop to the business location
@@ -251,10 +258,10 @@
         EditBusinessEmailAddress(input: editbusinessEmailInput): editBasicDetailsResponse
 
         # edit business logo
-        EditBusinesslogo(input: editBusinessLogo): editBasicDetailsResponse
+        EditBusinesslogo(input: editBusinessLogo): editBasicLogoResponse
 
         # edit business cover photo
-        EditBusinessCoverPhoto(input: editBusinessLogo): editBasicDetailsResponse
+        EditBusinessCoverPhoto(input: editBusinessLogo): editBasicLogoResponse
 
         # edit business whatsapp contact
         EditWhatsappContact(input: editWhatsappContact): editBasicDetailsResponse

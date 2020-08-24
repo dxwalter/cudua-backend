@@ -7,9 +7,37 @@ module.exports = class FindLocation extends LocationController {
         super()
     }
 
-    returnMethod (streetData, code, success, message) {
+    returnMethod (code, success, message) {
+        return {
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
+    returnStateMethod (stateData, countryData, code, success, message) {
+        return {
+            states: stateData,
+            country: countryData,
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
+    returnStreetMethod (streetData, code, success, message) {
         return {
             streetData: streetData,
+            code: code, 
+            success: success,
+            message: message
+        }
+    }
+
+
+    returnLGAMethod (lgaData, code, success, message) {
+        return {
+            lgaData: lgaData,
             code: code, 
             success: success,
             message: message
@@ -96,21 +124,21 @@ module.exports = class FindLocation extends LocationController {
     async FindStreet (keyword) {
         
         if (keyword.length < 1) {
-            return this.returnMethod(null, 200, false, 'Type the name of your street')
+            return this.returnStreetMethod(null, 200, false, 'Type the name of your street')
         }
 
         let getStreet = await this.SearchStreet(keyword);
 
         if (getStreet.error == true) {
-            return this.returnMethod(null, 500, false, 'Something went wrong. Please try again')
+            return this.returnStreetMethod(null, 500, false, 'Something went wrong. Please try again')
         }
 
         if (getStreet.result.length < 1) {
-            return this.returnMethod(null, 200, false, 'No result was found')
+            return this.returnStreetMethod(null, 200, true, 'No result was found')
         }
 
         let formatStreetData = this.FormatStreetData(getStreet.result);
-        return this.returnMethod(formatStreetData, 200, true, `Street search was successful`)
+        return this.returnStreetMethod(formatStreetData, 200, true, `Street search was successful`)
 
     }
 
@@ -129,9 +157,107 @@ module.exports = class FindLocation extends LocationController {
             return this.returnCommunityMethod(null, 200, false, 'No result was found')
         }
 
-        let formatCommunityData = this.FormatCommunityData(getCommunity.result);
+        let sortCommunity = this.SortLocationAlphabetically(getCommunity.result)
+        let formatCommunityData = this.FormatCommunityData(sortCommunity);
 
         return this.returnCommunityMethod(formatCommunityData, 200, true, `community search was successful`)
+
+    }
+
+    async FindLga (keyword) {
+        if (keyword.length < 1) {
+            return this.returnLGAMethod(null, 200, false, 'Type the name of your LGA')
+        }
+
+        let getLga = await this.SearchLGA(keyword);
+
+        if (getLga.error == true) {
+            return this.returnLGAMethod(null, 500, false, 'Something went wrong. Please try again')
+        }
+
+        if (getLga.result.length < 1) {
+            return this.returnLGAMethod(null, 200, true, 'No result was found')
+        }
+
+        let sortLga = this.SortLocationAlphabetically(getLga.result)
+
+        // format data
+        let newLgaArray = [];
+
+        Array.from(sortLga, x => {
+            newLgaArray.push({
+                lga: {
+                    name: x.name,
+                    lgaId: x._id,
+                },
+                state: {
+                    name: x.state_id.name,
+                    stateId: x.state_id._id
+                }
+            });
+        });
+
+        return this.returnLGAMethod(newLgaArray, 200, true, `LGA search was successful`)
+
+    }
+
+    async GetAllStates (countryId) {
+        countryId = '5f41789d3affd42e5892fac2';
+
+        if (countryId.length < 1) return this.returnStateMethod(null, null, 200, false, "Select a country to continue");
+
+        let states = await this.GetAllStatesQuery(countryId);
+
+        if (states.error) return this.returnStateMethod(null, null, 500, false, "An error occurred. Please try again");
+
+        if (states.result.length < 1) return this.returnStateMethod(null, null, 200, true, "No state record was found");
+
+        let countryData = {
+            name: states.result[0].country_id.name,
+            countryId: states.result[0].country_id._id
+        };
+
+        let formatState = this.SortLocationAlphabetically(states.result);
+        
+        let requestedData = []
+
+        Array.from(formatState, x => {
+            requestedData.push({
+                name: x.name,
+                stateId: x._id
+            });
+        });
+
+        return this.returnStateMethod(requestedData, countryData, 200, true, "States retrieved successfully")
+
+    }
+
+    async addNewLocation(args) {
+        let state = args.state;
+        let userId = args.userId;
+        let lga = args.lga
+        let community = args.community
+        let street = args.street
+        let proximity = args.proximity
+
+        if (userId.length < 1 || state.length < 1 || community.length < 1 || lga.length < 1 || street.length < 1) {
+            return this.returnMethod(200, false, "Your inputs were not correct")
+        }
+
+        let saveLocation = await this.AddNewLocation({
+            user_id: userId,
+            state: state,
+            lga: lga,
+            community: community,
+            street: street,
+            proximity: proximity
+        });
+
+        if (saveLocation.error == true) {
+            return this.returnMethod(500, false, `An error occurred. ${saveLocation.message}`)
+        }
+
+        return this.returnMethod(200, true, "Your location is undergoing review. It will take at most 30 minutes to get to be up for use")
 
     }
 }

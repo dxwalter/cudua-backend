@@ -14,7 +14,7 @@ const BusinessSchema = mongoose.Schema({
     },
     address: {
         bus_stop: {type: String, trim: true},
-        number: { type: Number},
+        number: { type: String, required: true},
         street: { type: mongoose.Schema.Types.ObjectId, ref: "location-streets"},
         community: { type: mongoose.Schema.Types.ObjectId, ref: "location-communities"},
         lga: { type: mongoose.Schema.Types.ObjectId, ref: "location-lgas"},
