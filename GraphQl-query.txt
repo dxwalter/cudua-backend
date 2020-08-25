@@ -1402,3 +1402,15 @@ mutation{
     message
   }
 }
+
+mutation {
+  CreateBusinessReview(input: {
+    businessId: "5f0a5ad394b3161a343590e7",
+    score: 1,
+    description: "Phasellus dolor. ."
+  }) {
+    code
+    success
+    message
+  }
+}

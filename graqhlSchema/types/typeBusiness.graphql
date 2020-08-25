@@ -237,11 +237,36 @@
         businessId: String!
     }
 
+    # create business review
+    input createReviewInput {
+        description: String
+        score: Int!
+        businessId: String!
+    }
+
+    input GetBusinessReviewInput {
+        businessId: String!
+    }
+
+    type ReviewType {
+        author: User!
+        description:String!
+        rating: Int!
+    }
+
+    type GetBusinessReviewResponse {
+        score: Float!,
+        reviews: [ReviewType]
+    }
+
     type Query {
         # get business details
         GetSingleBusinessDetails:  BusinessAccount
         # check if username exists
         CheckUsernameExists(input: checkUsernameInput): checkUsernameInputResponse
+        
+        # Get business reviews
+        GetBusinessReview(input: GetBusinessReviewInput): GetBusinessReviewResponse
     }
 
     type Mutation {
@@ -268,4 +293,7 @@
 
         # edit business address
         EditBusinessAddress(input: editBusinessAddress): editBasicDetailsResponse
+
+        # create business review
+        CreateBusinessReview(input: createReviewInput): DatalessResponse
     }

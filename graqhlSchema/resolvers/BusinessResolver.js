@@ -2,6 +2,9 @@
 const UsernameActions = require('../../Controllers/business/action/usernameActions')
 const CreateBusiness = require('../../Controllers/business/action/createBusiness') 
 const EditBusinessProfile = require('../../Controllers/business/action/editBusinessProfile') 
+
+const BusinessReview = require('../../Controllers/business/action/businessReview')
+
 const { GraphQLUpload } = require('apollo-upload-server');
 
 
@@ -14,6 +17,9 @@ module.exports = {
         CheckUsernameExists(parent, args, context, info) {
             let check = new UsernameActions();
             return check.CheckUsernameExistence(args.input.username);
+        },
+        GetBusinessReview(_, args, context) {
+            
         }
     },
     Mutation: {
@@ -117,6 +123,19 @@ module.exports = {
             args = args.input
             let editAddress = new EditBusinessProfile();
             return editAddress.changeBusinessAddress(args.streetNumber, args.streetId, args.closestBusStop, args.businessId, userId)
+        },
+        CreateBusinessReview(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+
+            args = args.input
+
+            let review = new BusinessReview();
+            return review.CreateReview(userId, args.businessId, args.description, args.score)
         }
     }
 }

@@ -200,4 +200,31 @@ module.exports = class OrderController extends FunctionRepo {
         }
     }
 
+    async CheckCustomerStatusWithBusiness (customer, business) {
+        try {
+            
+            let query = await OrderModel.findOne({
+                $and: [
+                    {
+                        customer: customer, 
+                        business: business
+                    }
+                ]
+            }, 'order_id');
+
+            return {
+                result: query,
+                error: false
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+
 }
