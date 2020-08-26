@@ -215,4 +215,26 @@ module.exports = class BusinessController extends FunctionRepo {
         }
     }
 
+    async GetReviewsForBusiness(businessId) {
+        try {
+            
+            let reviews = await BusinessReviews.find({business_id: businessId})
+            .populate('author', ['fullname', 'profilePicture', '_id'] )
+            .populate('business_id', 'review_score')
+            .sort({_id: -1})
+            .limit(24);
+
+            return {
+                result: reviews,
+                error: false
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
 }

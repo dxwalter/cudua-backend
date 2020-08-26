@@ -13,12 +13,49 @@ module.exports = class CreatebusinessReview extends BusinessController {
         this.OrderController = new OrderController();
     }
 
+    returnGetReviewMethod (reviews, score, code, success, message) {
+        return {
+            reviews: reviews,
+            score: score,
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
     returnMethod (code, success, message) {
         return {
             code: code,
             success: success,
             message: message
         }
+    }
+
+    formatBusinessReview (data) {
+
+        let newDataArray = []
+
+        let reviewScore = 0;
+
+        for (const [index, x] of data.entries()) {
+            if (index == 0) reviewScore = x.business_id.review_score
+            newDataArray[index] = {
+                author: {
+                    fullname: x.author.fullname,
+                    userId: x.author._id,
+                    displayPicture: x.author.profilePicture
+                },
+                description: x.description,
+                rating: x.rating,
+                timeStamp: x.created
+            }
+        }
+
+        return {
+            score: reviewScore,
+            reviews: newDataArray
+        }
+
     }
 
     async updateReviewScore (businessId) {
@@ -87,6 +124,20 @@ module.exports = class CreatebusinessReview extends BusinessController {
 
         }
 
+    }
+
+    async GetBusinessReview(businessId) {
+        if (businessId.length < 1) return this.returnGetReviewMethod(null, 0, 200, false, "An error occurred from our end. please try again")
+
+        let getBusinessReviews = await this.GetReviewsForBusiness(businessId);
+        
+        if (getBusinessReviews.error) return this.returnGetReviewMethod(null, 0, 200, false, `An error occurred from our end. please try again. ${error.message}`);
+
+        if (getBusinessReviews.result == null) return this.returnGetReviewMethod(null, 0, 200, true, "No review has been written for this business")
+
+        let formatReview = this.formatBusinessReview(getBusinessReviews.result);
+
+        return this.returnGetReviewMethod(formatReview.reviews, formatReview.score, 200, true, "Business reviews retrieved")
     }
     
 }

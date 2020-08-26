@@ -252,11 +252,15 @@
         author: User!
         description:String!
         rating: Int!
+        timeStamp: DateTime!
     }
 
-    type GetBusinessReviewResponse {
+    type GetBusinessReviewResponse implements responseType{
         score: Float!,
         reviews: [ReviewType]
+        code: Int!
+        success: Boolean!
+        message: String!
     }
 
     type Query {

@@ -1414,3 +1414,24 @@ mutation {
     message
   }
 }
+
+{
+	GetBusinessReview(input:{
+    businessId: ""
+  }) {
+    score
+    reviews {
+      author {
+        fullname
+        displayPicture
+        userId
+      }
+      description
+      author {
+        phone
+        displayPicture
+        businessId
+      }
+    }
+  }
+}

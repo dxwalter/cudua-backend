@@ -6,10 +6,12 @@ const EditBusinessProfile = require('../../Controllers/business/action/editBusin
 const BusinessReview = require('../../Controllers/business/action/businessReview')
 
 const { GraphQLUpload } = require('apollo-upload-server');
+const { GraphQLDateTime } = require('graphql-iso-date') ;
 
 
 module.exports = {
     Upload: GraphQLUpload,
+    DateTime: GraphQLDateTime,
     Query: {
         GetSingleBusinessDetails (parent, args, context, info) {
             console.log(args)
@@ -19,7 +21,9 @@ module.exports = {
             return check.CheckUsernameExistence(args.input.username);
         },
         GetBusinessReview(_, args, context) {
-            
+            let review = new BusinessReview();
+            args = args.input
+            return review.GetBusinessReview(args.businessId)
         }
     },
     Mutation: {
