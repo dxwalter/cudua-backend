@@ -18,7 +18,7 @@
         # business logo
         logo: String
         # business review
-        review: Int
+        review: Float
         # business cover photo
         coverPhoto: String
         # business description
