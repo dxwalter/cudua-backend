@@ -28,7 +28,8 @@ module.exports = class CreateBusiness extends BusinessController {
 
     // order scripts are tied to this function. you should have written test but you chose not to
     async validateBusinessInput (userId) {
-        
+
+
         let name = this.MakeFirstLetterUpperCase(this.name);
         let username = this.username;
 
