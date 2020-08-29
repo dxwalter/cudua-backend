@@ -1,4 +1,4 @@
-let whitelist = ['https://www.cudua.com', 'http://http://demo.cudua.com', 'https://cudua-ui.herokuapp.com/'];
+let whitelist = ['https://cudua-ui.herokuapp.com'];
 let corsOptionsDelegate = function (req, callback) {
     let corsOptions;
     if (whitelist.indexOf(req.header('Origin')) !== -1) {
