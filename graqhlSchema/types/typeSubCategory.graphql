@@ -28,7 +28,7 @@
 
     input CreateSubcategoryInput {
         # this will be an array of ids of different subcategory that belongs to a category
-        subcategories: [String!]!
+        subcategories: String!
         # the category id of the subcategory to be created
         categoryId: String!
     }

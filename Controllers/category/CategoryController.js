@@ -26,7 +26,7 @@ module.exports = class CategoryController extends FunctionRepo {
 
     }
 
-    async CreateCategory (Category) {
+    async CreateNewCategory (Category) {
         try {
 
             const create = await Category.save();

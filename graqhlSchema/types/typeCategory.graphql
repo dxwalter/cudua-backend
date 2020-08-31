@@ -26,9 +26,15 @@
         categoryName: String
     }
 
+    input createSubcategoryInput {
+        categoryId: String!,
+        subcategories: String!
+    }
+
     input CreateCategoryInput {
         # categegory name
         categoryName: String!
+        subcategories: String!
     }
 
     input ConfirmCategoryInput {
@@ -86,7 +92,11 @@
     #This is the mutation type that will handle create category and activate category
     type Mutation {
         # create category
-        createCategory(input: CreateCategoryInput): CreateCategoryResponse
+        createCategory(input: CreateCategoryInput): DatalessResponse
+
+        # creaet Subcategory
+        # createSubcategory(input: createSubcategoryInput): DatalessRcreateSubCategoryesponse
+
         # activate category
         ActivateCategory(input: ConfirmCategoryInput): DatalessResponse
     }

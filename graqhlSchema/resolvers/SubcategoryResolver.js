@@ -11,8 +11,19 @@ module.exports = {
         createSubCategory (parent, args, context, info) {
             // Remember to pass accessToken validation
             // admin and users can add subcategoies
-            let create = new CreateSubCategory(args.input);
-            return create.validateInputSubcategory()
+
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+            
+            args = args.input
+
+            let create = new CreateSubCategory();
+            return create.createNewSubcategory(args.categoryId, args.subcategories, userId);
         },
         ActivateSubcategory (parent, args, context, info) {
             // Remember to pass accessToken validation from Admin

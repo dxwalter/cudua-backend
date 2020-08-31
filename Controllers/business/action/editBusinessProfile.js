@@ -427,7 +427,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let updateCover = await this.findOneAndUpdate(businessId, newCover)
         
         if (updateCover.error == false) {
-            return this.returnDataImageFileName(null, 202, true, "Your business cover photo was updated successfully")
+            return this.returnDataImageFileName(newFileName, 202, true, "Your business cover photo was updated successfully")
         } else {
             return this.returnDataImageFileName(null, 500, false, "An error occurred updating your business cover photo")
         }

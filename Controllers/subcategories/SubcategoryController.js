@@ -97,4 +97,22 @@ module.exports = class SubcategoryController extends CategoryController {
             }
         }
     }
+
+    async createSubcategory (data) {
+        try {
+            
+            let save = await data.save();
+
+            return {
+                error: false,
+                result: save
+            } 
+
+        } catch (error) {
+            return {
+                error: false,
+                message: error.message
+            } 
+        }
+    }
 }

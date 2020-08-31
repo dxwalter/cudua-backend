@@ -27,9 +27,10 @@ module.exports = {
                 userId = userId.message;
             }
             
+            args = args.input
 
-            let createCategoryObject = new CreateCategory(args.input);
-            return createCategoryObject.validateInput()
+            let createCategoryObject = new CreateCategory();
+            return createCategoryObject.createNewCategory(args.categoryName, args.subcategories, userId)
         },
         ActivateCategory (parent, args, context, info) {
             // Remember to pass accessToken validation from Admin

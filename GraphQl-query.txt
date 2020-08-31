@@ -164,15 +164,18 @@ mutation {
   }
 }
 
-mutation{
-  createCategory(input:{categoryName: "Electronics"}) {
-    categoryId
-    categoryName
+mutation {
+  createCategory(input:{
+    categoryName: "Daniel",
+    subcategories:"Walter, udoh",
+  }) {
     code
     success
     message
   }
+}
 
+mutation{
   ActivateCategory (input:{categoryId: "5ee520f8f5970734a4cf64dc"}) {
     code
     success
