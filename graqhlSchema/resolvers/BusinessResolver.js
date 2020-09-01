@@ -98,7 +98,6 @@ module.exports = {
             const { filename, mimetype, createReadStream } = await args.input.file;
 
             let uploadLogo = new EditBusinessProfile();
-            console.log(filename + "here")
             return uploadLogo.changeBusinessLogo(args.input.businessId, args.input.file, userId);
            
         },
