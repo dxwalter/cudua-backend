@@ -127,6 +127,7 @@ type returnAllStates implements responseType {
 input searchStreetInput{
     # keyword
     keyword: String!
+    
 }
 
 input addNewLocation {
@@ -137,6 +138,8 @@ input addNewLocation {
     street: String!
     proximity: String
 }
+
+
 
 type Query {
     # get street

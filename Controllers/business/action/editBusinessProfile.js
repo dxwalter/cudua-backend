@@ -139,7 +139,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
         // check if any update was made at all
         if (newDatacheck == 0) {
-            return this.returnData(200, true, "Your profile was not updated because not change in data was detected")
+            return this.returnData(200, false, "Your profile was not updated because not change in data was detected")
         } else {
             return this.returnData(202, true, "Your business profile was updated successfully")
         }
