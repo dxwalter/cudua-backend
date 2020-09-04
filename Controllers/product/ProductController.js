@@ -81,29 +81,40 @@ module.exports = class ProductController extends BusinessController {
             .skip((page - 1) * limit)
             .populate('category')
             .populate('subcategory')
-
-
-            let countDocuments = await ProductModel.countDocuments({business_id: businessId, category: categoryId});
         
-            let result = {
-                totalNumberOfProducts: countDocuments,
-                products: getProducts.length > 0 ? getProducts : null
-            }
+            return {
+                error: false,
+                result: getProducts
+            } 
 
-            if (getProducts.length > 0) {
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }   
+        }
 
-                return {
-                    error: false,
-                    result: result
-                } 
+    }
 
-            } else {
-                
-                return {
-                    error: false,
-                    result: result
-                }
-            }
+    async FindProductByBusinessId(businessId, page) {
+
+        try {
+
+            // total number of returned products per request
+            let limit = 12;
+
+            let getProducts = await ProductModel.find({business_id: businessId})
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .populate('category')
+            .populate('subcategory')
+
+
+            return {
+                error: false,
+                result: getProducts
+            } 
 
         } catch (error) {
             return {
@@ -128,20 +139,10 @@ module.exports = class ProductController extends BusinessController {
             .populate('category')
             .populate('subcategory')
 
-            if (getProducts.length > 0) {
-
-                return {
-                    error: false,
-                    result: getProducts
-                } 
-
-            } else {
-                
-                return {
-                    error: false,
-                    result: result
-                }
-            }
+            return {
+                error: false,
+                result: getProducts
+            } 
 
         } catch (error) {
             return {

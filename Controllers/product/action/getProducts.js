@@ -195,7 +195,7 @@ module.exports = class EditProduct extends ProductController {
         }
 
         if (getProducts.result == null) {
-            return this.returnMultipleDataFromSubcategory(null, 200, false, `That was all the products in ${subcategoryName} subcategory.`, getProducts.result.totalNumberOfProducts)
+            return this.returnMultipleDataFromSubcategory(null, 200, true, `That was all the products in ${subcategoryName} subcategory.`, getProducts.result.totalNumberOfProducts)
         }
 
 
@@ -254,6 +254,22 @@ module.exports = class EditProduct extends ProductController {
         let formatProduct = this.formatProductDetails(getProducts.result.products);
 
         return this.returnMultipleData(formatProduct, 200, true, `Products for ${categoryName} category successfully retrieved`, getProducts.result.totalNumberOfProducts)
+
+    }
+
+    async getProductByBusinessId (businessId, page = 1) {
+        
+        if (businessId.length < 1) return this.returnMultipleDataFromSubcategory(null, 200, false, "An error occurred from your end. Refresh page and try again");
+        
+        let query = await this.FindProductByBusinessId(businessId, page);
+
+        if (query.error) return this.returnMultipleDataFromSubcategory(null, 500, false, "An error occurred from our end. Kindly refresh the page and try again");
+
+        if (query.result.length == null) return (null, 200, true, "No product has been uploaded by this business");
+
+        let formatProduct = this.formatProductDetails(query.result);
+
+        return this.returnMultipleDataFromSubcategory(formatProduct, 200, true, "successful")
 
     }
 

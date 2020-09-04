@@ -243,6 +243,17 @@ type MultipleProductResponse {
     message: String!
 }
 
+type GetMultipleProductResponse {
+    # an array of products
+    products: [Product]
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
 type BusinessSearchResultResponse {
     # an array of products
     products: [Product]
@@ -274,6 +285,12 @@ type MultipleProductResponseSubcategory {
 input productId {
     # product id
     productId: String!
+}
+
+input getBusinessProduct {
+    # business Id
+    businessId: String!
+    page: Int!
 }
 
 input businessGetProductByCategory {
@@ -328,6 +345,9 @@ type Query {
 
     # A business can search for a product she has uploaded. Please note that this search is basically a business searching for his/her product not all products uploaded to Cudua
     BusinessSearchProduct(input: businessSearchProduct): BusinessSearchResultResponse
+
+    # Get products using business Id
+    GetProductsUsingBusinessId(input: getBusinessProduct): GetMultipleProductResponse
 }
 
 

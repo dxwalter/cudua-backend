@@ -50,6 +50,11 @@ module.exports = {
 
             let searchForProduct = new GetProduct();
             return searchForProduct.SearchForBusinessProduct(args.businessId, args.keyword.trim(), userId)            
+        },
+        GetProductsUsingBusinessId(_, args) {
+            args = args.input
+            let getProducts = new GetProduct();
+            return getProducts.getProductByBusinessId(args.businessId, args.page)
         }
     },
     Mutation: {
