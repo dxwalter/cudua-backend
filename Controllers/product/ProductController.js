@@ -110,6 +110,8 @@ module.exports = class ProductController extends BusinessController {
             .populate('category')
             .populate('subcategory')
 
+            console.log(getProducts)
+
 
             return {
                 error: false,
@@ -138,6 +140,8 @@ module.exports = class ProductController extends BusinessController {
             .skip((page - 1) * limit)
             .populate('category')
             .populate('subcategory')
+
+            
 
             return {
                 error: false,

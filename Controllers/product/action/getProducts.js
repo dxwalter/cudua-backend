@@ -264,8 +264,9 @@ module.exports = class EditProduct extends ProductController {
         let query = await this.FindProductByBusinessId(businessId, page);
 
         if (query.error) return this.returnMultipleDataFromSubcategory(null, 500, false, "An error occurred from our end. Kindly refresh the page and try again");
+    
 
-        if (query.result.length == null) return (null, 200, true, "No product has been uploaded by this business");
+        if (query.result.length == null) return this.returnMultipleDataFromSubcategory(null, 200, true, "No product has been uploaded by this business");
 
         let formatProduct = this.formatProductDetails(query.result);
 
