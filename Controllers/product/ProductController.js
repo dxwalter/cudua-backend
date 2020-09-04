@@ -128,18 +128,11 @@ module.exports = class ProductController extends BusinessController {
             .populate('category')
             .populate('subcategory')
 
-
-            let countDocuments = await ProductModel.estimatedDocumentCount({business_id: businessId, subcategory: subcategoryId});
-            let result = {
-                totalNumberOfProducts: countDocuments,
-                products: getProducts.length > 0 ? getProducts : null
-            }
-
             if (getProducts.length > 0) {
 
                 return {
                     error: false,
-                    result: result
+                    result: getProducts
                 } 
 
             } else {

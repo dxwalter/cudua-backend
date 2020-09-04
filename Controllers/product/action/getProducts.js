@@ -194,17 +194,12 @@ module.exports = class EditProduct extends ProductController {
             return this.returnMultipleDataFromSubcategory(null, 500, false, `An error occurred retrieving your products for ${subcategoryName} subcategory.`)
         }
 
-        if (getProducts.result.products == null) {
-            // check if no product has been added to this subcategory
-            if (getProducts.result.totalNumberOfProducts == 0) {
-                return this.returnMultipleDataFromSubcategory(null, 200, false, `No product has been added to ${subcategoryName} subcategory under ${categoryName} category.`)
-            }
-
+        if (getProducts.result == null) {
             return this.returnMultipleDataFromSubcategory(null, 200, false, `That was all the products in ${subcategoryName} subcategory.`, getProducts.result.totalNumberOfProducts)
         }
 
 
-        let formatProduct = this.formatProductDetails(getProducts.result.products);
+        let formatProduct = this.formatProductDetails(getProducts.result);
 
         return this.returnMultipleDataFromSubcategory(formatProduct, 200, true, `Products for ${subcategoryName} category successfully retrieved`, getProducts.result.totalNumberOfProducts)
 

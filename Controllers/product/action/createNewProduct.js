@@ -76,7 +76,7 @@ module.exports = class CreateNewProduct extends ProductController {
 
         //upload to cloudinary
         let folder = "cudua_commerce/business/"+businessId+"/product/";
-        let publicId = newFileName;
+        let publicId = encryptedName;
         let tag = 'product';
         let imagePath = pathObj.path;
 
