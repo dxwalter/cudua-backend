@@ -100,6 +100,16 @@
         message: String!
     }
 
+    input deleteCategory {
+        categoryId: String!
+        businessId: String!
+    }
+
+    input deleteSubcategory {
+        subcategoryId: String!
+        businessId: String!
+    }
+
     type Query {
         # get business categories, subcategories and the number of products in a subcategory
         GetBusinessCategoriesWithSubcategory (input: getBusinessCategory): businessSubcategoryWithCountResponse
@@ -119,6 +129,12 @@
 
         # show business subcategory
         ShowSelectedBusinessSubcategory(input: showBusinessSubcategory): DatalessResponse
+
+        # delete selected subcategory
+        DeleteSelectedSubcategory(input: deleteSubcategory): DatalessResponse
+
+        # delete business category
+        DeleteSelectedCategory(input: deleteCategory): DatalessResponse
 
         
     }

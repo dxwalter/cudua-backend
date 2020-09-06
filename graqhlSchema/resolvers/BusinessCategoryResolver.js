@@ -11,6 +11,12 @@ const ShowBusinessSubcategory = require('../../Controllers/businessCategory/acti
 // get business category
 const GetCateories = require('../../Controllers/businessCategory/action/getBusinessCatgory');
 
+// delete category
+const DeleteCategory = require('../../Controllers/businessCategory/action/deleteCategory');
+
+// delete subcategory
+const DeleteSubcategory = require('../../Controllers/businessCategory/action/deleteSubcategory');
+
 module.exports = {
     Query: {
         GetBusinessCategoriesWithSubcategory (_, args, context) {
@@ -89,6 +95,37 @@ module.exports = {
 
             let showBusinessSubcategory = new ShowBusinessSubcategory();
             return showBusinessSubcategory.showSubcategory(args.input.businessId, args.input.categoryId, args.input.subcategoryId)
+        },
+        DeleteSelectedSubcategory (parent, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+
+            args = args.input;
+
+            let deleteSubcategory = new DeleteSubcategory();
+
+            return deleteSubcategory.deleteSubcategory(args.subcategoryId, args.businessId)
+        },
+        DeleteSelectedCategory (parent, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+
+            args = args.input
+
+            let deleteCategory = new DeleteCategory();
+
+            return deleteCategory.deleteCategory(args.categoryId, args.businessId)
+
         }
     }
 }

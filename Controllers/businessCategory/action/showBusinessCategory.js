@@ -49,12 +49,12 @@ module.exports = class ShowBusinessCategory extends BusinessCategoryController {
             }
         }
 
-        let categoryName = getCategoryDetails.result[0].name;
+        let categoryName = getCategoryDetails.result.name;
 
         return {
             code: 200,
             success: true,
-            message: `${categoryName} category is now visible`
+            message: `${categoryName} category is now visible to customers`
         }
 
     }

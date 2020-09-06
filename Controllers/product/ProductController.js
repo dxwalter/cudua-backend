@@ -110,9 +110,6 @@ module.exports = class ProductController extends BusinessController {
             .populate('category')
             .populate('subcategory')
 
-            console.log(getProducts)
-
-
             return {
                 error: false,
                 result: getProducts

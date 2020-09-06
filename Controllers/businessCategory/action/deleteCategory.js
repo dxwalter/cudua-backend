@@ -4,15 +4,15 @@ const BusinessCategoryController = require('../../businessCategory/BusinessCateg
 const BusinessController = require('../../business/BusinessController');
 const ProductController = require('../../product/ProductController');
 
-module.exports = class DeleteSelectedSubcategory extends BusinessCategoryController {
+module.exports = class DeleteSelectedCategory extends BusinessCategoryController {
     constructor () {
         super();
         this.businessController = new BusinessController();
         this.productController = new ProductController();
     }
 
-    async deleteSubcategory (subcategoryId, businessId) {
-        console.log(subcategoryId)
+    async deleteCategory (categoryId, businessId) {
+        console.log(categoryId)
         console.log(businessId)
 
         return {
