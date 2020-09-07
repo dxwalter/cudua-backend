@@ -110,7 +110,8 @@ module.exports = class GetFollowing extends FollowController {
             customerArray[index] = {
                 name: customer.customer_id.fullname,
                 profilePhoto: customer.customer_id.profilePicture,
-                reviewScore: customer.customer_id.review_score
+                reviewScore: customer.customer_id.review_score,
+                userId: customer.customer_id._id
             }
         }
 

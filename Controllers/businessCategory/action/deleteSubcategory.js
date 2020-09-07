@@ -24,7 +24,7 @@ module.exports = class DeleteSelectedSubcategory extends BusinessCategoryControl
     async deleteSubcategory (subcategoryId, businessId) {
         
         // validation
-        if (subcategoryId && !businessId) return this.returnMethod(200, false, "The data required to perform this operation was not provided. Refresh page and try again")
+        if (!subcategoryId || !businessId) return this.returnMethod(200, false, "The data required to perform this operation was not provided. Refresh page and try again")
 
         // subcategory details
         let subcat = await this.subcategoryController.GetOneSubcategory(subcategoryId);
@@ -35,11 +35,6 @@ module.exports = class DeleteSelectedSubcategory extends BusinessCategoryControl
 
         if (subcatDetails == null) return this.returnMethod(200, false, "This subcategory has either been moved or deleted");
 
-
-        // get all products in subcategory
-        let allProducts = await this.productController.allProductsInSubcategory(businessId, subcategoryId);
-        
-        if (allProducts.error) return this.returnMethod(500, false, "An error occurred from our end, kindly try again")
 
         // get selected category
         let categoryId = subcatDetails.category_id._id;
@@ -73,6 +68,11 @@ module.exports = class DeleteSelectedSubcategory extends BusinessCategoryControl
             if (updateCategory.error == true ) return this.returnMethod(500, false, "An error occurred from our end, kindly try again");
 
         }
+
+                // get all products in subcategory
+        let allProducts = await this.productController.allProductsInSubcategory(businessId, subcategoryId);
+        
+        if (allProducts.error) return this.returnMethod(500, false, "An error occurred from our end, kindly try again")
         
         if (allProducts.result.length > 0) {
 

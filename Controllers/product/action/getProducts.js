@@ -302,7 +302,7 @@ module.exports = class EditProduct extends ProductController {
             
             // check if no product has been added to this subcategory
             if (productSearch.result.totalNumberOfProducts == 0) {
-                return this.returnProductSearchResult(null, 200, false, `No result was found for '${keyword}'.`)
+                return this.returnProductSearchResult(null, 200, true, `No result was found for '${keyword}'.`)
             }
         }
 

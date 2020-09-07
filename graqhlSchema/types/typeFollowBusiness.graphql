@@ -62,6 +62,8 @@
         profilePhoto: String,
         # This is the customer review score
         reviewScore: Int!
+        # userId
+        userId: String!
     }
 
     # this is the list og people that followed a business

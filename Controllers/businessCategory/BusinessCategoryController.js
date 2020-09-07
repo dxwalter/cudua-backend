@@ -255,7 +255,7 @@ module.exports = class BusinessCategoryController extends BusinessController {
                 $and: [{ business_id: businessId, category_id: categoryId}]
             })
 
-            if (deleteItem.ok == 1 && deleteItem.deletedCount == 1) {
+            if (deleteItem.ok == 1) {
                 return {
                     result: true,
                     error: false
