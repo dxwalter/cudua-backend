@@ -137,8 +137,6 @@ module.exports = class FindLocation extends LocationController {
             return this.returnStreetMethod(null, 200, true, 'No result was found')
         }
 
-        console.log(getStreet.result)
-
         let formatStreetData = this.FormatStreetData(getStreet.result);
         return this.returnStreetMethod(formatStreetData, 200, true, `Street search was successful`)
 
