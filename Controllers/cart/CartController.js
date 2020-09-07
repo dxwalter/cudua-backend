@@ -80,7 +80,7 @@ module.exports = class CartController extends FunctionRepo {
             
             let deleteItem = await CartModel.deleteMany({owner: userId})
 
-            if (deleteItem.ok == 1 && deleteItem.deletedCount == 1) {
+            if (deleteItem.ok == 1) {
                 return {
                     result: true,
                     error: false

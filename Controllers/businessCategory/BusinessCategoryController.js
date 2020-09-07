@@ -81,7 +81,6 @@ module.exports = class BusinessCategoryController extends BusinessController {
 
     }
 
-
     async getbusinessCategories (businessId) {
         try {
             const findResult = await BusinessCategoryModel.find({
@@ -108,6 +107,7 @@ module.exports = class BusinessCategoryController extends BusinessController {
             }
         }
     }
+
     async hideAndShowSubcategory (businessId, categoryId, subcategoryId, updateData) {
         try {
             const findResult = await BusinessCategoryModel.find(
@@ -221,5 +221,58 @@ module.exports = class BusinessCategoryController extends BusinessController {
         }
     }
 
+    async getOneBusinessCategory (businessId, categoryId) {
+        try {
+            const findResult = await BusinessCategoryModel.findOne({
+                $and: [{ business_id: businessId, category_id: categoryId}]    
+            })
+            .sort({_id: -1})
+            .populate({
+                path: 'category_id',
+                model: 'categories',
+            }).populate({
+                path: 'subcategories.subcategory_id',
+                model: 'subcategories'
+            })
+
+            return {
+                error: false,
+                result: findResult   
+            }
+    
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+    async deleteChoosenCategory (businessId, categoryId) {
+        try {
+            
+            let deleteItem = await BusinessCategoryModel.deleteOne({
+                $and: [{ business_id: businessId, category_id: categoryId}]
+            })
+
+            if (deleteItem.ok == 1 && deleteItem.deletedCount == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
+            }
+           
+        } catch (error) {
+            return {
+                message: error.message,
+                error: true
+            }
+        }
+    }
     
 }

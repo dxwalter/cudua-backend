@@ -84,10 +84,9 @@ module.exports = class SubcategoryController extends CategoryController {
             )
             .populate('category_id');
 
-            let data = result._id.toString().length > 0 ? result : null;
             return {
                 error: false,
-                result: data
+                result: result
             };
 
         } catch (error) {

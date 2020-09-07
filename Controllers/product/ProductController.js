@@ -207,4 +207,55 @@ module.exports = class ProductController extends BusinessController {
         }
     }
 
+    async allProductsInSubcategory (businessId, subcategoryId) {
+
+        try {
+
+            let getProducts = await ProductModel.find({$and: [{business_id: businessId, subcategory: subcategoryId}]})
+
+            return {
+                error: false,
+                result: getProducts
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+
+    }
+
+    async deleteAllProductsFromSubcategory(businessId, subcategoryId) {
+        try {
+            
+            let deleteItem = await ProductModel.deleteMany({    
+                $and: [{business_id: businessId, subcategory: subcategoryId}]
+            })
+
+            console.log(deleteItem)
+
+            if (deleteItem.ok == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
+            }
+           
+        } catch (error) {
+            return {
+                message: error.message,
+                error: true
+            }
+        }
+    }
+
 }
