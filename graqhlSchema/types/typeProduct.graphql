@@ -54,6 +54,9 @@ type Product {
     images: [String]
     # Primary image is the image that will show first before other images can show in the slider
     primaryImage: String!
+
+    # product description
+    description: String
 }
 
 type Size {
@@ -75,6 +78,26 @@ type Color {
     colorId: String
     # color name
     color: String
+}
+
+type CreateColorResponse implements ResponseType {
+    colors: [Color]!
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type CreateSizeResponse implements ResponseType {
+    sizes: [Size]!
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
 }
 
 type createProductResponse implements ResponseType {
@@ -369,16 +392,16 @@ type Mutation {
     RemoveProductTag(input: removeProductTag): DatalessResponse
 
     # create/edit product sizes
-    CreateProductSizes(input: createProductSize): DatalessResponse
+    CreateProductSizes(input: createProductSize): CreateSizeResponse
 
     # remove product sizes
-    RemoveProductSize(input: removeProductSize): DatalessResponse
+    RemoveProductSize(input: removeProductSize): CreateSizeResponse
 
     # add/edit product colors
-    CreateProductColors(input: createProductColor): DatalessResponse
+    CreateProductColors(input: createProductColor): CreateColorResponse
 
     # remove product color
-    RemoveProductColor(input: removeProductColor): DatalessResponse
+    RemoveProductColor(input: removeProductColor): CreateColorResponse
 
     # add more photos(secondary photos) to a product
     AddmorePhotos(input: addMorePhotos): DatalessResponse

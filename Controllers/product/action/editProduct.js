@@ -22,6 +22,37 @@ module.exports = class EditProduct extends ProductController {
         }
     }
 
+    returnAvailableSizes (code, success, message, sizes = null) {
+        return {
+            code: code,
+            success: success,
+            message: message,
+            sizes: sizes
+        }
+    }
+
+    formatReturnedColor (colors) {
+        let newArray = [];
+
+        for (let x of colors) {
+            newArray.push({
+                colorId: x._id,
+                color: x.color_codes
+            })
+        }
+
+        return newArray
+    }
+
+    returnColorData (code, success, message, newData = null) {
+        return {
+            code: code,
+            success: success,
+            message: message,
+            colors: newData
+        }
+    }
+
     async editProductBasicDetails (name, price, category, subcategory, businessId, productId, userId) {
         
         let dataObject = {};
@@ -249,27 +280,27 @@ module.exports = class EditProduct extends ProductController {
 
     async createAvailableSizes (sizes, productId, businessId, userId) {
 
-        if (sizes.length < 1) return this.returnData(200, false, "Enter one or multiple sizes seperated by comma for this product");
+        if (sizes.length < 1) return this.returnAvailableSizes(200, false, "Enter one or multiple sizes seperated by comma for this product");
 
-        if (!productId || !businessId) return this.returnData(200, false, "Your business and product details were not provided. Kindly refresh the page and try again")
+        if (!productId || !businessId) return this.returnAvailableSizes(200, false, "Your business and product details were not provided. Kindly refresh the page and try again")
         
         // check if business exists
         let businessData = await this.getBusinessData(businessId);
 
         if (businessData.error == true) {
-            return this.returnData(200, false, "Your business is not recognised.")
+            return this.returnAvailableSizes(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
             if (businessData.result.owner != userId) {
-                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+                return this.returnAvailableSizes(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
 
         let getProductDetails = await this.FindProductById(productId);
 
-        if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.error == true) return this.returnAvailableSizes(200, false, "This product has been moved or does not exist.")
         
-        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
+        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnAvailableSizes(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result;
 
@@ -287,10 +318,19 @@ module.exports = class EditProduct extends ProductController {
             let sizeUpdate = await this.findOneAndUpdate(productId, newSizes);
 
             if (sizeUpdate.error == true) {
-                return this.returnData(500, false, `An error occurred updating the sizes for ${getProductDetails.name}`)
+                return this.returnAvailableSizes(500, false, `An error occurred updating the sizes for ${getProductDetails.name}`)
             }
 
-            return this.returnData(202, true, `The sizes for ${getProductDetails.name} was updated successfully`);
+
+            let newSizeUpdate = [];
+            for (let x of sizeUpdate.result.sizes) {
+                newSizeUpdate.push({
+                    sizeId: x._id,
+                    sizeNumber: x.sizes
+                })
+            }
+            
+            return this.returnAvailableSizes(202, true, `The sizes for ${getProductDetails.name} was updated successfully`, newSizeUpdate);
         }
         
 
@@ -299,10 +339,17 @@ module.exports = class EditProduct extends ProductController {
         let sizeUpdate = await this.findOneAndUpdate(productId, newSizeObject);
 
         if (sizeUpdate.error == true) {
-            return this.returnData(500, false, `An error occurred updating the sizes for ${getProductDetails.name}`)
+            return this.returnAvailableSizes(500, false, `An error occurred updating the sizes for ${getProductDetails.name}`)
         }
-
-        return this.returnData(202, true, `The sizes for ${getProductDetails.name} was updated successfully`);
+        
+        let newSize = [];
+        for (let y of sizeUpdate.result.sizes) {
+            newSize.push({
+                sizeId: y._id,
+                sizeNumber: y.sizes
+            })
+        }
+        return this.returnAvailableSizes(202, true, `The sizes for ${getProductDetails.name} was updated successfully`, newSize);
 
     }
     
@@ -360,25 +407,25 @@ module.exports = class EditProduct extends ProductController {
 
     async createAvailableColors (colors, productId, businessId, userId) {
         
-        if (colors.length < 1) return this.returnData(200, false, "Enter one or multiple colors to add to this product");
+        if (colors.length < 1) return this.returnColorData(200, false, "Enter one or multiple colors seperated by comma");
 
-        if (!productId || !businessId) return this.returnData(200, false, "Your business and product details were not provided. Kindly refresh the page and try again")
+        if (!productId || !businessId) return this.returnColorData(200, false, "Your business and product details were not provided. Kindly refresh the page and try again")
         
         // check if business exists
         let businessData = await this.getBusinessData(businessId);
 
         if (businessData.error == true) {
-            return this.returnData(200, false, "Your business is not recognised.")
+            return this.returnColorData(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
             if (businessData.result.owner != userId) {
-                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+                return this.returnColorData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
 
         let getProductDetails = await this.FindProductById(productId);
 
-        if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.error == true) return this.returnColorData(200, false, "This product has been moved or does not exist.")
         if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result;
@@ -398,22 +445,23 @@ module.exports = class EditProduct extends ProductController {
             let colorUpdate = await this.findOneAndUpdate(productId, newColors);
 
             if (colorUpdate.error == true) {
-                return this.returnData(500, false, `An error occurred updating the colors for ${getProductDetails.name}`)
+                return this.returnColorData(500, false, `An error occurred updating the colors for ${getProductDetails.name}`)
             }
 
-            return this.returnData(202, true, `The color for ${getProductDetails.name} was updated successfully`);
+            let retrurnedColors = this.formatReturnedColor(colorUpdate.result.colors)
+
+            return this.returnColorData(202, true, `The color for "${getProductDetails.name}" was created successfully`, retrurnedColors);
         }
 
 
         // update color in db
         let newColorObject = {colors: newColorArray}
         let colorUpdate = await this.findOneAndUpdate(productId, newColorObject);
-
         if (colorUpdate.error == true) {
             return this.returnData(500, false, `An error occurred updating the color for ${getProductDetails.name}`)
         }
-
-        return this.returnData(202, true, `The color for ${getProductDetails.name} were updated successfully`);
+        let retrurnedColors = this.formatReturnedColor(colorUpdate.result.colors)
+        return this.returnColorData(202, true, `The colors for "${getProductDetails.name}" were updated successfully`, retrurnedColors);
 
 
     }
@@ -457,7 +505,7 @@ module.exports = class EditProduct extends ProductController {
         }
 
         if (check == 0) {
-            return this.returnData(200, true, `The color you are trying to remove, no longer exists.`);
+            return this.returnData(200, false, `The color you are trying to remove, no longer exists.`);
         }
 
         let newData = {colors: savedColor};

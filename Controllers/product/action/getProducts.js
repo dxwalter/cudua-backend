@@ -91,6 +91,7 @@ module.exports = class EditProduct extends ProductController {
                 price: detail.price,
                 hide: detail.hide,
                 reviewScore: detail.score,
+                description: detail.description,
                 category: {
                     categoryId: detail.category._id,
                     categoryName: detail.category.name
