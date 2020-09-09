@@ -53,6 +53,15 @@ module.exports = class EditProduct extends ProductController {
         }
     }
 
+    uploadProductPhotoResponse (code, success, message, photos = null) {
+        return {
+            code: code,
+            success: success,
+            message: message,
+            photos: photos
+        }
+    }
+
     async editProductBasicDetails (name, price, category, subcategory, businessId, productId, userId) {
         
         let dataObject = {};
@@ -526,22 +535,22 @@ module.exports = class EditProduct extends ProductController {
         let businessData = await this.getBusinessData(businessId);
 
         if (businessData.error == true) {
-            return this.returnData(null, 200, false, "Your business is not recognised.")
+            return this.uploadProductPhotoResponse(null, 200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
             if (businessData.result.owner != userId) {
-                return this.returnData(null, 200, false, `You can not access this functionality. You do not own a business`)
+                return this.uploadProductPhotoResponse(null, 200, false, `You can not access this functionality. You do not own a business`)
             }
         }
 
         if (filename.length < 1) {
-            return this.returnData(200, false, "Choose a photo to upload for" + " " + getProductDetails.name)
+            return this.uploadProductPhotoResponse(200, false, "Choose a photo to upload for" + " " + getProductDetails.name)
         }
 
         let getProductDetails = await this.FindProductById(productId);
 
-        if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
-        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
+        if (getProductDetails.error == true) return this.uploadProductPhotoResponse(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.uploadProductPhotoResponse(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result;
 
@@ -553,7 +562,7 @@ module.exports = class EditProduct extends ProductController {
         const pathObj = await this.uploadImageFile(stream, newFileName, this.businessProductPath);
 
         if (pathObj.error == true) {
-            return this.returnData(null, 500, false, "An error occurred uploading your product photo. Please try again")
+            return this.uploadProductPhotoResponse(null, 500, false, "An error occurred uploading your product photo. Please try again")
         }
 
         //upload to cloudinary
@@ -568,7 +577,7 @@ module.exports = class EditProduct extends ProductController {
         let deleteFile = await this.deleteFileFromFolder(imagePath)
 
         if (moveToCloud.error == true) {
-            return this.returnData(null, 500, false, `An error uploading an image for ${getProductDetails.name}`)
+            return this.uploadProductPhotoResponse(null, 500, false, `An error uploading an image for ${getProductDetails.name}`)
         }
 
         let productImages = getProductDetails.images;
@@ -582,7 +591,7 @@ module.exports = class EditProduct extends ProductController {
             return this.returnData(500, false, `An error occurred uploading your image`)
         }
 
-        return this.returnData(202, true, `Image upload was successful`);
+        return this.uploadProductPhotoResponse(202, true, `Image upload was successful`, productImages);
 
     }
 

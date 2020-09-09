@@ -90,6 +90,16 @@ type CreateColorResponse implements ResponseType {
     message: String!
 }
 
+type AddMorePhotoResponse implements ResponseType {
+    photos: [String]!
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
 type CreateSizeResponse implements ResponseType {
     sizes: [Size]!
     # Response status code
@@ -404,7 +414,7 @@ type Mutation {
     RemoveProductColor(input: removeProductColor): CreateColorResponse
 
     # add more photos(secondary photos) to a product
-    AddmorePhotos(input: addMorePhotos): DatalessResponse
+    AddmorePhotos(input: addMorePhotos): AddMorePhotoResponse
 
     # make an image a primary image
     MakePrimaryImage (input: makePrimaryInput): ImageArrayResponse
