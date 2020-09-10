@@ -234,6 +234,17 @@ module.exports = {
 
             let showProduct = new ProductVisibility();
             return showProduct.ShowProduct(args.input.productId, args.input.businessId, userId)
+        },
+        DeleteProduct (parent, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) {
+                return userId
+            } else {
+                userId = userId.message
+            }
+
+            let deleteProduct = new EditProduct();
+            return deleteProduct.deleteProduct(args.input.productId, args.input.businessId)
         }
     }
 }

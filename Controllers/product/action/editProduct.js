@@ -62,6 +62,33 @@ module.exports = class EditProduct extends ProductController {
         }
     }
 
+    async deleteProduct (productId, businessId) {
+
+        if (productId.length == 0 || businessId.length == 0) return this.returnData(200, false, "An error occurred. Refresh page and try again");
+
+        let getProduct  = await this.GetProductById(productId);
+
+        if (getProduct.error) return this.returnData(500, false, "An error occurred deleting your product");
+
+        if (getProduct.result == null) return this.returnData(500, false, "This product has been moved or deleted");
+
+        // delete product
+        let deleteProduct = await this.deleteProductById(productId, businessId);
+
+        if (deleteProduct.error) return this.returnData(500, false, "An error occurred deleting your product");
+
+        let images = getProduct.result.images;
+
+        // delete image
+        images.forEach(async image => {
+            let publicID = `cudua_commerce/business/${businessId}/product/${image.split('.')[0]}`;
+            await this.removeFromCloudinary(publicID, 'image');
+        })
+
+        return this.returnData(200, true, `"${getProduct.result.name}" was deleted successfully`);
+
+    }
+
     async editProductBasicDetails (name, price, category, subcategory, businessId, productId, userId) {
         
         let dataObject = {};

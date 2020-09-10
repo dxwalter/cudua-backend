@@ -251,6 +251,13 @@ input hideProduct {
     businessId: String!
 }
 
+input deleteProduct {
+    # product id
+    productId: String!
+    # business id
+    businessId: String!
+}
+
 type SingleProductResponse {
     #  a single product
     product: Product
@@ -427,4 +434,7 @@ type Mutation {
 
     # show a product
     ShowProduct(input: hideProduct): DatalessResponse
+
+    # DELETE product
+    DeleteProduct(input: deleteProduct): DatalessResponse
 }   

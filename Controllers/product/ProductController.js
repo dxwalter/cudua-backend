@@ -305,4 +305,34 @@ module.exports = class ProductController extends BusinessController {
         }
     }
 
+    async deleteProductById(productId, businessId) {
+        
+        try {
+            let deleteItem = await ProductModel.deleteOne({
+                $and: [{_id: productId, business_id: businessId}]    
+            });
+
+            if (deleteItem.ok == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
+            }
+
+        } catch (error) {
+            
+            return {
+                message: error.message,
+                error: true
+            }
+
+        }
+
+    }
+
 }
