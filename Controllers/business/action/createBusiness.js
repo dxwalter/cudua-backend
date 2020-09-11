@@ -1,9 +1,10 @@
 "use-strict";
 
-let BusinessController = require('../BusinessController');
-let BusinessModel = require('../../../Models/BusinessModel');
+const BusinessController = require('../BusinessController');
+const BusinessModel = require('../../../Models/BusinessModel');
+const UserController = require('../../user/UserController');
 
-let UserController = require('../../user/UserController');
+const CreateSubscription = require('../../subscription/action/createSubscription');
 
 const CreateNotification = require('../../notifications/action/createNotification')
 
@@ -16,6 +17,8 @@ module.exports = class CreateBusiness extends BusinessController {
         this.model = BusinessModel;
         this.UserController = new UserController();
         this.CreateNotification = new CreateNotification()
+
+        this.createSubscription = new CreateSubscription();
     }
 
     returnRequestStatus (code, success, message) {
@@ -25,6 +28,8 @@ module.exports = class CreateBusiness extends BusinessController {
             message: message
         }
     }
+
+
 
     // order scripts are tied to this function. you should have written test but you chose not to
     async validateBusinessInput (userId) {
@@ -82,14 +87,49 @@ module.exports = class CreateBusiness extends BusinessController {
         if (UserController.error == true) {
             return this.returnRequestStatus(200, false, `An error occurred updating your personal account as a business owner. More details: ${UserController.message}`);
         }
+
+        // create notification
         await this.CreateNotification.createBusinessNotification(data._id, data._id, "business_profile", "Online store created", "Congratulations! Your online store is up and running.");
         await this.CreateNotification.createBusinessNotification(data._id, data._id, "business_profile", "Update business profile", "Update your business profile to help customers find you.");
+        
+        // create one month basic subscription for free
 
+        let createSub = await this.createSubscription.createNewSubscription(data._id, "free tier", "basic", 1);
+        
+        let subData = null;
+
+        if (createSub.error) {
+            await this.CreateNotification.createBusinessNotification(data._id, data._id, "Subscription", "Failed subscription", "An error occurred while activating your one month free basic subscription plan. Please our contact support team to get this issue fixed.");
+        } else {
+            // update
+            let subscriptionData = createSub.result;
+
+            let updateData = await this.findOneAndUpdate(data._id, {
+                subscription: subscriptionData._id
+            });
+
+            if (updateData.error) {
+                await this.CreateNotification.createBusinessNotification(data._id, subscriptionData._id, "Subscription", "Failed subscription", "An error occurred while activating your one month free basic subscription plan. Please our contact support team to get this issue fixed.");
+            } else {
+                await this.CreateNotification.createBusinessNotification(data._id, subscriptionData._id, "Subscription", "Successful subscription", "Your one month free basic subscription has been activated. Visit plans & billings tab in your account setting to learn more.");
+            }
+
+            subData = {
+                subscriptionId: subscriptionData._id,
+                subscriptionDate: subscriptionData.subscription_date,
+                expiryDate: subscriptionData.expiry_date,
+                subscriptionType: this.MakeFirstLetterUpperCase(subscriptionData.type),
+            }
+
+        }
+    
+        
         return {
             businessDetails : {
                 businessname: data.businessname,
                 username: data.username,
-                id: data._id
+                id: data._id,
+                subscription: subData
             },
             code: 200,
             success: true,

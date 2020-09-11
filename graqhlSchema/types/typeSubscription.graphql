@@ -1,0 +1,43 @@
+
+
+# response type
+interface ResponseType {
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type DatalessResponse implements ResponseType{
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type Subscription{
+    subscriptionDate: DateTime
+    expiryDate: DateTime
+    subscriptionId: String
+    subscriptionType: String
+}
+
+input disableSubscriptionInput {
+    businessId: String!,
+    subscriptionId: String!
+}
+
+# type Query {
+    
+# }
+
+type Mutation {
+
+    disableSubscription(input: disableSubscriptionInput): DatalessResponse
+
+}
+

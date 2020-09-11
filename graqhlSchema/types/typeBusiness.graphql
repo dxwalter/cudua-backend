@@ -25,6 +25,8 @@
         description: String
         # business username
         username: String
+        # subscription
+        subscription: Subscription
     }
 
     # This is a category choosen by  a business

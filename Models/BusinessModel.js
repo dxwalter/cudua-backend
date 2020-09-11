@@ -47,6 +47,10 @@ const BusinessSchema = mongoose.Schema({
         required: true,
         default: 0
     },
+    subscription: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "subscriptions"
+    },
     created : {
         type : Date,
         default: Date.now()

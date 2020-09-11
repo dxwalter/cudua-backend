@@ -17,6 +17,7 @@ const NotificationResolver = require('./NotificationResolver');
 const SaveForLaterResolver = require('./SaveForLaterResolver');
 const AnonymousUserResolver = require('./AnonymousUserResolver');
 const MoveCategoriesResolver = require('./MoveCategoriesResolver');
+const SubscriptionResolver = require('./SubscriptionResolver')
 
 const resolvers = [
   UserResolver,
@@ -35,7 +36,8 @@ const resolvers = [
   NotificationResolver,
   SaveForLaterResolver,
   AnonymousUserResolver,
-  MoveCategoriesResolver
+  MoveCategoriesResolver,
+  SubscriptionResolver
 ];
 
 module.exports = mergeResolvers(resolvers);

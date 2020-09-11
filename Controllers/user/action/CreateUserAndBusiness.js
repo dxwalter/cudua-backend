@@ -66,7 +66,8 @@ module.exports = class CreateUserAndBusiness extends UserController{
             id: business.id,
             businessname: business.businessname,
             username: business.username,
-            review: 0
+            review: 0,
+            subscription: business.subscription
         }
 
         return this.returnData(userData, businessData, createBusiness.code, createBusiness.success, createBusiness.message)

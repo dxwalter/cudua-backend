@@ -8,7 +8,9 @@ const UserModel = require('../../../Models/UserModel');
 const BusinessController = require('../../business/BusinessController');
 const BusinessCategoryController = require('../../businessCategory/BusinessCategoryController');
 const LocationController = require('../../Location/LocationController');
-const MoveToOnymousCart = require('../../anonymousCart/action/anonymousAddItemToCart')
+const MoveToOnymousCart = require('../../anonymousCart/action/anonymousAddItemToCart');
+
+const SubscriptionController = require('../../subscription/subscriptionController')
 
 module.exports = class LoginUser extends UserController{
 
@@ -21,7 +23,8 @@ module.exports = class LoginUser extends UserController{
         this.BusinessController = new BusinessController();
         this.LocationController = new LocationController();
         this.BusinessCategoryInstance = new BusinessCategoryController();
-        this.MoveToOnymousCart = new MoveToOnymousCart()
+        this.MoveToOnymousCart = new MoveToOnymousCart();
+        this.SubscriptionController = new SubscriptionController();
     }
 
     returnType (code, success, message) {
@@ -149,6 +152,25 @@ module.exports = class LoginUser extends UserController{
                 number: getBusinessData.contact.whatsapp.number
             }
         }
+
+        // get subscription
+        let subscription = await this.SubscriptionController.getSubscriptionById(businessDetails.subscription)
+        if (subscription.error) {
+            subscription = null
+        } else {
+            let subscriptionData = subscription.result
+
+            if (subscriptionData == null ){
+                subscription = null
+            } else {
+                subscription = {
+                    subscriptionDate: subscriptionData.subscription_date,
+                    expiryDate: subscriptionData.expiry_date,
+                    subscriptionId: subscriptionData._id,
+                    subscriptionType: this.MakeFirstLetterUpperCase(subscriptionData.type)
+                }
+            }
+        }
         
         // Business data including address and contact put together
         return {
@@ -161,7 +183,8 @@ module.exports = class LoginUser extends UserController{
             review: businessReview,
             logo: getBusinessData.logo.length < 1 || getBusinessData.logo == undefined ? null : getBusinessData.logo,
             coverPhoto: getBusinessData.coverPhoto.length < 1 || getBusinessData.coverPhoto == undefined ? null :  getBusinessData.coverPhoto,
-            businessCategories: businessCategories
+            businessCategories: businessCategories,
+            subscription: subscription
         }
 
 
