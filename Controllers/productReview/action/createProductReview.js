@@ -59,7 +59,7 @@ module.exports = class CreateProductReview extends ProductReviewController {
         if (userId == getBusinessDetails.owner) return this.returnData(200, false, "You cannot write a review for your own product")
 
         // check if user has reviewed product before
-        // a user can only review a product once. If the user wants to review it again, the previous one will be updated
+        // a user can only review a product once. If the user wants to review it again, the previous review will be updated
         let check = await this.CheckIfUserHasReviewedProduct(userId, productId);
         if (check.error == true) {
             return this.returnData(500, false, `An error occurred while checking your review status`)

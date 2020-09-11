@@ -4,10 +4,12 @@ const { GraphQLUpload } = require('apollo-upload-server');
 let CreateProduct = require('../../Controllers/product/action/createNewProduct');
 let EditProduct = require('../../Controllers/product/action/editProduct');
 let ProductVisibility = require('../../Controllers/product/action/hideAndShowProduct');
-let GetProduct = require('../../Controllers/product/action/getProducts')
+let GetProduct = require('../../Controllers/product/action/getProducts');
+const { GraphQLDateTime } = require('graphql-iso-date') ;
 
 module.exports = {
     Upload: GraphQLUpload,
+    DateTime: GraphQLDateTime,
     Query: {
         GetProductById(_, args) {
             let getProduct  = new GetProduct();

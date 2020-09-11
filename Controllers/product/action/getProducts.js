@@ -63,10 +63,11 @@ module.exports = class EditProduct extends ProductController {
                 author: {
                     authorId: review.author._id,
                     fullname: review.author.fullname,
-                    profilePicture: review.author.profilePicture
+                    displayPicture: review.author.profilePicture
                 },
                 rating: review.rating,
-                description: review.description
+                description: review.description,
+                timeStamp: review.created
             }
 
             newReviewArray.push(data)

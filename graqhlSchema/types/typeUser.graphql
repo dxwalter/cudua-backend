@@ -63,7 +63,7 @@
     type UserReview {
         authorId: String!
         fullname: String!
-        displaPicture: String
+        displayPicture: String
     }
 
     # This method allows a user to reset the password without logging in
