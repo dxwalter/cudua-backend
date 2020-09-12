@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/dxwalter/cudua-backend#readme",
   "dependencies": {
-    "@sendgrid/mail": "^7.1.1",
     "apollo-upload-server": "^7.1.0",
     "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",

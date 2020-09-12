@@ -1,7 +1,6 @@
 'use-strict'
 
-const Sengrid  = require('@sendgrid/mail');
-Sengrid.setApiKey(process.env.SENDGRID_API_KEY);
+
 const fs = require('fs');
 const crypto = require("crypto");
 const bcrypt = require('bcrypt');
@@ -19,16 +18,12 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-module.exports = class FunctionRepo {
+const EmailClass = require('./EmailClass');
 
-    constructor () {}
-    
-    sendEmail (emailObj) {
-        try {
-            return Sengrid.send(emailObj);   
-        } catch (error) {  
-            console.log(error)            
-        }
+module.exports = class FunctionRepo extends EmailClass{
+
+    constructor () {
+        super()
     }
 
     async generateId () {

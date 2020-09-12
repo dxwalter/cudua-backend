@@ -51,6 +51,13 @@ const BusinessSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "subscriptions"
     },
+    subscription_status: {
+        // this is the expiration status of a subscription
+        // 0 = active
+        // 1 = expired
+        type: Number,
+        default: 0
+    },
     created : {
         type : Date,
         default: Date.now()

@@ -1,3 +1,5 @@
+const SubscriptionActions = require('../../Controllers/subscription/action/createSubscription')
+
 module.exports = {
     Query: {
 
@@ -9,7 +11,8 @@ module.exports = {
             userId = userId.message
 
             args = args.input
-            
+            let sub = new SubscriptionActions();
+            return sub.deactivateSubscription(args.businessId, userId)
         }
     }
 }

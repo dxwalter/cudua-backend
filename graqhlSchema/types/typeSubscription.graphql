@@ -27,8 +27,7 @@ type Subscription{
 }
 
 input disableSubscriptionInput {
-    businessId: String!,
-    subscriptionId: String!
+    businessId: String!
 }
 
 # type Query {
