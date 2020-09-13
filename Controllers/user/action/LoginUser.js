@@ -136,7 +136,7 @@ module.exports = class LoginUser extends UserController{
             return this.returnType(500 , false, 'An error occurred while retrieving your business category')
         }
 
-        if (businessCategories.error == false && businessCategories.result == false ) {
+        if (businessCategories.error == false && businessCategories.result == null ) {
             businessCategories = null;
         } else {
             // this is the array of business categories and subcategories chosen by this business owner

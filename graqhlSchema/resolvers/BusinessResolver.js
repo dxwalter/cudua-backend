@@ -3,7 +3,9 @@ const UsernameActions = require('../../Controllers/business/action/usernameActio
 const CreateBusiness = require('../../Controllers/business/action/createBusiness') 
 const EditBusinessProfile = require('../../Controllers/business/action/editBusinessProfile') 
 
-const BusinessReview = require('../../Controllers/business/action/businessReview')
+const BusinessReview = require('../../Controllers/business/action/businessReview');
+
+const GetbusinessData = require('../../Controllers/business/action/getBusinessData')
 
 const { GraphQLUpload } = require('apollo-upload-server');
 const { GraphQLDateTime } = require('graphql-iso-date') ;
@@ -13,8 +15,11 @@ module.exports = {
     Upload: GraphQLUpload,
     DateTime: GraphQLDateTime,
     Query: {
-        GetSingleBusinessDetails (parent, args, context, info) {
-            console.log(args)
+        GetSingleBusinessDetailsByUsername (parent, args, context, info) {
+            
+            args = args.input.username
+            let getData = new GetbusinessData();
+            return getData.getData(args)
         },
         CheckUsernameExists(parent, args, context, info) {
             let check = new UsernameActions();

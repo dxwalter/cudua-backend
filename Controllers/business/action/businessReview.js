@@ -43,7 +43,7 @@ module.exports = class CreatebusinessReview extends BusinessController {
                 author: {
                     fullname: x.author.fullname,
                     userId: x.author._id,
-                    displayPicture: x.author.profilePicture
+                    displayPicture: x.author.profilePicture == undefined || x.author.profilePicture == null ? "" : x.author.profilePicture
                 },
                 description: x.description,
                 rating: x.rating,

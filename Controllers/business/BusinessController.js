@@ -76,16 +76,35 @@ module.exports = class BusinessController extends FunctionRepo {
             .populate('address.country')   
             .exec()
 
-            if (findResult._id) {
-                return {
-                    error: false,
-                    result: findResult   
-                }
+            return {
+                error: false,
+                result: findResult
             }
+    
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+    async getBusinessDataByUsername (username) {
+
+        try {
+            const findResult = await BusinessModel.findOne({
+                username: username
+            })            
+            .populate('address.street')
+            .populate('address.community')
+            .populate('address.lga')
+            .populate('address.state')
+            .populate('address.country')   
+            .exec()
 
             return {
                 error: false,
-                result: false   
+                result: findResult   
             }
     
         } catch (error) {

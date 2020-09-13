@@ -27,6 +27,8 @@
         username: String
         # subscription
         subscription: Subscription
+        # reviews
+        reviews: [ReviewType]
     }
 
     # This is a category choosen by  a business
@@ -133,6 +135,7 @@
     }
 
     # Check if username exists
+    # note that GetSingleBusinessDetailsByUsername also uses this input 
     input checkUsernameInput {
         # check username string
         username: String!
@@ -265,9 +268,16 @@
         message: String!
     }
 
+    type getBusinessDetailsResponse implements responseType{
+        businessData: BusinessAccount
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
     type Query {
         # get business details
-        GetSingleBusinessDetails:  BusinessAccount
+        GetSingleBusinessDetailsByUsername(input: checkUsernameInput):  getBusinessDetailsResponse
         # check if username exists
         CheckUsernameExists(input: checkUsernameInput): checkUsernameInputResponse
         

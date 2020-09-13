@@ -21,7 +21,8 @@ const SubscriptionSchema = mongoose.Schema({
     },
     expiry_date: {
         type : Date,
-        default: +new Date() + 30*24*60*60*1000
+        // default: +new Date() + 30*24*60*60*1000
+        default: +new Date() + 10*60*1000
     },
     created : {
         type : Date,
