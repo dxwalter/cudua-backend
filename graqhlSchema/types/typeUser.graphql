@@ -226,6 +226,7 @@
         # "/^(?!.*\.\.\s)(?!.*\.$)[^\W][\w.]{0,29}$/ig" remove the quote around it
         # visit this link to learn more "https://regexr.com/3cg7r"
         username: String!
+        inviteId: String
     }
 
     #This is the mutation type that will handle create account, forgot and recover pasword

@@ -275,6 +275,22 @@
         message: String!
     }
 
+    type ViralInvite {
+        viralId: String!
+        businessData: BusinessAccount!
+    }
+
+    type getViralIdResponse{
+        viralId: String
+        code: Int!
+        success: String!
+        message: String!
+    }
+
+    input getViralIdInput {
+        businessId: String!
+    }
+
     type Query {
         # get business details
         GetSingleBusinessDetailsByUsername(input: checkUsernameInput):  getBusinessDetailsResponse
@@ -283,6 +299,8 @@
         
         # Get business reviews
         GetBusinessReview(input: GetBusinessReviewInput): GetBusinessReviewResponse
+
+        GetViralId(input: getViralIdInput): getViralIdResponse
     }
 
     type Mutation {

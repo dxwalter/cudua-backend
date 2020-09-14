@@ -14,7 +14,7 @@ module.exports = class CreateBusiness extends BusinessController {
         super();
         this.name = args.name.toLowerCase();
         this.username = args.username.toLowerCase();
-        this.model = BusinessModel;
+        this.inviteId = args.inviteId
         this.UserController = new UserController();
         this.CreateNotification = new CreateNotification()
 
@@ -29,11 +29,57 @@ module.exports = class CreateBusiness extends BusinessController {
         }
     }
 
+    async saveViralRegistration(inviteId, businessId) {
+
+        // get viral id details
+        let viralIdDetails = await this.GetViralIdDetails(inviteId);
+        
+        console.log(viralIdDetails)
+
+        if (viralIdDetails.error) return
+
+        if (viralIdDetails.result == null) return
+
+        let details = viralIdDetails.result;
+
+        // count the number of documents that matches this inviteId
+
+        let count = await this.countBusinessInvite(details.business_id);
+
+        let uplinerId = details.business_id;
+
+        if (count.error) return
+
+        // if document count is less than 3
+        if (count.result == 3) return
+
+        // save and notify the business that initiated the invite
+        let createDownLiner = await this.createNewDownliner(uplinerId, businessId);
+
+        if (createDownLiner.error) return
+
+        if (count.result == 2) {
+            await this.CreateNotification.createBusinessNotification(uplinerId, inviteId, "Invite", "New Invite", `A new shop was created using your invitation link. You are qualified to get one month free basic plan.`);
+            return
+        }
+
+        let text = ""
+
+        if (count.result == 1) {
+            text = "You have one more business to qualify for one month free basic plan"
+        }
+
+        if (count.result == 0) {
+            text = "Invite two more businesses to qualify for one month free basic plan"
+        }
+
+        await this.CreateNotification.createBusinessNotification(uplinerId, inviteId, "Invite", "New Invite", `A new shop was created using your invitation link. ${text}`);
+    }
 
 
     // order scripts are tied to this function. you should have written test but you chose not to
     async validateBusinessInput (userId) {
-
+        
 
         let name = this.MakeFirstLetterUpperCase(this.name);
         let username = this.username;
@@ -121,6 +167,10 @@ module.exports = class CreateBusiness extends BusinessController {
                 subscriptionType: this.MakeFirstLetterUpperCase(subscriptionData.type),
             }
 
+        }
+
+        if (this.inviteId.length > 0){
+            this.saveViralRegistration(this.inviteId, data._id)
         }
     
         

@@ -30,6 +30,12 @@ input disableSubscriptionInput {
     businessId: String!
 }
 
+input createNewSubscription {
+    businessId: String!
+    referenceId: String!
+    subType: String!
+}
+
 # type Query {
     
 # }
@@ -37,6 +43,7 @@ input disableSubscriptionInput {
 type Mutation {
 
     disableSubscription(input: disableSubscriptionInput): DatalessResponse
+    createSubscription (input: createNewSubscription): DatalessResponse
 
 }
 

@@ -5,7 +5,9 @@ const EditBusinessProfile = require('../../Controllers/business/action/editBusin
 
 const BusinessReview = require('../../Controllers/business/action/businessReview');
 
-const GetbusinessData = require('../../Controllers/business/action/getBusinessData')
+const GetbusinessData = require('../../Controllers/business/action/getBusinessData');
+
+const ViralRegistration = require('../../Controllers/business/action/viralRegistration')
 
 const { GraphQLUpload } = require('apollo-upload-server');
 const { GraphQLDateTime } = require('graphql-iso-date') ;
@@ -29,6 +31,14 @@ module.exports = {
             let review = new BusinessReview();
             args = args.input
             return review.GetBusinessReview(args.businessId)
+        },
+        GetViralId(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            let getId = new ViralRegistration();
+            return getId.getBusinessViralId(args.input.businessId)
         }
     },
     Mutation: {

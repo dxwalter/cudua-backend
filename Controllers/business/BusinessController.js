@@ -4,6 +4,9 @@ const BusinessModel = require('../../Models/BusinessModel');
 const BusinessReviews = require('../../Models/BusinessReviews');
 const FunctionRepo = require('../MainFunction');
 
+const ViralIdStoreModel = require('../../Models/InviteViralMarket')
+const BusinessInvite = require('../../Models/inviteReferral')
+
 module.exports = class BusinessController extends FunctionRepo {
 
     constructor () {
@@ -256,4 +259,112 @@ module.exports = class BusinessController extends FunctionRepo {
         }
     }
 
+    async GetBusinessViralIdFromDb(businessId) {
+        try {
+
+            let getId = await ViralIdStoreModel.findOne({business_id: businessId});
+
+            return {
+                error: false,
+                result: getId
+            }
+            
+        } catch (error) {
+            return {
+                message: error.message,
+                error: true
+            }
+        }
+    }
+
+    async CreateNewViralId(newId, businessId) {
+        
+        let data = new ViralIdStoreModel({
+            business_id: businessId,
+            invite_id: newId
+        })
+
+        try {
+            
+            let save = await data.save()
+
+            return {
+                error: false,
+                result: save
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+
+    }
+
+    async GetViralIdDetails (inviteId) {
+
+        try {
+            
+            let findResult = await ViralIdStoreModel.findOne({invite_id: inviteId});
+
+            return {
+                error: false,
+                result: findResult
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+
+    }
+
+    async countBusinessInvite (businessId) {
+        try {
+            let countResult = await BusinessInvite.countDocuments({upliner : businessId});
+            return {
+                result: countResult,
+                error: false
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            };
+        }
+    }
+
+    async createNewDownliner(upliner, downliner) {
+
+        let data = new BusinessInvite({
+            downliner: downliner,
+            upliner: upliner
+        });
+
+        try {
+            
+            let save = await data.save();
+
+            return {
+                error: false,
+                result: save,
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
 }

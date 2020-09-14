@@ -82,6 +82,11 @@ module.exports = class createSubScription extends subscriptionController {
 
         }
 
+
+        if (businessId && referenceId) {
+
+        }
+
     }
 
     async deactivateSubscription (businessId, userId) {
@@ -125,5 +130,7 @@ module.exports = class createSubScription extends subscriptionController {
         return this.returnMethod(200, true, "Subscription deactivated")
 
     }
+
+    async 
 
 }
