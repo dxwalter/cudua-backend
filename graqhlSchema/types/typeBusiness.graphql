@@ -275,9 +275,12 @@
         message: String!
     }
 
-    type ViralInvite {
-        viralId: String!
-        businessData: BusinessAccount!
+    type getDownlineDetailsResponse implements responseType{
+        businessData: [BusinessAccount]
+        redeemPrice: Int
+        code: Int!
+        success: Boolean!
+        message: String!
     }
 
     type getViralIdResponse{
@@ -301,6 +304,8 @@
         GetBusinessReview(input: GetBusinessReviewInput): GetBusinessReviewResponse
 
         GetViralId(input: getViralIdInput): getViralIdResponse
+
+        GetDownLiners(input: getViralIdInput): getDownlineDetailsResponse
     }
 
     type Mutation {

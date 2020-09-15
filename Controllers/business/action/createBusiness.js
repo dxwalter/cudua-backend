@@ -33,8 +33,6 @@ module.exports = class CreateBusiness extends BusinessController {
 
         // get viral id details
         let viralIdDetails = await this.GetViralIdDetails(inviteId);
-        
-        console.log(viralIdDetails)
 
         if (viralIdDetails.error) return
 
@@ -44,32 +42,38 @@ module.exports = class CreateBusiness extends BusinessController {
 
         // count the number of documents that matches this inviteId
 
-        let count = await this.countBusinessInvite(details.business_id);
+        
 
         let uplinerId = details.business_id;
-
-        if (count.error) return
-
-        // if document count is less than 3
-        if (count.result == 3) return
 
         // save and notify the business that initiated the invite
         let createDownLiner = await this.createNewDownliner(uplinerId, businessId);
 
         if (createDownLiner.error) return
 
-        if (count.result == 2) {
+        let count = await this.countBusinessInvite(details.business_id);
+        if (count.error) return
+
+        // if document count is less than 3
+        if (count.result == 3) {
+            if (details.redeem_price == 0) {
+                let updateRecord = await this.updateViralData(inviteId, {'redeem_price': 1})
+                console.log(updateRecord)
+            }
+        }
+
+        if (count.result == 3) {
             await this.CreateNotification.createBusinessNotification(uplinerId, inviteId, "Invite", "New Invite", `A new shop was created using your invitation link. You are qualified to get one month free basic plan.`);
             return
         }
 
         let text = ""
 
-        if (count.result == 1) {
-            text = "You have one more business to qualify for one month free basic plan"
+        if (count.result == 2) {
+            text = "Invite have one more business to qualify for one month free basic plan"
         }
 
-        if (count.result == 0) {
+        if (count.result == 1) {
             text = "Invite two more businesses to qualify for one month free basic plan"
         }
 

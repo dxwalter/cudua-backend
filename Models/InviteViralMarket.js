@@ -10,6 +10,10 @@ const inviteViralMarketing = mongoose.Schema({
         type: String,
         required: true
     },
+    redeem_price: {
+        type: Number,
+        default: 0
+    },
     created : {
         type : Date,
         default: Date.now()

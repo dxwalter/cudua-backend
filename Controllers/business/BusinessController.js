@@ -326,6 +326,28 @@ module.exports = class BusinessController extends FunctionRepo {
 
     }
 
+    async GetViralDetailsWithBusinessId (businessId) {
+
+        try {
+            
+            let findResult = await ViralIdStoreModel.findOne({business_id: businessId});
+
+            return {
+                error: false,
+                result: findResult
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+
+    }
+
     async countBusinessInvite (businessId) {
         try {
             let countResult = await BusinessInvite.countDocuments({upliner : businessId});
@@ -365,6 +387,46 @@ module.exports = class BusinessController extends FunctionRepo {
                 message: error.message
             }
 
+        }
+    }
+
+    async GetDownLiners(businessId) {
+
+        try {
+
+            let findData = await BusinessInvite.find({upliner: businessId})
+            .populate('downliner')
+            .sort({_id: -1})
+            .limit(24);
+
+            return {
+                error: false,
+                result: findData
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+
+    }
+
+    async updateViralData(inviteId, newData) {
+        try {
+            let updateRecord = await ViralIdStoreModel.findOneAndUpdate({invite_id: inviteId}, { $set:newData }, {new : true });
+            return {
+                error: false,
+                result: updateRecord
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
         }
     }
 }

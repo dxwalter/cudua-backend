@@ -4,6 +4,7 @@ const subscriptionController = require('../subscriptionController')
 const BusinessController = require('../../business/BusinessController');
 const UserController = require('../../user/UserController')
 const SubscriptionModel = require('../../../Models/SubscriptionModel');
+const BusinessNotification = require('../../notifications/action/createNotification')
 
 module.exports = class createSubScription extends subscriptionController {
     
@@ -11,6 +12,7 @@ module.exports = class createSubScription extends subscriptionController {
         super();
         this.businessController = new BusinessController();
         this.userController = new UserController();
+        this.businessNotification = new BusinessNotification()
     }
 
     returnMethod (code, success, message) {
@@ -123,9 +125,9 @@ module.exports = class createSubScription extends subscriptionController {
             let recipientEmail = getUserData.result.email
 
             let sendEmail = await this.sendMail("no-reply@cudua.com", "Daniel Walter", subject, recipientEmail, recipientName, messageBody, textPart);
-
-            console.log(sendEmail)
         }
+
+        await this.businessNotification.createBusinessNotification(businessId, businessId, "Subscription", "Expired subscription", `Your subscription has expired. Your shop and products will no longer appear in search results. Visit plans & billing in your account settings to subscribe.`);
 
         return this.returnMethod(200, true, "Subscription deactivated")
 
