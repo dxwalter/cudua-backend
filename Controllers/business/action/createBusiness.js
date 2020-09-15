@@ -97,8 +97,8 @@ module.exports = class CreateBusiness extends BusinessController {
         }
 
         // regex username
-        if (username == "cudua") {
-            return this.returnRequestStatus(200, false, "Cudua is a reserved name. Enter a different username");
+        if (username == "cudua" || username == 'username') {
+            return this.returnRequestStatus(200, false, `${username} is a reserved name. Enter a different username`);
         }
         
         let checkUsername = new RegExp(/^(?!.*\.\.\s)(?!.*\.$)[^\W][\w.]{0,29}$/ig).test(username)
@@ -121,8 +121,9 @@ module.exports = class CreateBusiness extends BusinessController {
             businessname : name,
             username : username,
             owner: userId,
-            reviews: userId
         });
+
+        createBusiness.reviews = createBusiness.id
 
         let data = await this.createBusinessAccount(createBusiness);
 
