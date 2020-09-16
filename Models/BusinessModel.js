@@ -25,6 +25,7 @@ const BusinessSchema = mongoose.Schema({
         email: {type: String, trim: true},
         phone: [{type: String}],
         whatsapp: {
+            // 1 means activated
             status: {type: Number, default: 0},
             number: {type: String}
         }

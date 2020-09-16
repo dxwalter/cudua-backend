@@ -97,7 +97,8 @@ module.exports = class BusinessController extends FunctionRepo {
         try {
             const findResult = await BusinessModel.findOne({
                 username: username
-            })            
+            })
+            .populate('owner')            
             .populate('address.street')
             .populate('address.community')
             .populate('address.lga')

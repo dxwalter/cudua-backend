@@ -26,6 +26,7 @@ module.exports = class GetBusinessData extends BusinessController {
     }
 
     returnAddress(addressObject) {
+        if (addressObject.street == undefined) return null
         return {
             number: addressObject.number,
             street: addressObject.street.name,
@@ -85,7 +86,20 @@ module.exports = class GetBusinessData extends BusinessController {
 
     }
 
-    async formatBusinessDetails (businessDetails) {
+    formatBusinessOwnerData(data, returnData) {
+        if (data == null) return null
+        if (returnData == 'email') {
+            if (data.email == undefined) return null
+            return data.email
+        }
+
+        if (returnData == 'phone') {
+            if (data.phone == undefined) return null
+            return data.phone
+        }
+    }
+
+    async formatBusinessDetails (businessDetails, businessOwner) {
         
         // business data
         let getBusinessData = businessDetails;
@@ -111,8 +125,8 @@ module.exports = class GetBusinessData extends BusinessController {
 
         // business contact
         let businessContact =  {
-            email: getBusinessData.contact.email == undefined || getBusinessData.contact.email.length < 1 ? null : getBusinessData.contact.email,
-            phone: getBusinessData.contact.phone == undefined || getBusinessData.contact.phone.length < 1 ? null: getBusinessData.contact.phone,
+            email: getBusinessData.contact.email == undefined || getBusinessData.contact.email.length < 1 ? this.formatBusinessOwnerData(businessOwner, "email") : getBusinessData.contact.email,
+            phone: getBusinessData.contact.phone == undefined || getBusinessData.contact.phone.length < 1 ? this.formatBusinessOwnerData(businessOwner, "phone"): getBusinessData.contact.phone,
             whatsapp: {
                 status: getBusinessData.contact.whatsapp.status,
                 number: getBusinessData.contact.whatsapp.number
@@ -147,7 +161,9 @@ module.exports = class GetBusinessData extends BusinessController {
 
         if (businessData.result == null) return this.returnData(null, 200, true, `No result was found for "${username}"`)
 
-        let businessDetails = await this.formatBusinessDetails(businessData.result);
+        let businessOwner = businessData.result.owner == null ? null : businessData.result.owner
+
+        let businessDetails = await this.formatBusinessDetails(businessData.result, businessOwner);
         
         let businessId = businessDetails.id;
 
