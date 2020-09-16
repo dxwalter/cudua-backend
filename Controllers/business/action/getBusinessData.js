@@ -138,12 +138,12 @@ module.exports = class GetBusinessData extends BusinessController {
             id: getBusinessData._id,
             businessname: getBusinessData.businessname,
             username: getBusinessData.username,
-            description: getBusinessData.description.length < 1 ||  getBusinessData.description == undefined ? null : getBusinessData.description,
+            description: getBusinessData.description.length < 1 ||  getBusinessData.description == undefined ? "" : getBusinessData.description,
             address: businessAddress,
             contact: businessContact,
             review: businessReview,
-            logo: getBusinessData.logo.length < 1 || getBusinessData.logo == undefined ? null : getBusinessData.logo,
-            coverPhoto: getBusinessData.coverPhoto.length < 1 || getBusinessData.coverPhoto == undefined ? null :  getBusinessData.coverPhoto,
+            logo: getBusinessData.logo.length < 1 || getBusinessData.logo == undefined ? "" : getBusinessData.logo,
+            coverPhoto: getBusinessData.coverPhoto.length < 1 || getBusinessData.coverPhoto == undefined ? "" :  getBusinessData.coverPhoto,
             businessCategories: businessCategories
         }
 
