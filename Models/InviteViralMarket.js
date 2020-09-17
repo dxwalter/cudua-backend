@@ -12,7 +12,9 @@ const inviteViralMarketing = mongoose.Schema({
     },
     redeem_price: {
         type: Number,
-        default: 0
+        default: 0,
+        // When this is 0, note that the business owner is yet to get the free monthly sub
+        // 1 means the owner has gotten it
     },
     created : {
         type : Date,

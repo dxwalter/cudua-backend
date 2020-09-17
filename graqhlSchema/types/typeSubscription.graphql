@@ -36,14 +36,27 @@ input createNewSubscription {
     subType: String!
 }
 
+type SubscriptionTimer {
+    start: DateTime,
+    end: DateTime
+}
+
+type createSubscriptionResponse implements ResponseType{
+    subscriptionData: SubscriptionTimer,
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
 # type Query {
     
 # }
 
 type Mutation {
-
     disableSubscription(input: disableSubscriptionInput): DatalessResponse
-    createSubscription (input: createNewSubscription): DatalessResponse
-
+    createSubscription (input: createNewSubscription): createSubscriptionResponse
 }
 

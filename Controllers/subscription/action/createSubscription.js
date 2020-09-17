@@ -23,6 +23,17 @@ module.exports = class createSubScription extends subscriptionController {
         }
     }
 
+
+    returnMethodForNewSubscription (subscriptionData, code, success, message) {
+        return {
+            subscriptionData: subscriptionData,
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
+
     expiredSubscriptionMessage () {
         return `
         <p style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
@@ -57,7 +68,17 @@ module.exports = class createSubScription extends subscriptionController {
         `
     }
 
-    async createNewSubscription (businessId, referenceId, type = "basic", newBusiness = 0) {
+    renewedSubscriptionMessage () {
+        return `
+        <p style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
+        
+        Your basic subscription plan has been renewed. To this effect, Your shop and products will now appear in search results and suggestions. 
+        
+        </p>
+        `
+    }
+
+    async createNewSubscription (businessId, referenceId, type = "basic", newBusiness = 0, userId = "") {
 
         // free subscription
         if (newBusiness == 1) {
@@ -87,6 +108,55 @@ module.exports = class createSubScription extends subscriptionController {
 
         if (businessId && referenceId) {
 
+            let start = Date.now();
+            let end = +new Date() + 30*24*60*60*1000
+
+            let updateSubscriptionData = {
+                subscription_date: start,
+                expiry_date: end,
+                transaction_ref: referenceId
+            }
+
+            let updateTime = await this.findOneAndUpdate(businessId, updateSubscriptionData);
+
+            if (updateTime.error) return this.returnMethodForNewSubscription(null, 500, false, "An error occurred updating your subscription record. Please contact the support team");
+
+            start = updateTime.result.subscription_date;
+            end = updateTime.result.expiry_date
+
+            let updateBusinessSubscription = await this.businessController.findOneAndUpdate(businessId, {subscription_status: 0});
+
+            if (updateBusinessSubscription.error) return this.returnMethodForNewSubscription(null, 500, false, "An error occurred updating your subscription record. Please contact the support team");
+
+            // createsubscription reference
+            let createSubRef = await this.createSubscriptionReference(businessId, referenceId)
+
+            let getUserData = await this.userController.findUsersById(userId);
+
+            if (!getUserData.error) {
+                
+                // send email
+                let message = this.renewedSubscriptionMessage();
+                let subject = "Renewed subscription";
+                let textPart = "Your subscription has been renewed";
+    
+                let emailAction = `<a class="mcnButton " title="Start Shopping" href="https://www.cudua.com/b/profile/edit?billing=true" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Visit business profile</a>`;
+    
+                let messageBody = this.emailMessageUi(subject, emailAction, message)
+    
+                let recipientName = getUserData.result.fullname;
+                let recipientEmail = getUserData.result.email
+    
+                let sendEmail = await this.sendMail("no-reply@cudua.com", "Daniel Walter", subject, recipientEmail, recipientName, messageBody, textPart);
+            }
+    
+            await this.businessNotification.createBusinessNotification(businessId,referenceId, "Subscription", "Subscription Activated", `Your subscription has been activated. Your shop and products will now appear in search results.`);
+    
+            return this.returnMethodForNewSubscription({start, end}, 200, true, "Subscription activated")
+
+
+        } else {
+            return this.returnMethodForNewSubscription(null, 200, false, "An error occurred. Your transaction ID was not provided")
         }
 
     }
