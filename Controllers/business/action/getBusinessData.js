@@ -113,11 +113,11 @@ module.exports = class GetBusinessData extends BusinessController {
         let businessCategories = await this.businessCategory.getbusinessCategories(businessId);
     
         if (businessCategories.error == true) {
-            businessCategories = null;
+            businessCategories = [];
         }
 
         if (businessCategories.error == false && businessCategories.result == null ) {
-            businessCategories = null;
+            businessCategories = [];
         } else {
             // this is the array of business categories and subcategories chosen by this business owner
             businessCategories = this.formatBusinessCategoryData(businessCategories.result);
