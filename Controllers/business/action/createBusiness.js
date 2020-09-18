@@ -55,12 +55,11 @@ module.exports = class CreateBusiness extends BusinessController {
         if (count.error) return
 
         // if document count is less than 3
-        if (count.result == 3) {
-            if (details.redeem_price == 0) {
-                let updateRecord = await this.updateViralData(inviteId, {'redeem_price': 1})
-                console.log(updateRecord)
-            }
-        }
+        // if (count.result == 3) {
+        //     if (details.redeem_price == 0) {
+        //         let updateRecord = await this.updateViralData(inviteId, {'redeem_price': 1})
+        //     }
+        // }
 
         if (count.result == 3) {
             await this.CreateNotification.createBusinessNotification(uplinerId, inviteId, "Invite", "New Invite", `A new shop was created using your invitation link. You are qualified to get one month free basic plan.`);

@@ -64,7 +64,7 @@ module.exports = class ProductController extends BusinessController {
             let countResult = await ProductModel.countDocuments({$and : [dataObject]});
             return countResult
         } catch (error) {
-            return error.message;
+            return 0;
         }
     }
 

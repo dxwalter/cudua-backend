@@ -47,6 +47,14 @@ module.exports = {
 
             let getDownlines = new ViralRegistration();
             return getDownlines.getDownLiners(args.input.businessId)
+        },
+        GetViralRedemptionStatus(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            let getViralStat = new ViralRegistration();
+            return getViralStat.getViralRedemptionStatus(args.input.businessId)
         }
     },
     Mutation: {

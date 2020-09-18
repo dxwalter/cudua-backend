@@ -17,6 +17,15 @@ module.exports = class ViralRegistration extends BusinessController{
         }
     }
 
+    returnViralStatus (status, code, success, message) {
+        return {
+            status: status,
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
     returnIdMethod (viralId, code, success, message) {
         return {
             viralId: viralId,
@@ -82,4 +91,32 @@ module.exports = class ViralRegistration extends BusinessController{
 
     }
 
+    async getViralRedemptionStatus(businessId) {
+        if (businessId.length < 1) return this.returnViralStatus(null, 200, false, "An error occurred. Refresh page and try again");
+
+        let getViralId = await this.getBusinessViralId(businessId);
+
+        if (getViralId.success == false) return this.returnViralStatus(null, 200, false, "An error occurred getting your viral registration ID. Refresh page and try again");
+
+        let viralId = getViralId.viralId;
+
+        let countDownLiners = await this.CountRegisteredDownliners(businessId)
+
+        if (countDownLiners.error) return this.returnViralStatus(null, 200, false, "An error occurred getting your viral registration ID. Refresh page and try again");
+
+        countDownLiners = countDownLiners.result;
+
+        let getViralIdDetails = await this.getViralIdDetailsByViralId(viralId);
+
+        if (getViralIdDetails.error) return this.returnViralStatus(null, 200, false, "An error occurred getting your viral registration ID. Refresh page and try again");
+
+        let redemptionStatus = getViralIdDetails.result.redeem_price;
+
+        if (redemptionStatus == 0 && countDownLiners >= 3) {
+            return this.returnViralStatus(true, 200, true, "You can activate your subscription")
+        } else {
+            return this.returnViralStatus(false, 200, true, "You cannot activate your subscription")
+        }
+
+    }
 }

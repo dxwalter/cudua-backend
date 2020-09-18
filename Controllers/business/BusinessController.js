@@ -430,4 +430,39 @@ module.exports = class BusinessController extends FunctionRepo {
             }
         }
     }
+
+    async CountRegisteredDownliners(businessId) {
+        try {
+            let getCount = await BusinessInvite.countDocuments({upliner: businessId});
+            return {
+                error: false,
+                result: getCount
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+    async getViralIdDetailsByViralId(InviteId) {
+        try {
+            
+            let details = await ViralIdStoreModel.findOne({invite_id: InviteId});
+
+            return {
+                error: false,
+                result: details
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
 }

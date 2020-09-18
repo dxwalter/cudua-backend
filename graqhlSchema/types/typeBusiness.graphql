@@ -290,6 +290,13 @@
         message: String!
     }
 
+    type getViralRedemptionStatusResponse {
+        status: Boolean
+        code: Int!
+        success: String!
+        message: String!
+    }
+
     input getViralIdInput {
         businessId: String!
     }
@@ -306,6 +313,8 @@
         GetViralId(input: getViralIdInput): getViralIdResponse
 
         GetDownLiners(input: getViralIdInput): getDownlineDetailsResponse
+
+        GetViralRedemptionStatus(input: getViralIdInput): getViralRedemptionStatusResponse
     }
 
     type Mutation {
