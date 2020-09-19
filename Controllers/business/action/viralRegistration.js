@@ -1,10 +1,21 @@
 
 const BusinessController = require('../BusinessController')
+const CreateSubscription = require('../../subscription/action/createSubscription')
 
 module.exports = class ViralRegistration extends BusinessController{
 
     constructor () {
-        super()
+        super();
+        this.createSubscription = new CreateSubscription()
+    }
+
+    returnMethodForNewSubscription (subscriptionData, code, success, message) {
+        return {
+            subscriptionData: subscriptionData,
+            code: code,
+            success: success,
+            message: message
+        }
     }
 
     returnDownLineRecord (businessData, redeemPrice, code, success, message) {
@@ -44,8 +55,17 @@ module.exports = class ViralRegistration extends BusinessController{
         if (getId.error) return this.returnIdMethod(null, 500, false, "An error occurred. Kindly refresh the page and try again")
 
         if (getId.result == null) {
+
             let newId = await this.generateId();
 
+            // check if viral ID exists
+            let checkIfIdExists = await this.getViralIdDetailsByViralId(newId);
+
+            if (checkIfIdExists.error) this.returnIdMethod(null, 500, false, "An error occurred. Kindly refresh the page and try again")
+
+            if (checkIfIdExists.result != null) this.getBusinessViralId(businessId)
+
+            // store the viral ID
             let createNewViralId = await this.CreateNewViralId(newId, businessId);
 
             if (createNewViralId.error) return this.returnIdMethod(null, 500, false, "An error occurred. Kindly refresh the page and try again")
@@ -119,4 +139,19 @@ module.exports = class ViralRegistration extends BusinessController{
         }
 
     }
-}
+
+    async activateViralRegistrationGift(businessId, viralId, userId) {
+        
+        if (businessId.length < 1 || viralId.length < 1) return this.returnMethodForNewSubscription(null, 200, false, "An error occurred. Kindly refresh page and try again");
+
+        let createSubscription = await this.createSubscription.createNewSubscription(businessId, viralId, "Basic", 0, userId);
+
+        if(createSubscription.success == false) return createSub
+
+        let updateRecord = await this.updateViralData(viralId, {'redeem_price': 1});
+
+        if (updateRecord.error) return this.returnMethodForNewSubscription(null, 500, false, "An error occurred updating your subscription status")
+
+        return createSubscription
+    }
+} 

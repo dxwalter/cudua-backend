@@ -301,6 +301,26 @@
         businessId: String!
     }
 
+    input activateSubscriptionGift {
+        businessId: String!
+        viralId: String!
+    }
+
+    type SubscriptionTimer {
+        start: DateTime,
+        end: DateTime
+    }
+
+    type createSubscriptionResponse implements ResponseType{
+        subscriptionData: SubscriptionTimer,
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
     type Query {
         # get business details
         GetSingleBusinessDetailsByUsername(input: checkUsernameInput):  getBusinessDetailsResponse
@@ -310,10 +330,15 @@
         # Get business reviews
         GetBusinessReview(input: GetBusinessReviewInput): GetBusinessReviewResponse
 
+        # generate invitation ID for a business
         GetViralId(input: getViralIdInput): getViralIdResponse
 
+        # get all the businesses that registered under an invite link
         GetDownLiners(input: getViralIdInput): getDownlineDetailsResponse
 
+        # when a business owner invites 3 businesses to register using a unique link, the
+        # business owner gets one month free subscription. This query is to check if the business owner is eligible
+        # to activate the free gift
         GetViralRedemptionStatus(input: getViralIdInput): getViralRedemptionStatusResponse
     }
 
@@ -344,4 +369,6 @@
 
         # create business review
         CreateBusinessReview(input: createReviewInput): DatalessResponse
+
+        ActivateViralInvitationGift(input: activateSubscriptionGift): createSubscriptionResponse
     }

@@ -171,6 +171,14 @@ module.exports = {
 
             let review = new BusinessReview();
             return review.CreateReview(userId, args.businessId, args.description, args.score)
+        },
+        ActivateViralInvitationGift(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            let activateGift = new ViralRegistration();
+            return activateGift.activateViralRegistrationGift(args.input.businessId, args.input.viralId, userId)
         }
     }
 }
