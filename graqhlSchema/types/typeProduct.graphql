@@ -378,10 +378,10 @@ type Query {
     GetProductById(input: productId): SingleProductResponse
 
     # A business can get all the products under a category
-    BusinessGetProductByCategory (input: businessGetProductByCategory): MultipleProductResponse
+    GetProductByCategory (input: businessGetProductByCategory): MultipleProductResponse
     
     # A business can get all the products under a subcategory
-    BusinessGetProductBysubCategory(input: businessGetProductBySubcategory): MultipleProductResponseSubcategory
+    GetProductBysubCategory(input: businessGetProductBySubcategory): MultipleProductResponseSubcategory
 
     # A business can search for a product she has uploaded. Please note that this search is basically a business searching for his/her product not all products uploaded to Cudua
     BusinessSearchProduct(input: businessSearchProduct): BusinessSearchResultResponse

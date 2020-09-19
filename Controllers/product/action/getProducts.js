@@ -160,26 +160,21 @@ module.exports = class EditProduct extends ProductController {
         
     }
 
-    async businessGetProductBySubcategory (businessId, subcategoryId, page, userId) {
+    async GetProductBySubcategory (businessId, subcategoryId, page) {
 
         if (page < 1) {
             return this.returnMultipleDataFromSubcategory(null, 200, false, `Set the page field for this request. The default value is 1`)
         }
 
         if (businessId.length == false || subcategoryId.length == false) {
-            return this.returnMultipleDataFromSubcategory(null, 200, false, `An error occurred. Your business details or category details was not provided`)
+            return this.returnMultipleDataFromSubcategory(null, 200, false, `An error occurred. The business details or subcategory details was not provided`)
         }
 
         // check if business exists
         let businessData = await this.getBusinessData (businessId);
 
         if (businessData.error == true) {
-            return this.returnMultipleDataFromSubcategory(null, 200, false, "Your business is not recognised.")
-        } else {
-            // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
-                return this.returnMultipleDataFromSubcategory(null, 200, false, `You can not access this functionality. You do not own a business`)
-            }
+            return this.returnMultipleDataFromSubcategory(null, 200, false, "This business is not recognised.")
         }
 
         let getSubategoryDetails = await this.SubcategoryController.GetOneSubcategory(subcategoryId)
@@ -207,7 +202,7 @@ module.exports = class EditProduct extends ProductController {
 
     }
 
-    async businessGetProductByCategory (businessId, categoryId, page, userId) {
+    async GetProductByCategory (businessId, categoryId, page) {
         
         if (page < 1) {
             return this.returnMultipleData(null, 200, false, `Set the page field for this request. The default value is 1`)
@@ -221,12 +216,7 @@ module.exports = class EditProduct extends ProductController {
         let businessData = await this.getBusinessData (businessId);
 
         if (businessData.error == true) {
-            return this.returnMultipleData(null, 200, false, "Your business is not recognised.")
-        } else {
-            // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
-                return this.returnMultipleData(null, 200, false, `You can not access this functionality. You do not own a business`)
-            }
+            return this.returnMultipleData(null, 200, false, "This business is not recognised.")
         }
 
         let getCategoryDetails = await this.CategoryController.GetOneCategory(categoryId)
@@ -239,21 +229,14 @@ module.exports = class EditProduct extends ProductController {
 
         let getProducts = await this.GetBusinessProductsByCategory(businessId, categoryId, page);
         if (getProducts.error == true) {
-            return this.returnMultipleData(null, 500, false, `An error occurred retrieving your products for ${categoryName} category.`)
+            return this.returnMultipleData(null, 500, false, `An error occurred retrieving the products for ${categoryName} category.`)
         }
 
-        if (getProducts.result.products == null) {
-            
-            // check if no product has been added to this subcategory
-            if (getProducts.result.totalNumberOfProducts == 0) {
-                return this.returnMultipleData(null, 200, false, `No product has been added to ${categoryName} category.`)
-            }
-
-            return this.returnMultipleData(null, 200, false, `That was all the products in ${categoryName} category.`, getProducts.result.totalNumberOfProducts)
+        if (getProducts.result == null) {
+            return this.returnMultipleData(null, 200, true, `No product has been added to ${categoryName} category.`)
         }
 
-
-        let formatProduct = this.formatProductDetails(getProducts.result.products);
+        let formatProduct = this.formatProductDetails(getProducts.result);
 
         return this.returnMultipleData(formatProduct, 200, true, `Products for ${categoryName} category successfully retrieved`, getProducts.result.totalNumberOfProducts)
 

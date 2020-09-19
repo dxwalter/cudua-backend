@@ -15,31 +15,17 @@ module.exports = {
             let getProduct  = new GetProduct();
             return getProduct.getProductById(args.input.productId);
         },
-        BusinessGetProductByCategory(_, args, context) {
-            let accessToken = context.accessToken;
-            let userId = context.authFunction(accessToken);
-            if (userId.error == true) {
-                return userId
-            } else {
-                userId = userId.message;
-            }
+        GetProductByCategory(_, args, context) {
             args = args.input;
 
             let getProductByCategory = new GetProduct();
-            return getProductByCategory.businessGetProductByCategory(args.businessId, args.categoryId, args.page, userId)
+            return getProductByCategory.GetProductByCategory(args.businessId, args.categoryId, args.page)
         },
-        BusinessGetProductBysubCategory(_, args, context) {
-            let accessToken = context.accessToken;
-            let userId = context.authFunction(accessToken);
-            if (userId.error == true) {
-                return userId
-            } else {
-                userId = userId.message;
-            }
+        GetProductBysubCategory(_, args, context) {
             args = args.input;
 
             let getProductByCategory = new GetProduct();
-            return getProductByCategory.businessGetProductBySubcategory(args.businessId, args.subcategoryId, args.page, userId)            
+            return getProductByCategory.GetProductBySubcategory(args.businessId, args.subcategoryId, args.page)            
         },
         BusinessSearchProduct(_, args, context) {
             let accessToken = context.accessToken;
