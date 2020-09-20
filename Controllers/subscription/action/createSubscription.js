@@ -201,8 +201,6 @@ module.exports = class createSubScription extends subscriptionController {
 
         return this.returnMethod(200, true, "Subscription deactivated")
 
-    }
-
-    async 
+    } 
 
 }
