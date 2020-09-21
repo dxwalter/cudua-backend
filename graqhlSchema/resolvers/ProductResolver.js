@@ -40,6 +40,12 @@ module.exports = {
             let searchForProduct = new GetProduct();
             return searchForProduct.SearchForBusinessProduct(args.businessId, args.keyword.trim(), userId)            
         },
+        BusinessSearchProductByCustomer(_, args, context) {
+            args = args.input;
+
+            let searchForProduct = new GetProduct();
+            return searchForProduct.SearchForBusinessProductByCustomer(args.businessId, args.keyword.trim(), args.page)            
+        },
         GetProductsUsingBusinessId(_, args) {
             args = args.input
             let getProducts = new GetProduct();

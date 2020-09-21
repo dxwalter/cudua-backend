@@ -26,6 +26,16 @@ module.exports = {
 
             let getFollowers = new GetFollow();
             return getFollowers.BusinessGetFollowers(args.input.page, args.input.businessId, userId);
+        },
+        IsCustomerFollowingBusiness(parent, args, context, info) {
+
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+
+            let checkFollerStatus = new FollowBusiness();
+            return checkFollerStatus.isCustomerFollowingBusiness(args.input.businessId, userId);
         }
     },
     Mutation: {

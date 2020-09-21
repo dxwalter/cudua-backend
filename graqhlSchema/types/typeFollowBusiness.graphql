@@ -84,11 +84,20 @@
         businessId: String!
     }
 
+    type checkFollowerStatusResponse {
+        status: Boolean
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
     type Query {
         # get following. Only a signed in user can get this data
         Getfollowing(input: getFollowingInput): getFollowResponse
         # a business can get all the people that followed a business
         GetFollowers(input: getFollowersBusinessInput): getFollowersResponse  
+
+        IsCustomerFollowingBusiness(input: followBusinessInput): checkFollowerStatusResponse
     }
 
     type Mutation {

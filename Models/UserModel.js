@@ -8,14 +8,15 @@ const UserSchema = mongoose.Schema({
         type: String, required: true, trim: true
     },
     phone : {
-        type: String, required : false
+        type: String, required : false, default: ""
     },
     password : {
         type : String, required : true
     },
     profilePicture: {
         type: String, 
-        required: false
+        required: false,
+        default: ""
     },
     email_notification: {
         type: Number, 

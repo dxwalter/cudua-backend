@@ -18,6 +18,15 @@ module.exports = class FollowBusiness extends FollowController {
         }
     }
 
+    returnIsFollowingMethod (status, code, success, message) {
+        return {
+            status: status,
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
     async createFollow(businessId, userId) {
        
         if (businessId.length < 1) return this.returnMethod(200, false, "An error occurred. Choose a business you want to follow")
@@ -54,5 +63,19 @@ module.exports = class FollowBusiness extends FollowController {
         if (unfollow.error == true || unfollow.result == false) return this.returnMethod(200, false, `An error occurred unfollowing this business`);
         
         return this.returnMethod(200, true, `You successfully unfollowed this business.`);
+    }
+
+    async isCustomerFollowingBusiness(businessId, userId) {
+        
+        if (businessId.length < 1 || userId.length < 1) return this.returnIsFollowingMethod(null, 200, false, "An error occurred. Kindly refresh page and try again 1");
+
+        let checkStatus = await this.CheckIfExist(businessId, userId);
+
+        if (checkStatus.error) return this.returnIsFollowingMethod(null, 200, false, "An error occurred. Kindly refresh page and try again 2");
+
+        if (checkStatus.result != null) return this.returnIsFollowingMethod(true, 200, true, "Successful");
+
+        return this.returnIsFollowingMethod(false, 200, true, "Successful");
+
     }
 }

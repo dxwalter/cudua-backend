@@ -192,6 +192,58 @@ module.exports = class ProductController extends BusinessController {
 
     }
 
+    async businessProductSearchCustomer(businessId, keyword, page) {
+
+        try {
+
+            let limit = 12
+
+            // total number of returned products per request
+
+            let getProducts = await ProductModel
+            .find({
+                $and: [
+                    {
+                        name: { $regex: '.*' + keyword + '.*', $options: 'i'}, 
+                        business_id: businessId,
+                        hide: 0
+                    }
+                ]
+            })
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+
+            let result = {
+                totalNumberOfProducts: await ProductModel
+                .countDocuments({
+                    $and: [
+                        {
+                            name: { $regex: '.*' + keyword + '.*', $options: 'i'}, 
+                            business_id: businessId,
+                            hide: 0
+                        }
+                    ]
+                }),
+                products: getProducts.length > 0 ? getProducts : null
+            }
+
+            
+
+            return {
+                error: false,
+                result: result
+            } 
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }   
+        }
+
+    }
+
     async findOneAndUpdate(productId, newDataObject) {
         try {
             let updateRecord = await ProductModel.findOneAndUpdate({_id: productId}, { $set:newDataObject }, {new : true });

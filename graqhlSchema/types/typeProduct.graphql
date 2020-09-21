@@ -373,6 +373,16 @@ input businessSearchProduct {
     businessId: String!
 }
 
+
+input businessSearchbusinessProduct {
+    # product search keyword.
+    keyword: String!
+    # business id
+    businessId: String!
+    # page
+    page: Int!
+}
+
 type Query {
     # A business or a user can get the details of a product with its reviews
     GetProductById(input: productId): SingleProductResponse
@@ -385,6 +395,8 @@ type Query {
 
     # A business can search for a product she has uploaded. Please note that this search is basically a business searching for his/her product not all products uploaded to Cudua
     BusinessSearchProduct(input: businessSearchProduct): BusinessSearchResultResponse
+
+    BusinessSearchProductByCustomer(input: businessSearchbusinessProduct): BusinessSearchResultResponse
 
     # Get products using business Id
     GetProductsUsingBusinessId(input: getBusinessProduct): GetMultipleProductResponse

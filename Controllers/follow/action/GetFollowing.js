@@ -107,11 +107,13 @@ module.exports = class GetFollowing extends FollowController {
         let customerArray = [];
 
         for (const [index, customer] of getBusinessFollowers.result.entries()) {
-            customerArray[index] = {
-                name: customer.customer_id.fullname,
-                profilePhoto: customer.customer_id.profilePicture,
-                reviewScore: customer.customer_id.review_score,
-                userId: customer.customer_id._id
+            if (customer.customer_id != null) {
+                customerArray.push({
+                    name: customer.customer_id.fullname,
+                    profilePhoto: customer.customer_id.profilePicture,
+                    reviewScore: customer.customer_id.review_score,
+                    userId: customer.customer_id._id
+                })
             }
         }
 

@@ -299,4 +299,41 @@ module.exports = class EditProduct extends ProductController {
 
         
     }
+
+    async SearchForBusinessProductByCustomer (businessId, keyword, page = 1) {
+
+        page = page == 0 ? 1 : page
+
+        if (businessId.length == false || keyword.length == false) {
+            return this.returnProductSearchResult(null, 200, false, `An error occurred. Your business details or search keyword was not provided`)
+        }
+
+        // check if business exists
+        let businessData = await this.getBusinessData (businessId);
+
+        if (businessData.error == true) {
+            return this.returnProductSearchResult(null, 200, false, "This business is not recognised.")
+        }
+
+        let productSearch = await this.businessProductSearchCustomer(businessId, keyword, page);
+
+        if (productSearch.error == true) {
+            return this.returnProductSearchResult(null, 500, false, `An error occurred while searching for '${keyword}'.`)
+        }
+
+        if (productSearch.result.products == null) {
+            if (page > 1){
+                return this.returnProductSearchResult(null, 200, true, `That was all the results for '${keyword}'.`, productSearch.result.totalNumberOfProducts)
+            } else {
+                return this.returnProductSearchResult(null, 200, true, `No result was found for '${keyword}'.`, productSearch.result.totalNumberOfProducts)
+            }
+        }
+
+        let formatProduct = this.formatProductDetails(productSearch.result.products);
+
+        return this.returnProductSearchResult(formatProduct, 200, true, `Product search was successful`, productSearch.result.totalNumberOfProducts)
+
+
+        
+    }
 }
