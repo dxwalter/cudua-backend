@@ -4,6 +4,7 @@ const ProductController = require('../ProductController');
 const ProductReviewController = require('../../productReview/ProductReviewController');
 const CategoryController = require('../../category/CategoryController');
 const SubategoryController = require('../../subcategories/SubcategoryController');
+const FormatBusinessData = require('../../business/action/getBusinessData')
 
 
 module.exports = class EditProduct extends ProductController {
@@ -13,14 +14,16 @@ module.exports = class EditProduct extends ProductController {
         this.ProductReviewController = new ProductReviewController();
         this.CategoryController = new CategoryController();
         this.SubcategoryController = new SubategoryController();
+        this.formatBusinessData = new FormatBusinessData()
     }
 
-    returnData (product, code, success, message) {
+    returnData (product, code, success, message, business = null) {
         return {
             product: product,
             code: code,
             success: success,
-            message: message
+            message: message,
+            business: business
         }
     }
 
@@ -153,10 +156,12 @@ module.exports = class EditProduct extends ProductController {
         }
 
         let formatProduct = this.formatProductDetails([productDetails]);
+        let formatBusinessDetails = await this.formatBusinessData.formatBusinessDetails(productDetails.business_id, null);
+
 
         formatProduct[0].reviews = reviews
 
-        return this.returnData(formatProduct[0], 200, true, `Product successfully retrieved`)
+        return this.returnData(formatProduct[0], 200, true, `Product successfully retrieved`, formatBusinessDetails)
         
     }
 
@@ -244,7 +249,14 @@ module.exports = class EditProduct extends ProductController {
 
     async getProductByBusinessId (businessId, page = 1) {
         
-        if (businessId.length < 1) return this.returnMultipleDataFromSubcategory(null, 200, false, "An error occurred from your end. Refresh page and try again");
+        if (businessId.length < 1) return this.returnMultipleDataFromSubcategory(null, 200, false, "This business does not exist. It has either been moved or deleted");
+
+        // check if business exists
+        let businessData = await this.getBusinessData (businessId);
+
+        if (businessData.error == true) {
+            return this.returnMultipleDataFromSubcategory(null, 200, false, "This business does not exist. It has either been moved or deleted")
+        }
         
         let query = await this.FindProductByBusinessId(businessId, page);
 

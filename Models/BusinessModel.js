@@ -26,7 +26,7 @@ const BusinessSchema = mongoose.Schema({
         phone: [{type: String}],
         whatsapp: {
             // 1 means activated
-            status: {type: Number, default: 0},
+            status: {type: Number, default: 1},
             number: {type: String}
         }
     },

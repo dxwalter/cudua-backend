@@ -44,6 +44,7 @@ module.exports = class ProductController extends BusinessController {
             const findProduct = await ProductModel.findOne({_id: productId})
             .populate('category')
             .populate('subcategory')
+            .populate('business_id')
             .exec();
 
             return {

@@ -262,6 +262,7 @@ type SingleProductResponse {
     #  a single product
     product: Product
     # Response status code
+    business: BusinessAccount
     code: Int!
     # This boolean value is used to check if an operation ran successfully
     success: Boolean!

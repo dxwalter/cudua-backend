@@ -2,12 +2,14 @@
 
 const FollowController = require('../FollowController');
 const FollowModel = require('../../../Models/FollowModel');
-const BusinessNotification = require('../../notifications/action/createNotification')
+const BusinessNotification = require('../../notifications/action/createNotification');
+const UserController = require('../../user/UserController')
 
 module.exports = class FollowBusiness extends FollowController {
     constructor() { 
         super()
         this.BusinessNotification = new BusinessNotification()
+        this.UserController = new UserController()
     }
 
     returnMethod (code, success, message) {
@@ -29,7 +31,7 @@ module.exports = class FollowBusiness extends FollowController {
 
     async createFollow(businessId, userId) {
        
-        if (businessId.length < 1) return this.returnMethod(200, false, "An error occurred. Choose a business you want to follow")
+        if (businessId.length < 1) return this.returnMethod(200, false, "An error occurred. The business you want to follow is not recognised")
 
         // check if customer has followed business before
         let checkIfExist = await this.CheckIfExist(businessId, userId);
@@ -37,6 +39,15 @@ module.exports = class FollowBusiness extends FollowController {
         if (checkIfExist.error) return this.returnMethod(500, false, 'An error occurred from our end. Please try again');
 
         if (checkIfExist.result != null) return this.returnMethod(200, false, 'You already follow this business');
+
+        let checkUserIsBusinessOwner = await this.UserController.findUsersByField({business_details: businessId});
+
+        if (checkUserIsBusinessOwner.error) return this.returnMethod(500, false, 'An error occurred from our end. Please try again');
+
+        if (checkUserIsBusinessOwner.result == null) return this.returnMethod(200, false, 'The business you want to follow is not recognised');
+
+        if (checkUserIsBusinessOwner.result._id == userId) return this.returnMethod(200, false, "You can't follow your business");
+
 
         let followBusiness  = new FollowModel({
             customer_id: userId,

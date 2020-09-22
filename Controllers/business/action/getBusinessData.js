@@ -87,22 +87,25 @@ module.exports = class GetBusinessData extends BusinessController {
     }
 
     formatBusinessOwnerData(data, returnData) {
-        if (data == null) return null
+        if (data == null) return ''
         if (returnData == 'email') {
-            if (data.email == undefined) return null
+            if (data.email == undefined) return ''
             return data.email
         }
 
         if (returnData == 'phone') {
-            if (data.phone == undefined) return null
+            if (data.phone == undefined) return []
             return data.phone
         }
     }
 
     async formatBusinessDetails (businessDetails, businessOwner) {
+
         
         // business data
         let getBusinessData = businessDetails;
+
+        
 
         // business address
         let businessAddress = getBusinessData.address == null || getBusinessData.address == undefined ? null : this.returnAddress(getBusinessData.address);
@@ -125,8 +128,8 @@ module.exports = class GetBusinessData extends BusinessController {
 
         // business contact
         let businessContact =  {
-            email: getBusinessData.contact.email == undefined || getBusinessData.contact.email.length < 1 ? this.formatBusinessOwnerData(businessOwner, "email") : getBusinessData.contact.email,
-            phone: getBusinessData.contact.phone == undefined || getBusinessData.contact.phone.length < 1 ? this.formatBusinessOwnerData(businessOwner, "phone"): getBusinessData.contact.phone,
+            email: getBusinessData.contact.email == undefined || getBusinessData.contact.email.length < 1 ? this.formatBusinessOwnerData(businessOwner, 'email') : getBusinessData.contact.email,
+            phone: getBusinessData.contact.phone == undefined || getBusinessData.contact.phone.length < 1 ? [] : getBusinessData.contact.phone,
             whatsapp: {
                 status: getBusinessData.contact.whatsapp.status,
                 number: getBusinessData.contact.whatsapp.number
@@ -158,6 +161,7 @@ module.exports = class GetBusinessData extends BusinessController {
         let businessData = await this.getBusinessDataByUsername(username);
         
         if (businessData.error) return this.returnData(null, 200, false, "An error occurred. Kindly try again")
+
 
         if (businessData.result == null) return this.returnData(null, 200, true, `No result was found for "${username}"`)
 
