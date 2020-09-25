@@ -1,11 +1,18 @@
 let whitelist = ['http://localhost:3333', 'https://cudua-ui.herokuapp.com', 'http://cudua-ui.herokuapp.com'];
 let corsOptionsDelegate = function (req, callback) {
     let corsOptions;
-    if (whitelist.indexOf(req.header('Origin')) !== -1) {
-      corsOptions = { origin: true, methods: "GET,HEAD,PUT,PATCH,POST,DELETE", } // reflect (enable) the requested origin in the CORS response
+    if (req.hostname.endsWith('cudua-ui.herokuapp.com')){
+      corsOptions = { origin: true}
     } else {
-      corsOptions = { origin: false, methods: "GET,HEAD,PUT,PATCH,POST,DELETE" } // disable CORS for this request
+      corsOptions = { origin: false}
     }
+
+    // let corsOptions;
+    // if (whitelist.indexOf(req.header('Origin')) !== -1) {
+    //   corsOptions = { origin: true} // reflect (enable) the requested origin in the CORS response
+    // } else {
+    //   corsOptions = { origin: false} // disable CORS for this request
+    // }
     
     callback(null, corsOptions) // callback expects two parameters: error and options
 } 
