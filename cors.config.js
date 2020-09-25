@@ -6,8 +6,7 @@ let corsOptionsDelegate = function (req, callback) {
     } else {
       corsOptions = { origin: false } // disable CORS for this request
     }
+    console.log(corsOptions)
     callback(null, corsOptions) // callback expects two parameters: error and options
 } 
-
-console.log(corsOptions)
 module.exports = corsOptionsDelegate
