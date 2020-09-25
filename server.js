@@ -17,6 +17,9 @@ require('heroku-self-ping').default(`https://${process.env.HEROKU_APP_NAME}.hero
 const app = express();
 
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+});
 
 app.options('*', cors());
 app.use(cors(corsOptionsDelegate))
