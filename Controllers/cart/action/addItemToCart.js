@@ -56,8 +56,8 @@ module.exports = class AddItemToCart extends CartController {
             owner: userId,
             product: productId,
             business: businessId,
-            size: size.length > 1 ? size : null,
-            color: color.length > 1 ? color : null
+            size: size.length > 1 ? size : "",
+            color: color.length > 1 ? color : ""
         });
 
         let create = await this.createCartItem(createItem);

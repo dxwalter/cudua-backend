@@ -54,8 +54,8 @@ module.exports = class AddItemToCart extends AnonymousCartController {
             owner: userId,
             product: productId,
             business: businessId,
-            size: size.length > 1 ? size : null,
-            color: color.length > 1 ? color : null
+            size: size.length > 1 ? size : "",
+            color: color.length > 1 ? color : ""
         });
 
         let create = await this.createCartItem(createItem);
@@ -107,16 +107,14 @@ module.exports = class AddItemToCart extends AnonymousCartController {
                     owner: userId,
                     product: productId,
                     business: businessId,
-                    size: item.size.length > 1 ? item.size : null,
-                    color: item.color.length > 1 ? item.color : null
+                    size: item.size.length > 0 ? item.size : "",
+                    color: item.color.length > 0 ? item.color : ""
                 })
             }
         }
 
         await this.SignedCartController.saveMultipleCart(approvedItemArray);
         await this.deleteAllFromAnonymousCart(anonymousId)
-
-
 
     }
 

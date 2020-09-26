@@ -17,10 +17,10 @@ const SignedCart = mongoose.Schema({
         required: true
     },
     size: {
-        type: String, trim: true
+        type: String, trim: true, default: ""
     },
     color: {
-        type: String, trim: true
+        type: String, trim: true, default: ""
     },
     quantity: {
         type: Number,
