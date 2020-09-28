@@ -244,7 +244,7 @@ module.exports = class EditUserProfile extends UserController {
 
     async editCustomerPassword (oldPassword, newPassword, userId) {
         
-        if (newPassword.length < 6) return this.returnMethod(200, false, "Your password must be greater than 5 characters");
+        if (newPassword.length < 6) return this.returnMethod(200, false, "Your new password must be greater than 5 characters");
 
         let userData = await this.findUsersById(userId);
         if (userData.error) return this.returnMethod(500, false, "An error occurred. Please try again")
@@ -255,7 +255,7 @@ module.exports = class EditUserProfile extends UserController {
             return this.returnMethod(500 , false, "An error occurred. Please try again")
         }
 
-        if (comparePassword.result == false) return this.returnMethod(200, false, "Your old password is incorrect");
+        if (comparePassword.result == false) return this.returnMethod(200, false, "Your current password is incorrect");
 
         newPassword = await bcrypt.hashSync(newPassword, 10);
 
