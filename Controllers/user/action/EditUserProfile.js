@@ -22,6 +22,15 @@ module.exports = class EditUserProfile extends UserController {
         }
     }
 
+    returnMethodForDp (code, success, message, imagePath = "") {
+        return {
+            code: code,
+            success: success,
+            message: message,
+            imagePath: imagePath
+        }
+    }
+
 
     async editUserContact(email, phone, userId) {
         
@@ -42,14 +51,14 @@ module.exports = class EditUserProfile extends UserController {
             // check if email is used as customer
             let checkUserExist = await this.findUserByEmail(email);
             if (checkUserExist.error) return this.returnMethod(500, false, "An error occurred from our end. Please try again")
-            if (checkUserExist.result != null) return this.returnMethod(200, false, "The email address you entered is used by another customer.");
+            if (checkUserExist.result != null) return this.returnMethod(200, false, "The email address you entered is already exists.");
 
             // check if email is used by business
             let checkEmailInBusiness = await this.BusinessController.checkIfEmailExists(email);
             if (checkEmailInBusiness.error) return this.returnMethod(500, false, "An error occurred from our end. Please try again")
             if (checkEmailInBusiness.result != null) {
                 // check if the business is owned by this customer
-                if (checkEmailInBusiness.result.owner != userId) return this.returnMethod(200, false, "The email address you entered is used by a business.");
+                if (checkEmailInBusiness.result.owner != userId) return this.returnMethod(200, false, "The email address you entered already exists.");
             }
 
             updateData["email"] = email.trim();
@@ -69,7 +78,7 @@ module.exports = class EditUserProfile extends UserController {
 
 
         if (updateStatus == 0) {
-            return this.returnMethod(200, true, "No profile update was made. Enter new details to profile")
+            return this.returnMethod(200, false, "No profile update was made. Enter new details to profile")
         }
 
         let updateRecord = await this.findOneAndUpdate(userId, updateData);
@@ -151,10 +160,10 @@ module.exports = class EditUserProfile extends UserController {
     async editUserDp (file, userId) {
         const { filename, mimetype, createReadStream } = await file;
 
-        if (filename.length < 1) return this.returnMethod(200, false, "Choose a profile display picture");
+        if (filename.length < 1) return this.returnMethodForDp(200, false, "Choose a profile display picture");
 
         let userData = await this.findUsersById(userId);
-        if (userData.error) return this.returnMethod(500, false, "An error occurred. Please try again")
+        if (userData.error) return this.returnMethodForDp(500, false, "An error occurred. Please try again")
         userData = userData.result
 
         // encrypt file name
@@ -169,7 +178,7 @@ module.exports = class EditUserProfile extends UserController {
         const pathObj = await this.uploadImageFile(stream, newFileName, path);
         
         if (pathObj.error == true) {
-            return this.returnMethod(500, false, "An error occurred uploading your business logo")
+            return this.returnMethodForDp(500, false, "An error occurred uploading your business logo")
         }
 
         // This is used to remove data from cloudinary
@@ -191,7 +200,7 @@ module.exports = class EditUserProfile extends UserController {
         let deleteFile = await this.deleteFileFromFolder(imagePath)
 
         if (moveToCloud.error == true) {
-            return this.returnMethod(500, false, `An error occurred uploading your profile picture`)
+            return this.returnMethodForDp(500, false, `An error occurred uploading your profile picture`)
         }
 
 
@@ -201,9 +210,9 @@ module.exports = class EditUserProfile extends UserController {
         let updateLogo = await this.findOneAndUpdate(userId, profilePicture)
         
         if (updateLogo.error == false) {
-            return this.returnMethod(202, true, "Your profile picture was updated successfully")
+            return this.returnMethodForDp(202, true, "Your profile picture was updated successfully", newFileName)
         } else {
-            return this.returnMethod(500, false, "An error occurred updating your profile pictre")
+            return this.returnMethodForDp(500, false, "An error occurred updating your profile pictre")
         }
 
 
@@ -229,7 +238,7 @@ module.exports = class EditUserProfile extends UserController {
             return this.returnMethod(202, true, "Your profile was updated successfully");
         }
         
-        return this.returnMethod(200, true, "No profile update was made. Enter new details to profile")
+        return this.returnMethod(200, false, "No profile update was made. Enter new details to profile")
 
     }
 

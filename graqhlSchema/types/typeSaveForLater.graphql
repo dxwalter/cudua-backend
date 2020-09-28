@@ -3,7 +3,9 @@ type SavedItems {
     productId: String!
     name: String!
     image: String!
-    review: Int!
+    review: Float!
+    price: Int!
+    businessId: String!
 }
 
 type SavedItemsResponse implements ResponseType {
@@ -20,6 +22,7 @@ input getSavedProduct {
 
 input saveProduct {
     productId: String!
+    businessId: String!
 }
 
 input removeProduct {

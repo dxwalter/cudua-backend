@@ -154,6 +154,8 @@ module.exports = class GetBusinessData extends BusinessController {
     }
 
     async getData (username) {
+
+        username = username.toLowerCase()
         
         if (username.length < 1) return this.returnData(null, 200, false, "Provide a business username")
 

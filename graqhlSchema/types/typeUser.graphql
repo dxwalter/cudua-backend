@@ -20,6 +20,17 @@
         message: String!
     }
 
+    # This is the response type that returns no data
+    type updateProfileDpResponse implements ResponseType {
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!,
+        imagePath: String
+    }
+
     # This "User" type defines the queryable fields for every user in our data source.
     type User {
         # The fullname of the user must be greater than 2 characters
@@ -249,7 +260,7 @@
         editCustomerAddress(input: editUserAddress): DatalessResponse
 
         # edit user Dp
-        editCustomerDP (input: editUserDp): DatalessResponse
+        editCustomerDP (input: editUserDp): updateProfileDpResponse
 
         # edit customer's name
         editCustomerName (input: editCustomerFullname): DatalessResponse

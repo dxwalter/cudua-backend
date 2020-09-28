@@ -31,9 +31,11 @@ module.exports = class SaveProductForLater extends SaveForLaterController {
         }
     }
 
-    async SaveProduct (productId, userId) {
+    async SaveProduct (productId, businessId, userId) {
         
         if (productId.length < 1) return this.returnMethod(200, false, "The product's credential was not provided");
+
+        if (businessId.length < 1) return this.returnMethod(200, false, "The business's credential was not provided");
         
         // check if product has already been added to save
         let check = await this.FindProductInSaveForLater(productId, userId);
@@ -42,7 +44,7 @@ module.exports = class SaveProductForLater extends SaveForLaterController {
 
         if (check.result != null) return this.returnMethod(200, false, "This product already exists in your saved products")
 
-        let save  = await this.InsertProduct(productId, userId);
+        let save  = await this.InsertProduct(productId, userId, businessId);
 
         if (save.error) return this.returnMethod(500, false, "An error occurred saving this product for later");
         return this.returnMethod(200, true, "Product successfully saved");
@@ -111,7 +113,9 @@ module.exports = class SaveProductForLater extends SaveForLaterController {
                         productId: x.product_id._id,
                         name: x.product_id.name,
                         image: x.product_id.primary_image,
-                        review: x.product_id.score
+                        review: x.product_id.score,
+                        price: x.product_id.price,
+                        businessId: x.business_id
                     })
                 } else {
                     count = count - 1

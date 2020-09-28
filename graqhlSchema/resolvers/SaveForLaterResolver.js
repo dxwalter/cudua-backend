@@ -23,7 +23,7 @@ module.exports = {
             args = args.input
 
             let saveProduct = new SaveForLater();
-            return saveProduct.SaveProduct(args.productId, userId)
+            return saveProduct.SaveProduct(args.productId, args.businessId, userId)
 
         },
         RemoveProductFromSavedProducts (_, args, context) {

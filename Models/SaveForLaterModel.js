@@ -11,6 +11,11 @@ const SaveForLater = mongoose.Schema({
         ref: "product",
         required: true
     },
+    business_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "business-accounts",
+        required: true
+    },
     created : {
         type : Date,
         default: Date.now()

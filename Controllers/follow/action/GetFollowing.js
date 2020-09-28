@@ -55,7 +55,7 @@ module.exports = class GetFollowing extends FollowController {
                 businessId: businessData.business_id._id,
                 username: businessData.business_id.username,
                 businessName: businessData.business_id.businessname,
-                logo: businessData.business_id.logo.length > 0 ? businessData.business_id.logo.length : null,
+                logo: businessData.business_id.logo.length > 0 ? businessData.business_id.logo : "",
                 review: businessData.business_id.review_score,
                 businessCategory: businessData.categories.length > 0 ? await this.FormatCategories(businessData.categories) : null
             }

@@ -6,10 +6,11 @@ const SaveForLaterModel = require('../../Models/SaveForLaterModel')
 module.exports = class SaveForLaterController extends FunctionRepository {
     constructor () { super() }
 
-    async InsertProduct(productId, userId) {
+    async InsertProduct(productId, userId, businessId) {
         let saveData = new SaveForLaterModel({
             owner: userId,
-            product_id: productId
+            product_id: productId,
+            business_id: businessId
         });
 
         try {
@@ -48,7 +49,7 @@ module.exports = class SaveForLaterController extends FunctionRepository {
         
             let result = {
                 totalNumberOfProducts: countDocuments,
-                products: getProducts.length > 0 ? getProducts : null
+                products: getProducts
             }
             
             return {

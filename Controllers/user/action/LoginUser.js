@@ -233,7 +233,6 @@ module.exports = class LoginUser extends UserController{
 
                         // check if anonymous Id exists
                         if(this.anonymousId != null && this.anonymousId.length > 0) {
-                            console.log(this.anonymousId)
                             this.MoveToOnymousCart.MoveAnonymousCartToOnymousCart(this.anonymousId, userId)
                         }
 
