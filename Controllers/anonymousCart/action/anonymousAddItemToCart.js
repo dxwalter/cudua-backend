@@ -108,10 +108,12 @@ module.exports = class AddItemToCart extends AnonymousCartController {
                     product: productId,
                     business: businessId,
                     size: item.size.length > 0 ? item.size : "",
-                    color: item.color.length > 0 ? item.color : ""
+                    color: item.color.length > 0 ? item.color : "",
+                    quantity: item.quantity
                 })
             }
         }
+
 
         await this.SignedCartController.saveMultipleCart(approvedItemArray);
         await this.deleteAllFromAnonymousCart(anonymousId)

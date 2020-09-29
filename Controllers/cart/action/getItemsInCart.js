@@ -18,20 +18,23 @@ module.exports = class GetItemsInCart extends CartController {
         }
     }
 
-    async getColor(id, colorArray) {
+    getColor(id, colorArray) {
         for (let x of colorArray) {
             if (id == x._id) {
                 return x.color_codes;
             }
         }
+        return ""
     }
 
-    async getSize(id, sizeArray) {
+    getSize(id, sizeArray) {
         for (let x of sizeArray) {
             if (id == x._id) {
                 return x.sizes;
             }
         }
+
+        return ""
     }
 
     async formatCartItems(getCartItems) {
@@ -59,8 +62,8 @@ module.exports = class GetItemsInCart extends CartController {
                     username:item.business.username
                 },
                 // get color and size from product's color and sizes array
-                size: item.size == undefined ? null : await  this.getSize(item.size, item.product.sizes),
-                color: item.color == undefined ? null : await this.getColor(item.color, item.product.colors),
+                size: item.size == undefined ? "" : this.getSize(item.size, item.product.sizes),
+                color: item.color == undefined ? "" : this.getColor(item.color, item.product.colors),
 
                 quantity: item.quantity
             }
