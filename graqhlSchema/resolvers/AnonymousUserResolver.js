@@ -1,6 +1,7 @@
 
 let AddItemToCart = require('../../Controllers/anonymousCart/action/anonymousAddItemToCart');
 let GetItemsInCart = require('../../Controllers/anonymousCart/action/anonymousGetItemsInCart');
+let EditItemsInCart = require('../../Controllers/anonymousCart/action/anonymousEditCartItem')
 
 
 let tempResponse = () => {
@@ -28,6 +29,16 @@ module.exports = {
             args = args.input
             let deleteCart = new AddItemToCart();
             return deleteCart.AnonymousDeleteItemInCart(args.itemId, args.anonymousId);
+        },
+        AnonymousEditProductQuanityInCart (parent, args, context) {
+            args = args.input
+            let changeQuanity = new EditItemsInCart();
+            return changeQuanity.editProductQuantity(args.itemId, args.quantity)
+        },
+        AnonymousEditProductSizeAndColorInCart (parent, args, context) {
+            args = args.input
+            let changeColorAndSize = new EditItemsInCart();
+            return changeColorAndSize.editProductSizeAndColor(args.itemId, args.sizeId, args.colorId)
         }
     }
 }

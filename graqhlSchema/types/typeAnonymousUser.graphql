@@ -84,6 +84,16 @@ input anonymousId {
     anonymousId: String!
 }
 
+input editProductQuanity {
+    quantity: Int!
+    itemId: String!
+}
+
+input editProductSizeAndColor {
+    sizeId: String
+    colorId: String
+    itemId: String!
+}
 
 type Query {
     # get items from cart
@@ -94,6 +104,12 @@ type Query {
 type Mutation {
     # add an item to cart
     AnonymousAddItemToCart(input: anonymousAddItemToCart): DatalessResponse
+    # edit product quantity
+    AnonymousEditProductQuanityInCart(input: editProductQuanity): DatalessResponse
+    
+    # edit product color and size
+    AnonymousEditProductSizeAndColorInCart(input: editProductSizeAndColor): DatalessResponse
+
     # delete an item from cart
     AnonymousDeleteItemFromCart(input: anonymousDeleteItemFromCart): DatalessResponse
 }

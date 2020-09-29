@@ -24,6 +24,8 @@ module.exports = class GetItemsInCart extends AnonymousCartController {
                 return x.color_codes;
             }
         }
+
+        return ""
     }
 
     getSize(id, sizeArray) {
@@ -32,6 +34,8 @@ module.exports = class GetItemsInCart extends AnonymousCartController {
                 return x.sizes;
             }
         }
+
+        return ""
     }
 
     async formatCartItems(getCartItems) {
