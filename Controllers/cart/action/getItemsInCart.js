@@ -56,6 +56,7 @@ module.exports = class GetItemsInCart extends CartController {
                 business: {
                     businessId: item.business._id,
                     name: item.business.businessname,
+                    username:item.business.username
                 },
                 // get color and size from product's color and sizes array
                 size: item.size == undefined ? null : await  this.getSize(item.size, item.product.sizes),

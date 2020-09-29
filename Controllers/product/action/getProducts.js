@@ -145,6 +145,8 @@ module.exports = class EditProduct extends ProductController {
 
         let productDetails = getProduct.result
 
+        if (productDetails.hide == 1) return this.returnData(null, 500, false, `An error occurred. This product has been moved or deleted`)
+
         let getProductReview = await this.ProductReviewController.getReviewByProductId(productId);
 
         let reviews;

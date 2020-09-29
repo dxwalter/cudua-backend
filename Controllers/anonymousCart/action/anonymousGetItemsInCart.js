@@ -18,7 +18,7 @@ module.exports = class GetItemsInCart extends AnonymousCartController {
         }
     }
 
-    async getColor(id, colorArray) {
+    getColor(id, colorArray) {
         for (let x of colorArray) {
             if (id == x._id) {
                 return x.color_codes;
@@ -26,7 +26,7 @@ module.exports = class GetItemsInCart extends AnonymousCartController {
         }
     }
 
-    async getSize(id, sizeArray) {
+    getSize(id, sizeArray) {
         for (let x of sizeArray) {
             if (id == x._id) {
                 return x.sizes;
@@ -55,10 +55,11 @@ module.exports = class GetItemsInCart extends AnonymousCartController {
                 business: {
                     businessId: item.business._id,
                     name: item.business.businessname,
+                    username: item.business.username
                 },
                 // get color and size from product's color and sizes array
-                size: item.size == undefined ? null : await  this.getSize(item.size, item.product.sizes),
-                color: item.color == undefined ? null : await this.getColor(item.color, item.product.colors),
+                size: item.size == '' ? '' : await  this.getSize(item.size, item.product.sizes),
+                color: item.color == '' ? '' : await this.getColor(item.color, item.product.colors),
 
                 quantity: item.quantity
             }
@@ -75,6 +76,7 @@ module.exports = class GetItemsInCart extends AnonymousCartController {
                 // check if street exists in object
 
                 let getSavedLocation = streetObject.streetId;
+
                 
                 if (getSavedLocation == undefined) {
 
@@ -96,6 +98,7 @@ module.exports = class GetItemsInCart extends AnonymousCartController {
                             lga: locationDetails.lga_id.name,
                             state: locationDetails.state_id.name,
                             country: locationDetails.country_id.name,
+                            busStop: item.business.address.bus_stop
                         }
 
                         let getCartLocationData = streetObject[streetId]

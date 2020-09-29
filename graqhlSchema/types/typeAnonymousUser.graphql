@@ -45,7 +45,7 @@ type ProductCartInfo {
     # image of product
     image: String!
     # this is the review score for the product between 1-5
-    review: Int!
+    review: Float!
 }
 
 # this is the info of the business that owns the product
@@ -56,6 +56,7 @@ type BusinessCartInfo {
     name: String!
     # business address
     address: AddressType
+    username: String!
 }
 
 # add item to cart
