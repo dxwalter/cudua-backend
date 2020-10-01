@@ -78,11 +78,11 @@ module.exports = class FollowBusiness extends FollowController {
 
     async isCustomerFollowingBusiness(businessId, userId) {
         
-        if (businessId.length < 1 || userId.length < 1) return this.returnIsFollowingMethod(null, 200, false, "An error occurred. Kindly refresh page and try again 1");
+        if (businessId.length < 1 || userId.length < 1) return this.returnIsFollowingMethod(null, 200, false, "An error occurred. Kindly refresh page and try again");
 
         let checkStatus = await this.CheckIfExist(businessId, userId);
 
-        if (checkStatus.error) return this.returnIsFollowingMethod(null, 200, false, "An error occurred. Kindly refresh page and try again 2");
+        if (checkStatus.error) return this.returnIsFollowingMethod(null, 200, false, "An error occurred. Kindly refresh page and try again");
 
         if (checkStatus.result != null) return this.returnIsFollowingMethod(true, 200, true, "Successful");
 
