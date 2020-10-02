@@ -17,11 +17,12 @@ module.exports = class createOrder extends OrderController {
         this.businessIdArray = [];
     }
 
-    returnMethod (code, success, message) {
+    returnMethod (code, success, message, orderId = "") {
         return {
             code: code,
             success: success,
-            message: message
+            message: message,
+            orderId: orderId
         }
     }
 
@@ -38,27 +39,30 @@ module.exports = class createOrder extends OrderController {
 
     }
 
-    formatCartItems (cartItems, orderId) {
+    formatCartItems (cartItems, orderId, businessOwnerId) {
 
         let newCartArray = [];
 
         for (const [index, data] of cartItems.entries()) {
-            newCartArray[index] = {
-                customer: data.owner._id,
-                product: data.product._id,
-                business: data.business._id,
-                quantity: data.quantity,
-                order_id: orderId
-            }
-            if (data.size != null) {
-                newCartArray[index]["size"] = data.size
-            }
 
-            if (data.color != null) {
-                newCartArray[index]["color"] = data.color
+            if (data.business._id.toString() !== businessOwnerId.toString()) {
+                newCartArray[index] = {
+                    customer: data.owner._id,
+                    product: data.product._id,
+                    business: data.business._id,
+                    quantity: data.quantity,
+                    order_id: orderId
+                }
+                if (data.size != null) {
+                    newCartArray[index]["size"] = data.size
+                }
+
+                if (data.color != null) {
+                    newCartArray[index]["color"] = data.color
+                }
+                
+                this.businessIdArray.push(data.business._id)
             }
-            
-            this.businessIdArray.push(data.business._id)
             
         }
 
@@ -126,9 +130,17 @@ module.exports = class createOrder extends OrderController {
             orderId = orderId + "RF";
         }
 
-        // format cart items and add orderId
+        let customerDetails = await this.userController.findUsersById(userId);
 
-        let newData = this.formatCartItems(getItemsInCart.result, orderId);
+        if (customerDetails.error) return this.returnMethod(200, false, "An error occurred. Please try again");
+
+        let businessOwnerId = customerDetails.result.business_details == undefined ? "" : customerDetails.result.business_details;
+
+
+        // format cart items and add orderId
+        let newData = this.formatCartItems(getItemsInCart.result, orderId, businessOwnerId);
+        
+        if (newData.length == 0 && getItemsInCart.result.length > 0) return this.returnMethod(200, false, "An error occurred. You cannot order your own product.")
 
         let saveData = await this.saveOrder(newData);
         
@@ -162,7 +174,7 @@ module.exports = class createOrder extends OrderController {
         // delete items from cart
         this.cartController.deleteAllCartItemsByUserId(userId)
         
-        return this.returnMethod(200, true, notificationMessage)
+        return this.returnMethod(200, true, notificationMessage, orderId)
         
 
     }

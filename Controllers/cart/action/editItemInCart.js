@@ -46,39 +46,21 @@ module.exports = class EditItemsInCart extends CartController {
 
     }
 
-    async updateColor (itemId, color) {
+    async updateColorAndSize (itemId, colorId, sizeId) {
         
-        if (color.length < 1)  return this.returnMethod(200, false, `Select a new color`);
-
         if (itemId.length < 1)  return this.returnMethod(500, false, `An error occurred from our end. Refresh and try again`);
 
-        let newDataObject = {color: color};
-
-        let updateData = await this.findOneAndUpdate(itemId, newDataObject);
-
-        if (updateData.error == false) {
-            return this.returnMethod(202, true, "The color of your item has been updated")
-        } else {
-            return this.returnMethod(500, false, "An error occurred updating the color of your item");
+        if (sizeId.length > 0) {
+            let updateSize = await this.findOneAndUpdate(itemId, {size: sizeId})
+            if (updateSize.error) return this.returnMethod(200, false, "An error occurred. Kindly try again");
         }
 
-    }
-
-    async updateSize (itemId, size) {
-        
-        if (size.length < 1)  return this.returnMethod(200, false, `Select a new size`);
-
-        if (itemId.length < 1)  return this.returnMethod(500, false, `An error occurred from our end. Refresh and try again`);
-
-        let newDataObject = {size: size};
-
-        let updateData = await this.findOneAndUpdate(itemId, newDataObject);
-
-        if (updateData.error == false) {
-            return this.returnMethod(202, true, "The size of your item has been updated")
-        } else {
-            return this.returnMethod(500, false, "An error occurred updating the size of your item");
+        if (colorId.length > 0) {
+            let updateColor = await this.findOneAndUpdate(itemId, {color: colorId})
+            if (updateColor.error) return this.returnMethod(200, false, "An error occurred. Kindly try again");
         }
+
+        return this.returnMethod(200, true, "Cart updated successfully")
 
     }
  

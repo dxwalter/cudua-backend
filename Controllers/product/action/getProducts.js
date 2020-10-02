@@ -167,6 +167,36 @@ module.exports = class EditProduct extends ProductController {
         
     }
 
+    async businessGetProductById (productId) {
+
+        if (productId.length < 1) return this.returnData(null, 200, false, `An error occurred. The details of the product was not provided`)
+
+        let getProduct = await this.GetProductById(productId);
+
+        if (getProduct.error ||  getProduct.result == null) return this.returnData(null, 500, false, `An error occurred. This product has been moved or deleted`)
+
+        let productDetails = getProduct.result
+
+        let getProductReview = await this.ProductReviewController.getReviewByProductId(productId);
+
+        let reviews;
+
+        if (getProductReview.error == false) {
+            reviews = getProductReview.result.length > 0 ? this.formatReview(getProductReview.result) : null;
+        } else {
+            reviews = null
+        }
+
+        let formatProduct = this.formatProductDetails([productDetails]);
+        let formatBusinessDetails = await this.formatBusinessData.formatBusinessDetails(productDetails.business_id, null);
+
+
+        formatProduct[0].reviews = reviews
+
+        return this.returnData(formatProduct[0], 200, true, `Product successfully retrieved`, formatBusinessDetails)
+        
+    }
+
     async GetProductBySubcategory (businessId, subcategoryId, page) {
 
         if (page < 1) {

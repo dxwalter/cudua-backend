@@ -100,6 +100,15 @@ input rejectDelivery {
     orderId: String!
 }
 
+# create order response
+
+type createOrderResponse implements ResponseType {
+    orderId: String
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
 type Query {
     BusinessGetOrders(input: businessGetOrder): OrdersResponse
     BusinessGetProductsInOrder(input: orderInput): productsInOrderResponse
@@ -108,7 +117,7 @@ type Query {
 }
 
 type Mutation {
-    CreateOrder: DatalessResponse
+    CreateOrder: createOrderResponse
     CustomerDeleteProductInOrder (input: deleteItemInOrder): DatalessResponse
     ConfirmOrder(input: confirmOrderInput): DatalessResponse
     RejectOrder(input: rejectOrder): DatalessResponse

@@ -72,7 +72,7 @@ module.exports = {
                 return updateItemQuantity.updateQuantity(args.itemId, args.quantity);
             }
         },
-        UpdateItemColor(parent, args, context) {
+        UpdateItemColorAndSize(parent, args, context) {
             let accessToken = context.accessToken;
             let userId = context.authFunction(accessToken);
             if (userId.error == true) {
@@ -83,23 +83,8 @@ module.exports = {
                 userId = userId.message;
                 args = args.input
                 
-                let updateItemQuantity = new EditItemInCart();
-                return updateItemQuantity.updateColor(args.itemId, args.colorId);
-            }
-        },
-        UpdateItemSize(parent, args, context) {
-            let accessToken = context.accessToken;
-            let userId = context.authFunction(accessToken);
-            if (userId.error == true) {
-                // anonymous user
-                return tempResponse()
-            } else {
-                // known user
-                userId = userId.message;
-                args = args.input
-                
-                let updateItemQuantity = new EditItemInCart();
-                return updateItemQuantity.updateSize(args.itemId, args.sizeId);
+                let updateItemDetails = new EditItemInCart();
+                return updateItemDetails.updateColorAndSize(args.itemId, args.colorId, args.sizeId);
             }
         }
     }

@@ -15,6 +15,10 @@ module.exports = {
             let getProduct  = new GetProduct();
             return getProduct.getProductById(args.input.productId);
         },
+        BusinessGetProductById(_, args) {
+            let getProduct  = new GetProduct();
+            return getProduct.businessGetProductById(args.input.productId);
+        },
         GetProductByCategory(_, args, context) {
             args = args.input;
 

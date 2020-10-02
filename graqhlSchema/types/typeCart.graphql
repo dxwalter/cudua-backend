@@ -87,11 +87,13 @@ input updateItemQuantity {
 }
 
 # update item color
-input updateItemColor {
+input updateItemColorAndSize {
     # this is the unique id of the item in cart. this is not product id
     itemId: String!
     # color id not color name
-    colorId: String!
+    colorId: String
+    # size
+    sizeId: String
 }
 
 
@@ -118,7 +120,5 @@ type Mutation {
     # update the quantity of an item in cart
     UpdateItemQuantity(input: updateItemQuantity): DatalessResponse
     # update the color of an item in cart
-    UpdateItemColor(input: updateItemColor): DatalessResponse
-    # update the size of an item in cart
-    UpdateItemSize(input: updateItemSize): DatalessResponse
+    UpdateItemColorAndSize(input: updateItemColorAndSize): DatalessResponse
 }

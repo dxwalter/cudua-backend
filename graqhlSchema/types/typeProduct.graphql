@@ -385,8 +385,11 @@ input businessSearchbusinessProduct {
 }
 
 type Query {
-    # A business or a user can get the details of a product with its reviews
+    # a user can get the details of a product with its reviews
     GetProductById(input: productId): SingleProductResponse
+    
+    # a business can get the details of a product with its reviews
+    BusinessGetProductById(input: productId): SingleProductResponse
 
     # A business can get all the products under a category
     GetProductByCategory (input: businessGetProductByCategory): MultipleProductResponse
