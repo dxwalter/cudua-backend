@@ -86,10 +86,10 @@ module.exports = class EditProduct extends ProductController {
 
         for (const detail of details) {
             let data = {
-                images: detail.images.length > 0 ? detail.images : null,
-                colors: detail.colors.length > 0 ? [] : null,
-                tags: detail.tags.length > 0 ? [] : null,
-                sizes: detail.sizes.length > 0 ? [] : null,
+                images: detail.images.length > 0 ? detail.images : [],
+                colors: detail.colors.length > 0 ? [] : [],
+                tags: detail.tags.length > 0 ? [] : [],
+                sizes: detail.sizes.length > 0 ? [] : [],
                 id: detail._id,
                 name: detail.name,
                 price: detail.price,
@@ -152,9 +152,9 @@ module.exports = class EditProduct extends ProductController {
         let reviews;
 
         if (getProductReview.error == false) {
-            reviews = getProductReview.result.length > 0 ? this.formatReview(getProductReview.result) : null;
+            reviews = getProductReview.result.length > 0 ? this.formatReview(getProductReview.result) : [];
         } else {
-            reviews = null
+            reviews = []
         }
 
         let formatProduct = this.formatProductDetails([productDetails]);
@@ -182,9 +182,9 @@ module.exports = class EditProduct extends ProductController {
         let reviews;
 
         if (getProductReview.error == false) {
-            reviews = getProductReview.result.length > 0 ? this.formatReview(getProductReview.result) : null;
+            reviews = getProductReview.result.length > 0 ? this.formatReview(getProductReview.result) : [];
         } else {
-            reviews = null
+            reviews = []
         }
 
         let formatProduct = this.formatProductDetails([productDetails]);

@@ -2,6 +2,7 @@
 
 const FunctionRepo = require('../MainFunction');
 const OrderModel = require('../../Models/OrderModel')
+const OrderProductModel = require('../../Models/orderProductModel')
 
 module.exports = class OrderController extends FunctionRepo {
     constructor () {
@@ -29,7 +30,25 @@ module.exports = class OrderController extends FunctionRepo {
     async saveOrder(order) {
         try {
             
-            let saveData = await OrderModel.insertMany(order);
+            let saveData = await OrderProductModel.insertMany(order);
+
+            return {
+                error: false,
+                result: saveData
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                messgae: error.message
+            }
+        }
+    }
+
+    async saveBusinessOrder(data) {
+        try {
+            
+            let saveData = await OrderModel.insertMany(data);
 
             return {
                 error: false,

@@ -3,7 +3,7 @@ type Order {
     customerName: String!
     customerId: String!
     profilePicture: String
-    orderTime: String!
+    orderTime: DateTime!
     orderId: String!
 }
 
@@ -94,6 +94,21 @@ input rejectOrder {
     reason: String!
 }
 
+type productsInOrderResponseWithBusinessData {
+    orderDetails: [orderProduct]!
+    businessName: String!
+    username: String!
+    businessId: String!
+    logo: String
+}
+
+type orderDetailsResponse {
+    orderDetails: [productsInOrderResponseWithBusinessData]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
 # A customer 
 input rejectDelivery {
     businessId: String!
@@ -109,11 +124,17 @@ type createOrderResponse implements ResponseType {
     message: String!
 }
 
+input customerOrderDetailsInput {
+    orderId: String!
+}
+
 type Query {
     BusinessGetOrders(input: businessGetOrder): OrdersResponse
     BusinessGetProductsInOrder(input: orderInput): productsInOrderResponse
 
     GetNewOrderCount(input: businessGetOrder): orderCountResponse
+
+    GetOrderItemsForCustomer(input: customerOrderDetailsInput): orderDetailsResponse
 }
 
 type Mutation {

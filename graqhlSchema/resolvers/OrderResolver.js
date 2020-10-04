@@ -4,7 +4,10 @@ const DeleteItem = require('../../Controllers/order/action/deleteItemInOrder');
 const GetOrders = require('../../Controllers/order/action/getOrder')
 const OrderState = require('../../Controllers/order/action/orderState')
 
+const { GraphQLDateTime } = require('graphql-iso-date') ;
+
 module.exports = {
+    DateTime: GraphQLDateTime,
     Query: {
         BusinessGetOrders(_, args, context) {
             let userId = context.authFunction(context.accessToken);
@@ -38,6 +41,17 @@ module.exports = {
 
             let getOrder = new GetOrders();
             return getOrder.getOrderCount(args.businessId)
+        },
+
+        GetOrderItemsForCustomer(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+
+            let getOrder = new GetOrders();
+            return getOrder.GetCustomerOrderDetails(args.orderId, userId)
         }
     },
     Mutation: {

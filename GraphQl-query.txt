@@ -1493,3 +1493,29 @@ mutation {
     message
   }
 }
+
+
+query{
+  GetOrderItemsForCustomer(input:{
+    orderId: ""
+  }){
+    orderDetails {
+      orderDetails {
+        name
+        productId
+        avatar
+        quantity
+        price
+        size
+        color
+      }
+      businessName
+      username
+      logo
+      businessId
+    }
+    code
+    success
+    message
+  }
+}

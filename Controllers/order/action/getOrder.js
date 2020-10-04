@@ -175,11 +175,11 @@ module.exports = class GetOrders extends OrderController {
         let customerObject = {
             customerId: customerData._id,
             fullname: customerData.fullname,
-            phone: customerData.phone == undefined ? null : customerData.phone,
-            profilePicture: customerData.profilePicture == undefined ? null : customerData.profilePicture,
+            phone: customerData.phone == undefined ? "" : customerData.phone,
+            profilePicture: customerData.profilePicture == undefined ? "" : customerData.profilePicture,
             email: customerData.email,
             ratingScore: customerData.review_score,
-            address: customerData.address.street.length < 1 || customerData.address == undefined ? null: {
+            address: customerData.address.street.length < 1 || customerData.address == undefined ? "": {
                 number: customerData.address.number,
                 busStop: customerData.address.bus_stop,
                 street: customerData.address.street.name,
@@ -236,6 +236,10 @@ module.exports = class GetOrders extends OrderController {
         let newOrderCount = await this.newOrderCount(businessId);
         if (newOrderCount.error) return this.returnCount(0, 500, false, "An error occurred");
         return this.returnCount(newOrderCount.result, 200, true, "Successful")
+
+    }
+
+    async GetCustomerOrderDetails (orderId, userId) {
 
     }
 }

@@ -142,6 +142,23 @@ module.exports = class createOrder extends OrderController {
         
         if (newData.length == 0 && getItemsInCart.result.length > 0) return this.returnMethod(200, false, "An error occurred. You cannot order your own product.")
 
+        let newBusinessId =  Array.from(new Set(this.businessIdArray));
+
+        // save orders by business
+        let businessOrder = [];
+
+        for(let businessId of newBusinessId) {
+            businessOrder.push({
+                customer: userId,
+                business: businessId,
+                order_id: orderId,
+            })
+        }
+
+        let saveOrderForBusiness = await this.saveBusinessOrder(businessOrder);
+
+        if (saveOrderForBusiness.error) return this.returnMethod(500, false, "An error occurred creating your order. Please try again");
+
         let saveData = await this.saveOrder(newData);
         
         if (saveData.error) return this.returnMethod(500, false, "An error occurred creating your order. Please try again");
@@ -152,7 +169,6 @@ module.exports = class createOrder extends OrderController {
 
         // create business notification
         let businessNotificationMessage = `You have a new order and it is awaiting confirmation. The order ID is ${orderId}`;
-        let newBusinessId =  Array.from(new Set(this.businessIdArray));
 
         let saveBusinessNotification = await this.saveBusinessNotification(newBusinessId, orderId, businessNotificationMessage);
 
