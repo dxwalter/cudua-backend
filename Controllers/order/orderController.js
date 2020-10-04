@@ -145,9 +145,9 @@ module.exports = class OrderController extends FunctionRepo {
 
         try {
             
-            let find = await OrderModel.find({
+            let find = await OrderProductModel.find({
                 $and: [{ business: businessId, customer: customerId, order_id: orderId }]
-            }).populate("product")
+            }).populate("product");
 
             return {
                 result: find,

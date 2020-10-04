@@ -43,6 +43,24 @@ module.exports = class GetOrders extends OrderController {
         }
     }
 
+    formatAddress(customerData) {
+    
+        if (customerData.street == undefined) {
+            return null
+        } else {
+            
+            return {
+                number: customerData.number,
+                busStop: customerData.bus_stop,
+                street: customerData.street.name,
+                community: customerData.community.name,
+                lga: customerData.community.name,
+                state: customerData.state.name,
+                country: customerData.country.name
+            }
+        }
+    }
+  
     getOrderSize(orderOptionData, productOptionArray) {
         for(let x of productOptionArray) {
             if (x._id == orderOptionData) return x.sizes
@@ -160,11 +178,13 @@ module.exports = class GetOrders extends OrderController {
         findProductsInOrder = findProductsInOrder.result
         if (findProductsInOrder < 1) return this.returnProductMethod(null, null, null, 200, false, `No product was found for order ${orderId}. Please try again`)
 
-        let customerReviews = findProductsInOrder.length < 1 || null ? null : await this.CustomerReviews.getCustomerReviews(customerId);
+        let customerReviews = findProductsInOrder.length < 1 || null ? [] : await this.CustomerReviews.getCustomerReviews(customerId);
+
         if (customerReviews != null) {
             if (customerReviews.error) return this.returnProductMethod(null, null, null, 500, `An error occurred while getting this customer's reviews by other businesses`)
         }
 
+        
 
         let customerData = await this.CustomerData.findUsersById(customerId)
         if (customerData.error) return this.returnProductMethod(null, null, null, 500, `An error occurred while getting this customer's information`)
@@ -175,36 +195,29 @@ module.exports = class GetOrders extends OrderController {
         let customerObject = {
             customerId: customerData._id,
             fullname: customerData.fullname,
-            phone: customerData.phone == undefined ? "" : customerData.phone,
+            phoneNumber: customerData.phone,
             profilePicture: customerData.profilePicture == undefined ? "" : customerData.profilePicture,
             email: customerData.email,
             ratingScore: customerData.review_score,
-            address: customerData.address.street.length < 1 || customerData.address == undefined ? "": {
-                number: customerData.address.number,
-                busStop: customerData.address.bus_stop,
-                street: customerData.address.street.name,
-                community: customerData.address.community.name,
-                lga: customerData.address.community.name,
-                state: customerData.address.state.name,
-                country: customerData.address.country.name
-            }
+            address: this.formatAddress(customerData.address)
         }
 
         // customer reviews
 
         if (customerReviews == null || customerReviews.length < 1) {
-            customerObject["reviews"] = null;
+            customerObject["reviews"] = [];
         } else {
 
             customerReviews = customerReviews.result;
+            
 
             customerObject["reviews"] = [];
             for (const [index, review] of customerReviews.entries()) {
                 customerObject.reviews[index] = {
                     rating: review.rating,
-                    description: review.description.length < 1 || review.description == undefined ? null : review.description,
+                    description: review.description.length < 1 || review.description == undefined ? '' : review.description,
                     author: review.business_id.businessname,
-                    logo: review.business_id.logo.length < 1 || review.business_id.logo.undefined ? null : review.business_id.logo
+                    logo: review.business_id.logo.length < 1 || review.business_id.logo.undefined ? '' : review.business_id.logo
                 }
             }
         }
@@ -219,10 +232,9 @@ module.exports = class GetOrders extends OrderController {
                 avatar: orderProduct.product.primary_image,
                 quantity: orderProduct.quantity,
                 price: orderProduct.product.price,
-                size: orderProduct.size.length < 1 || orderProduct.size == undefined ? null : this.getOrderSize(orderProduct.size, orderProduct.product.sizes),
-                color: orderProduct.color.length < 1 || orderProduct.color == undefined ? null : this.getOrderColor(orderProduct.color, orderProduct.product.colors)
+                size: orderProduct.size.length < 1 || orderProduct.size == undefined ? '' : this.getOrderSize(orderProduct.size, orderProduct.product.sizes),
+                color: orderProduct.color.length < 1 || orderProduct.color == undefined ? '' : this.getOrderColor(orderProduct.color, orderProduct.product.colors)
             }
-            deliveryPrice = orderProduct.delivery_charge;
         }
 
         return this.returnProductMethod(productList, customerObject, deliveryPrice, 200, true, "ordered products retrieved successfully")
