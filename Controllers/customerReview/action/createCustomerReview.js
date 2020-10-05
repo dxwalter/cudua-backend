@@ -5,13 +5,14 @@ const BusinessController = require('../../business/BusinessController');
 const CustomerReviewModel = require('../../../Models/CustomerReview')
 
 const CustomerNotification = require('../../notifications/action/createNotification');
-let CustomerController = require('../../user/UserController')
+const CustomerController = require('../../user/UserController')
 
 module.exports = class CreateCustomerReview extends CustomerReviewController {
 
     constructor () {
         super();
         this.businessController = new BusinessController();
+
         this.customerNotification = new CustomerNotification();
         this.CustomerController = new CustomerController();
     }
@@ -21,6 +22,16 @@ module.exports = class CreateCustomerReview extends CustomerReviewController {
             code: code,
             success: success,
             message: message
+        }
+    }
+
+    returnCustomerReviews(code, success, message, reviews, reviewScore = 0) {
+        return {
+            code: code,
+            success: success,
+            message: message,
+            reviews: reviews,
+            reviewScore: reviewScore
         }
     }
  
@@ -101,4 +112,44 @@ module.exports = class CreateCustomerReview extends CustomerReviewController {
         return this.returnMethod(200, true, "Your review was submitted successfully.")
     }
 
+    formatReviews (data) {
+
+        let reviewArray = [];
+
+        for (const x of data) {
+            reviewArray.push({
+                businessId: x.business_id._id,
+                customerId: x.customer_id,
+                rating: x.rating,
+                description: x.description,
+                logo: x.business_id.logo,
+                timeStamp: x.created,
+                author: x.business_id.businessname
+            })
+        }
+
+        return reviewArray
+
+    }
+
+    async getAllReview(userId) {
+        
+        if (userId.length < 1) return this.returnCustomerReviews(200, false, "An error occurred. Sign into your account and try again", [], 0);
+
+        let getCustomerDetails = await this.CustomerController.findUsersById(userId)
+        
+        if (getCustomerDetails.error) return this.returnCustomerReviews(500, false, "An error occurred. Kindly try again", [], 0);
+
+        let reviewScore = getCustomerDetails.result.review_score
+
+        let getReviews = await this.getCustomerReviews(userId);
+        
+        if (getReviews.error) return this.returnCustomerReviews(500, false, "An error occurred. Kindly try again", [], 0);
+        
+        
+        let reviews = getReviews.result.length == 0 ? [] : this.formatReviews(getReviews.result);
+
+        return this.returnCustomerReviews(200, true, "Reviews successfully retrieved", reviews, reviewScore)
+
+    }
 }

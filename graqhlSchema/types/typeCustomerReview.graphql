@@ -1,8 +1,18 @@
 
+type customerReview {
+    businessId: String!
+    customerId: String!
+    rating: Float!
+    author: String!
+    description: String
+    logo: String
+    timeStamp: DateTime!
+}
+
 input createReview {
     businessId: String!
     customerId: String!
-    rating: Int!
+    rating: Float!
     description: String
 }
 
@@ -12,7 +22,18 @@ type createReviewResponse implements ResponseType {
     message: String!
 }
 
+type getCustomerReviewsResponse {
+    reviews: [customerReview]
+    reviewScore: Float
+    code: Int!
+    success: Boolean!
+    message: String!
+}
 
+
+type Query {
+    getCustomerReviews: getCustomerReviewsResponse
+}
 
 type Mutation {
     createCustomerReview(input: createReview): createReviewResponse

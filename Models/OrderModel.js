@@ -32,6 +32,9 @@ const OrderSchema = mongoose.Schema({
     reject_order_reason: {
         type: String, trim: true
     },
+    delivery_time: {
+        type: String, trim: true, default: ""
+    },
     delivery_status: {
         type: Number,
         /**

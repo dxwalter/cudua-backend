@@ -219,6 +219,34 @@ module.exports = class OrderController extends FunctionRepo {
         }
     }
 
+    async getOrderMetaData(customerId, businessId, orderId) {
+        try {
+            
+            let query = await OrderModel.findOne({
+                $and: [
+                    {
+                        customer: customerId, 
+                        business: businessId,
+                        order_id: orderId
+                    }
+                ]
+            });
+
+            return {
+                result: query,
+                error: false
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+
     async CheckCustomerStatusWithBusiness (customer, business) {
         try {
             

@@ -50,23 +50,35 @@ type orderCustomer {
 type CustomerReview {
     rating: Int!
     description: String
+    businessId: String!
+    customerId: String
     author: String!
     logo: String
+    timeStamp: DateTime!
 }
 
 type orderProduct {
     name: String!
     productId: String!
-    avatar: String!
+    image: String!
     quantity: Int!
     price: Int!
     size: String
     color: String
+    businessId: String!
+}
+
+type orderInfo {
+    deliveryCharge: Int!
+    orderStatus: Int!
+    deliveryStatus: Int!
+    deliveryTime: String
+    orderTime: DateTime
 }
 
 type productsInOrderResponse implements ResponseType {
     orderDetails: [orderProduct]
-    deliveryCharge: Int!
+    orderInfo: orderInfo
     customerDetails: orderCustomer
     code: Int!
     success: Boolean!

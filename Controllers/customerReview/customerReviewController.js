@@ -85,6 +85,8 @@ module.exports = class CustomerReviewController extends FunctionRepository {
         try {
             let findReview = await CustomerReviewModel.find({customer_id: customerId})
             .populate('business_id')
+            .sort({_id: -1})
+            .limit(20)
 
             return {
                 result: findReview,

@@ -23,11 +23,11 @@ module.exports = class GetOrders extends OrderController {
         }
     }
 
-    returnProductMethod (products, customerData, deliveryPrice, code, success, message) {
+    returnProductMethod (products, customerData, orderInfo, code, success, message) {
         return {
             orderDetails: products,
             customerDetails: customerData,
-            deliveryCharge: deliveryPrice,
+            orderInfo: orderInfo,
             code: code,
             success: success,
             message: message
@@ -54,7 +54,7 @@ module.exports = class GetOrders extends OrderController {
                 busStop: customerData.bus_stop,
                 street: customerData.street.name,
                 community: customerData.community.name,
-                lga: customerData.community.name,
+                lga: customerData.lga.name,
                 state: customerData.state.name,
                 country: customerData.country.name
             }
@@ -209,7 +209,6 @@ module.exports = class GetOrders extends OrderController {
         } else {
 
             customerReviews = customerReviews.result;
-            
 
             customerObject["reviews"] = [];
             for (const [index, review] of customerReviews.entries()) {
@@ -217,27 +216,44 @@ module.exports = class GetOrders extends OrderController {
                     rating: review.rating,
                     description: review.description.length < 1 || review.description == undefined ? '' : review.description,
                     author: review.business_id.businessname,
-                    logo: review.business_id.logo.length < 1 || review.business_id.logo.undefined ? '' : review.business_id.logo
+                    businessId: review.business_id._id,
+                    customerId: review.customer_id,
+                    logo: review.business_id.logo.length < 1 || review.business_id.logo.undefined ? '' : review.business_id.logo,
+                    timeStamp: review.created
                 }
             }
         }
 
+        // order details like delivery charge, order status etc
+        let orderDetails = await this.getOrderMetaData(customerId, businessId, orderId);
+
+        if (orderDetails.error) return this.returnProductMethod(null, null, null, 500, `An error occurred while getting this order information`);
+
+        let orderInfo = {
+            deliveryCharge: orderDetails.result.delivery_charge,
+            orderStatus: orderDetails.result.order_status,
+            deliveryStatus: orderDetails.result.delivery_status,
+            deliveryTime: orderDetails.result.delivery_time,
+            orderTime: orderDetails.result.created
+        }
+
+        // product details
         let productList = [];
-        let deliveryPrice = 0;
 
         for (const [index, orderProduct] of findProductsInOrder.entries()) {
             productList[index] = {
                 name: orderProduct.product.name,
                 productId: orderProduct.product._id,
-                avatar: orderProduct.product.primary_image,
+                image: orderProduct.product.primary_image,
                 quantity: orderProduct.quantity,
                 price: orderProduct.product.price,
                 size: orderProduct.size.length < 1 || orderProduct.size == undefined ? '' : this.getOrderSize(orderProduct.size, orderProduct.product.sizes),
-                color: orderProduct.color.length < 1 || orderProduct.color == undefined ? '' : this.getOrderColor(orderProduct.color, orderProduct.product.colors)
+                color: orderProduct.color.length < 1 || orderProduct.color == undefined ? '' : this.getOrderColor(orderProduct.color, orderProduct.product.colors),
+                businessId: orderProduct.business
             }
         }
 
-        return this.returnProductMethod(productList, customerObject, deliveryPrice, 200, true, "ordered products retrieved successfully")
+        return this.returnProductMethod(productList, customerObject, orderInfo, 200, true, "ordered products retrieved successfully")
 
         
 
