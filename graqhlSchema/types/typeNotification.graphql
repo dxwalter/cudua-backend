@@ -6,6 +6,7 @@ type Notification {
     isRead: Int!
     owner: String!
     actionId: String!
+    header: String
     type: String!
     message: String!
     timeStamp: DateTime!

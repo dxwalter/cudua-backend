@@ -88,20 +88,21 @@ module.exports = class GetOrders extends OrderController {
 
                 // new order that is yet to be confirmed
                 if (orderItem.order_status == 0) {
+
                     newOrder.push({
                         customerName: orderItem.customer.fullname,
                         customerId: orderItem.customer._id,
-                        profilePicture: orderItem.customer.profilePicture == undefined ? null : orderItem.customer.profilePicture,
+                        profilePicture: orderItem.customer.profilePicture == undefined ? "" : orderItem.customer.profilePicture,
                         orderTime: orderItem.created,
                         orderId: orderItem.order_id,
                     })
                 }
 
-                if (orderItem.order_status &&  orderItem.delivery_status != 1) {
+                if (orderItem.order_status == 1 &&  orderItem.delivery_status != 1) {
                     pendingOrder.push({
                         customerName: orderItem.customer.fullname,
                         customerId: orderItem.customer._id,
-                        profilePicture: orderItem.customer.profilePicture == undefined ? null : orderItem.customer.profilePicture,
+                        profilePicture: orderItem.customer.profilePicture == undefined ? "" : orderItem.customer.profilePicture,
                         orderTime: orderItem.created,
                         orderId: orderItem.order_id,
                     })
@@ -112,7 +113,7 @@ module.exports = class GetOrders extends OrderController {
                     clearedOrder.push({
                         customerName: orderItem.customer.fullname,
                         customerId: orderItem.customer._id,
-                        profilePicture: orderItem.customer.profilePicture == undefined ? null : orderItem.customer.profilePicture,
+                        profilePicture: orderItem.customer.profilePicture == undefined ? "" : orderItem.customer.profilePicture,
                         orderTime: orderItem.created,
                         orderId: orderItem.order_id,
                     })
@@ -151,6 +152,34 @@ module.exports = class GetOrders extends OrderController {
         let formatOrder = this.formartOrderData(getOrdersForBusiness.result);
 
         return this.returnMethod(formatOrder, 200, true, "Orders retrieved successfully")
+    }
+
+    async searchForOrder (businessId, orderId) {
+ 
+        if (!businessId || !orderId) {
+            return this.returnMethod(null, 200, false, "An error occurred. Type your order id")
+        }
+
+        let searchOrder = await this.searchOrderById(businessId, orderId);
+        
+        if (searchOrder.error) return this.returnMethod(null, 500, false, "An error occurred. Kindly try again");
+
+        if (searchOrder.result.length == 0) return this.returnMethod([], 200, true, "No result was found");
+
+        let newArray = [];
+
+        for (const x of searchOrder.result) {
+            newArray.push({
+                customerName: x.customer.fullname,
+                customerId: x.customer._id,
+                profilePicture: x.customer.profilePicture == undefined ? "" : x.customer.profilePicture,
+                orderTime: x.created,
+                orderId: x.order_id,
+            })
+        }
+
+        return this.returnMethod(newArray, 200, true, "Search complete");
+
     }
 
     async businessGetProductsInOrder(businessId, customerId, orderId, userId) {
@@ -226,7 +255,6 @@ module.exports = class GetOrders extends OrderController {
 
         // order details like delivery charge, order status etc
         let orderDetails = await this.getOrderMetaData(customerId, businessId, orderId);
-        console.log(orderDetails)
 
         if (orderDetails.error) return this.returnProductMethod(null, null, null, 500, `An error occurred while getting this order information`);
 

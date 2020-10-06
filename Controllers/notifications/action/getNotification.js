@@ -41,6 +41,7 @@ module.exports = class GetNotification extends NotificationController {
                 isRead: notification.is_read,
                 owner: notification.owner,
                 actionId: notification.action_id,
+                header: notification.header == undefined ? "" : notification.header,
                 type: notification.type,
                 message: notification.message,
                 timeStamp: notification.created

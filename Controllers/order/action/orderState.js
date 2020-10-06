@@ -98,11 +98,13 @@ module.exports = class OrderStatus extends OrderController {
         return this.returnMethod(202, true, `Order was rejected successfully`);
     }
 
-    async updateDeliveryCharge (businessId, customerId, orderId, deliveryPrice, userId) {
+    async updateDeliveryCharge (businessId, customerId, orderId, deliveryPrice, userId, startTime, endTime) {
 
         if (businessId.length < 1) return this.returnMethod(200, false, "Your business credential was not provided. Refresh and try again")  
         if (customerId.length < 1) return this.returnMethod(200, false, "The customer's credential was not provided. Refresh and try again")  
         if (orderId.length < 1) return this.returnMethod(200, false, "The order id was not provided was not provided. Refresh and try again")  
+        
+        if (startTime.length == 0 || endTime.length == 0) return this.returnMethod(200, false, "The delivery time span for this order was not provided")
 
         // check if business exists
         let businessData = await this.businessController.getBusinessData(businessId);
@@ -119,7 +121,11 @@ module.exports = class OrderStatus extends OrderController {
         // update price
         let updateOrder = {
             order_status: 1,
-            delivery_charge: deliveryPrice
+            delivery_charge: deliveryPrice,
+            delivery_time: {
+                start: startTime,
+                end: endTime
+            }
         }
 
         let findAndUpdate = await this.confirmCustomerOrder(businessId, customerId, orderId, updateOrder);
@@ -127,9 +133,9 @@ module.exports = class OrderStatus extends OrderController {
         if (findAndUpdate.error || findAndUpdate.result == false) await this.returnMethod(500, false, "An error occurred while updating delivery price for order. Please try again");
 
         //notify customer
-        let alertCustomer = await this.createNotification.createCustomerNotification(customerId, orderId, "order", "New delivery price", `The delivery price for your order with ID ${orderId} has been updated. Click to find out more details.`);
+        let alertCustomer = await this.createNotification.createCustomerNotification(customerId, orderId, "order", "New delivery price", `The delivery price and time for your order with ID ${orderId} has been updated. Click to find out more details.`);
 
-        return this.returnMethod(202, true, `Delivery price was updated successfully`);
+        return this.returnMethod(202, true, `Order was updated successfully`);
 
     }
 

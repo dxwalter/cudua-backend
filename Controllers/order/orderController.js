@@ -63,6 +63,31 @@ module.exports = class OrderController extends FunctionRepo {
         }
     }
 
+    async searchOrderById(businessId, orderId) {
+        try {
+            
+            let findData = await OrderModel.find({
+                $and: [
+                    {
+                        order_id:  { $regex: '.*' + orderId + '.*', $options: 'i'}, 
+                        business: businessId
+                    }
+                ]
+            }).populate("customer").limit(4)
+
+            return {
+                error: false,
+                result: findData
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async getItemFromOrder (orderId, productId, userId) {
 
         try {

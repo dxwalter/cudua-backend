@@ -19,8 +19,16 @@ module.exports = {
             let getOrder = new GetOrders();
             return getOrder.getOrderListingForBusiness(args.businessId, userId)
         },
+        SearchForOrder (_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
 
-        
+            args = args.input
+
+            let getOrder = new GetOrders();
+            return getOrder.searchForOrder(args.businessId, args.orderId)
+        },
         BusinessGetProductsInOrder(_, args, context) {
             let userId = context.authFunction(context.accessToken);
             if (userId.error === true) return userId
@@ -101,7 +109,7 @@ module.exports = {
             args = args.input
 
             let updateDelivery = new OrderState();
-            return updateDelivery.updateDeliveryCharge(args.businessId, args.customerId, args.orderId, args.deliveryCharge, userId);
+            return updateDelivery.updateDeliveryCharge(args.businessId, args.customerId, args.orderId, args.deliveryCharge, userId, args.startTime, args.endTime);
         },
         RejectOrderDelivery(_, args, context) {
             let userId = context.authFunction(context.accessToken);

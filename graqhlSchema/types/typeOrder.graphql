@@ -29,6 +29,13 @@ type OrdersResponse implements ResponseType {
     message: String!
 }
 
+type searchOrdersResponse implements ResponseType {
+    orders: [Order]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
 type orderCountResponse implements ResponseType {
     count: Int!
     code: Int!
@@ -145,6 +152,11 @@ type createOrderResponse implements ResponseType {
     message: String!
 }
 
+input SearchForOrderInput {
+    orderId: String!
+    businessId: String!
+}
+
 input customerOrderDetailsInput {
     orderId: String!
 }
@@ -156,6 +168,7 @@ type Query {
     GetNewOrderCount(input: businessGetOrder): orderCountResponse
 
     GetOrderItemsForCustomer(input: customerOrderDetailsInput): orderDetailsResponse
+    SearchForOrder(input: SearchForOrderInput): searchOrdersResponse
 }
 
 type Mutation {
