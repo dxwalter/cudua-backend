@@ -81,7 +81,7 @@ module.exports = {
             args = args.input
 
             let confirm = new OrderState();
-            return confirm.confirmOrder(args.businessId, args.customerId, args.orderId, args.deliveryCharge, userId)
+            return confirm.confirmOrder(args.businessId, args.customerId, args.orderId, args.deliveryCharge, userId, args.startTime, args.endTime)
         },
         RejectOrder(_, args, context) {
             let userId = context.authFunction(context.accessToken);

@@ -68,12 +68,19 @@ type orderProduct {
     businessId: String!
 }
 
+type deliveryTime {
+    start: String
+    end: String
+}
+
 type orderInfo {
     deliveryCharge: Int!
     orderStatus: Int!
     deliveryStatus: Int!
-    deliveryTime: String
+    deliveryTime: deliveryTime
     orderTime: DateTime
+    cancelDeliveryReason: String
+    customerCancelOrder: Int
 }
 
 type productsInOrderResponse implements ResponseType {
@@ -97,6 +104,8 @@ input confirmOrderInput {
     customerId: String!
     orderId: String!
     deliveryCharge: Int
+    startTime: String!
+    endTime: String!
 }
 
 input rejectOrder {

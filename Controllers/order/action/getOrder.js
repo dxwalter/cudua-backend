@@ -226,6 +226,7 @@ module.exports = class GetOrders extends OrderController {
 
         // order details like delivery charge, order status etc
         let orderDetails = await this.getOrderMetaData(customerId, businessId, orderId);
+        console.log(orderDetails)
 
         if (orderDetails.error) return this.returnProductMethod(null, null, null, 500, `An error occurred while getting this order information`);
 
@@ -233,8 +234,13 @@ module.exports = class GetOrders extends OrderController {
             deliveryCharge: orderDetails.result.delivery_charge,
             orderStatus: orderDetails.result.order_status,
             deliveryStatus: orderDetails.result.delivery_status,
-            deliveryTime: orderDetails.result.delivery_time,
-            orderTime: orderDetails.result.created
+            deliveryTime: {
+                start: orderDetails.result.delivery_time.start,
+                end: orderDetails.result.delivery_time.end
+            },
+            orderTime: orderDetails.result.created,
+            cancelDeliveryReason: orderDetails.result.cancel_delivery_reason,
+            customerCancelOrder: orderDetails.result.customer_cancel_order
         }
 
         // product details

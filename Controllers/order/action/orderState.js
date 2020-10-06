@@ -21,11 +21,13 @@ module.exports = class OrderStatus extends OrderController {
         }
     }
 
-    async confirmOrder(businessId, customerId, orderId, deliveryPrice, userId) {
+    async confirmOrder(businessId, customerId, orderId, deliveryPrice, userId, startTime, endTime) {
 
         if (businessId.length < 1) return this.returnMethod(200, false, "Your business credential was not provided. Refresh and try again")  
         if (customerId.length < 1) return this.returnMethod(200, false, "The customer's credential was not provided. Refresh and try again")  
         if (orderId.length < 1) return this.returnMethod(200, false, "The order id was not provided was not provided. Refresh and try again")  
+
+        if (startTime.length == 0 || endTime.length == 0) return this.returnMethod(200, false, "The delivery time span for this order was not provided")
 
         // check if business exists
         let businessData = await this.businessController.getBusinessData(businessId);
@@ -42,7 +44,11 @@ module.exports = class OrderStatus extends OrderController {
         // confirm order
         let updateOrder = {
             order_status: 1,
-            delivery_charge: deliveryPrice
+            delivery_charge: deliveryPrice,
+            delivery_time: {
+                start: startTime,
+                end: endTime
+            }
         }
 
         let findAndUpdate = await this.confirmCustomerOrder(businessId, customerId, orderId, updateOrder);

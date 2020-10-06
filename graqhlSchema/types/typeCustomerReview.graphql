@@ -12,7 +12,7 @@ type customerReview {
 input createReview {
     businessId: String!
     customerId: String!
-    rating: Float!
+    rating: Int!
     description: String
 }
 

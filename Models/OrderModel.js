@@ -30,10 +30,15 @@ const OrderSchema = mongoose.Schema({
         default: 0,
     },
     reject_order_reason: {
-        type: String, trim: true
+        type: String, trim: true, default: ""
     },
     delivery_time: {
-        type: String, trim: true, default: ""
+        start: {
+            type: String, trim: true, default: ""
+        },
+        end: {
+            type: String, trim: true, default: ""
+        }
     },
     delivery_status: {
         type: Number,
@@ -46,10 +51,10 @@ const OrderSchema = mongoose.Schema({
 
     },
     cancel_delivery_reason: {
-        type: String, trim: true
+        type: String, trim: true, default: ""
     },
     customer_cancel_order: {
-        type: String, trim: true
+        type: Number, default: 0
     },
     created : {
         type : Date,
