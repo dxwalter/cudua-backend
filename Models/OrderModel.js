@@ -50,7 +50,7 @@ const OrderSchema = mongoose.Schema({
         default: 0,
 
     },
-    cancel_delivery_reason: {
+    customer_cancel_order_reason: {
         type: String, trim: true, default: ""
     },
     customer_cancel_order: {

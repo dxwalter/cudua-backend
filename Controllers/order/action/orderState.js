@@ -62,6 +62,28 @@ module.exports = class OrderStatus extends OrderController {
 
     }
 
+    async deleteOrder(orderId, businessId, customerId) {
+
+        if (!orderId || !businessId || !customerId) {
+            return this.returnMethod(200, false, "An error occurred. Kindly refresh and try again");
+        }
+
+        let deleteOrder = await this.deleteOrderFromDb(orderId, customerId, businessId);
+
+        if (deleteOrder.error) return this.returnMethod(200, false, "An error occurred. Kindly refresh and try again");
+
+        if (deleteOrder.result == false) return this.returnMethod(200, false, "An error occurred. Kindly refresh and try again");
+
+        let deleteProductsInOrder = await this.deleteAllProductsInOrderFromDb(orderId, customerId, businessId);
+
+        if (deleteProductsInOrder.error) return this.returnMethod(200, false, "An error occurred. Kindly refresh and try again");
+
+        if (deleteProductsInOrder.result == false) return this.returnMethod(200, false, "An error occurred. Kindly refresh and try again");
+
+        return this.returnMethod(200, true, "Order was deleted successfully");
+
+    }
+
     async rejectOrder(businessId, customerId, orderId, reason, userId) {
         
         if (businessId.length < 1) return this.returnMethod(200, false, "Your business credential was not provided. Refresh and try again")  

@@ -120,6 +120,16 @@ module.exports = {
 
             let reject = new OrderState();
             return reject.RejectDelivery(args.businessId, args.orderId, userId)
+        },
+        DeleteOrder(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+
+            let deleteOrder = new OrderState();
+            return deleteOrder.deleteOrder(args.orderId, args.businessId, args.customerId)
         }
     }
 }

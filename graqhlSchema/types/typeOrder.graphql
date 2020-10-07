@@ -86,7 +86,8 @@ type orderInfo {
     deliveryStatus: Int!
     deliveryTime: deliveryTime
     orderTime: DateTime
-    cancelDeliveryReason: String
+    cancelOrderReason: String
+    BusinessRejectOrderReason: String
     customerCancelOrder: Int
 }
 
@@ -122,12 +123,17 @@ input rejectOrder {
     reason: String!
 }
 
-type productsInOrderResponseWithBusinessData {
-    orderDetails: [orderProduct]!
+type businessData {
     businessName: String!
     username: String!
     businessId: String!
     logo: String
+}
+
+type productsInOrderResponseWithBusinessData {
+    orderProduct: [orderProduct]!
+    businessData: businessData!
+    orderInfo: orderInfo!
 }
 
 type orderDetailsResponse {
@@ -161,11 +167,18 @@ input customerOrderDetailsInput {
     orderId: String!
 }
 
+input deleteOrderInput {
+    orderId: String!
+    businessId: String!
+    customerId: String!
+}
+
 type Query {
     BusinessGetOrders(input: businessGetOrder): OrdersResponse
     BusinessGetProductsInOrder(input: orderInput): productsInOrderResponse
 
     GetNewOrderCount(input: businessGetOrder): orderCountResponse
+    # CustomerGetNewOrderCount
 
     GetOrderItemsForCustomer(input: customerOrderDetailsInput): orderDetailsResponse
     SearchForOrder(input: SearchForOrderInput): searchOrdersResponse
@@ -178,4 +191,5 @@ type Mutation {
     RejectOrder(input: rejectOrder): DatalessResponse
     UpdateDeliveryCharge(input: confirmOrderInput): DatalessResponse
     RejectOrderDelivery(input: rejectDelivery): DatalessResponse
+    DeleteOrder(input: deleteOrderInput): DatalessResponse
 }

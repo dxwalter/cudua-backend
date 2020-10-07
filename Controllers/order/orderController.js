@@ -63,6 +63,74 @@ module.exports = class OrderController extends FunctionRepo {
         }
     }
 
+    async deleteOrderFromDb(orderId, customerId, businessId) {
+
+        try {
+            
+            let deleteOrder = await OrderModel.deleteOne({
+                $and: [
+                    {
+                        order_id: orderId,
+                        customer: customerId,
+                        business: businessId
+                    }
+                ]
+            });
+
+            if (deleteOrder.ok == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }   
+        }
+    }
+    
+    async deleteAllProductsInOrderFromDb(orderId, customerId, businessId) {
+
+        try {
+            
+            let deleteOrder = await OrderProductModel.deleteMany({
+                $and: [
+                    {
+                        order_id: orderId,
+                        customer: customerId,
+                        business: businessId
+                    }
+                ]
+            });
+
+            if (deleteOrder.ok == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }   
+        }
+    }
+
     async searchOrderById(businessId, orderId) {
         try {
             
@@ -121,11 +189,11 @@ module.exports = class OrderController extends FunctionRepo {
     async deleteItemFromOrder (orderId, productId, userId) {
         try {
             
-            let deleteItem = await OrderModel.deleteOne({
+            let deleteItem = await OrderProductModel.deleteOne({
                 $and: [{ customer: userId, order_id: orderId, product: productId}]
             })
 
-            if (deleteItem.ok == 1 && deleteItem.deletedCount == 1) {
+            if (deleteItem.ok == 1) {
                 return {
                     result: true,
                     error: false
@@ -299,4 +367,29 @@ module.exports = class OrderController extends FunctionRepo {
         }
     }
 
+    async findAllorderByCustomerIdAndOrderId(customerId, orderId) {
+
+        try {
+            
+            let findOrder = await OrderModel.find({
+                $and: [
+                    {
+                        order_id: orderId,
+                        customer: customerId
+                    }
+                ]
+            }).populate("business")
+
+            return {
+                error: false,
+                result: findOrder
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
 }

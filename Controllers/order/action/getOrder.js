@@ -43,6 +43,15 @@ module.exports = class GetOrders extends OrderController {
         }
     }
 
+    returnCustomerOrderDetails (orderDetails, code, success, message) {
+        return {
+            orderDetails: orderDetails,
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
     formatAddress(customerData) {
     
         if (customerData.street == undefined) {
@@ -267,8 +276,9 @@ module.exports = class GetOrders extends OrderController {
                 end: orderDetails.result.delivery_time.end
             },
             orderTime: orderDetails.result.created,
-            cancelDeliveryReason: orderDetails.result.cancel_delivery_reason,
-            customerCancelOrder: orderDetails.result.customer_cancel_order
+            cancelOrderReason: orderDetails.result.customer_cancel_order_reason,
+            customerCancelOrder: orderDetails.result.customer_cancel_order,
+            BusinessRejectOrderReason: orderDetails.result.reject_order_reason
         }
 
         // product details
@@ -302,6 +312,84 @@ module.exports = class GetOrders extends OrderController {
     }
 
     async GetCustomerOrderDetails (orderId, userId) {
+
+        orderId = orderId.toUpperCase()
+
+        if (userId.length == 0 || orderId.length == 0) return  this.returnCustomerOrderDetails(null, 200, false, "An error occurred. An incorrect data was passed. Refresh and try again");
+
+        let getOrder = await this.findAllorderByCustomerIdAndOrderId(userId, orderId);
+
+        if (getOrder.error) return this.returnCustomerOrderDetails(null, 500, false, getOrder.message);
+
+        let activeOrders = [];
+
+        // this is to check if a customer had cancelled an order that is yet to be deleted by the business owner
+        for (let x of getOrder.result) {
+            if (x.customer_cancel_order == 0) {
+                activeOrders.push(x)
+            }
+        }
+
+        if (activeOrders.length == 0) return this.returnCustomerOrderDetails(null, 200, false, `No order was found for ${orderId}`)
+
+        let mainData = [];
+
+        for (const [index, y] of activeOrders.entries()) {
+            console.log(index)
+            mainData.push({
+                businessData: {
+                    businessName: y.business.businessname,
+                    username: y.business.username,
+                    businessId: y.business.id,
+                    logo: y.business.logo
+                },
+                orderInfo: {
+                    deliveryCharge: y.delivery_charge,
+                    deliveryStatus: y.delivery_status,
+                    deliveryTime: {
+                        start: y.delivery_time.start,
+                        end: y.delivery_time.end
+                    },
+                    orderTime: y.created,
+                    cancelOrderReason: y.customer_cancel_order_reason,
+                    customerCancelOrder: y.customer_cancel_order,
+                    orderStatus: y.order_status,
+                    BusinessRejectOrderReason: y.reject_order_reason
+                },
+                orderProduct: []
+            })
+
+            let allProductsInOrder = await this.findProductsInOrder(y.business.id, userId, orderId);
+
+            if (allProductsInOrder.error) {
+                return this.returnCustomerOrderDetails(null, 500, false, "An error occurred. Please try again")
+                break;
+            }
+
+            if (allProductsInOrder.result.length == 0) {
+                mainData[index].orderProduct = []
+            } else {
+
+                let dataProduct = allProductsInOrder.result;
+                
+                for (let data of dataProduct) {
+                    mainData[index].orderProduct.push({
+                        name: data.product.name,
+                        productId: data.product.id,
+                        image: data.product.primary_image,
+                        quantity: data.quantity,
+                        price: data.product.price,
+                        size: data.size.length < 1 || data.size == undefined ? '' : this.getOrderSize(data.size, data.product.sizes),
+                        color: data.color.length < 1 || data.color == undefined ? '' : this.getOrderColor(data.color, data.product.colors),
+                        businessId: data.product.business_id
+                    })
+                }
+            }
+        }
+
+        return this.returnCustomerOrderDetails(mainData, 200, true, "Order details retrieved successfully")
+
+        
 
     }
 }
