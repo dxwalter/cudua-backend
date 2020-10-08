@@ -99,7 +99,17 @@ module.exports = {
             args = args.input
 
             let reject = new OrderState();
-            return reject.rejectOrder(args.businessId, args.customerId, args.orderId, args.reason, userId)
+            return reject.businessRejectOrder(args.businessId, args.customerId, args.orderId, args.reason, userId)
+        },
+        CustomerCancelOrder(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+
+            let reject = new OrderState();
+            return reject.customerCancelOrder(args.businessId, args.orderId, args.reason, userId)
         },
         UpdateDeliveryCharge(_, args, context) {
             let userId = context.authFunction(context.accessToken);
@@ -120,6 +130,16 @@ module.exports = {
 
             let reject = new OrderState();
             return reject.RejectDelivery(args.businessId, args.orderId, userId)
+        },
+        ConfirmDelivery(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+
+            let confirm = new OrderState();
+            return confirm.ConfirmOrderDelivery(args.businessId, args.orderId, userId)
         },
         DeleteOrder(_, args, context) {
             let userId = context.authFunction(context.accessToken);

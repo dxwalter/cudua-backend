@@ -71,6 +71,7 @@ type orderProduct {
     quantity: Int!
     price: Int!
     size: String
+    ratingScore: Float!
     color: String
     businessId: String!
 }
@@ -123,6 +124,12 @@ input rejectOrder {
     reason: String!
 }
 
+input customrRejectOrder {
+    businessId: String!
+    orderId: String!
+    reason: String
+}
+
 type businessData {
     businessName: String!
     username: String!
@@ -144,7 +151,7 @@ type orderDetailsResponse {
 }
 
 # A customer 
-input rejectDelivery {
+input rejectDeliveryInput {
     businessId: String!
     orderId: String!
 }
@@ -190,6 +197,8 @@ type Mutation {
     ConfirmOrder(input: confirmOrderInput): DatalessResponse
     RejectOrder(input: rejectOrder): DatalessResponse
     UpdateDeliveryCharge(input: confirmOrderInput): DatalessResponse
-    RejectOrderDelivery(input: rejectDelivery): DatalessResponse
+    RejectOrderDelivery(input: rejectDeliveryInput): DatalessResponse
+    ConfirmDelivery(input: rejectDeliveryInput): DatalessResponse
     DeleteOrder(input: deleteOrderInput): DatalessResponse
+    CustomerCancelOrder(input: customrRejectOrder): DatalessResponse
 }

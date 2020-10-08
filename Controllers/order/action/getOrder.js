@@ -291,6 +291,7 @@ module.exports = class GetOrders extends OrderController {
                 image: orderProduct.product.primary_image,
                 quantity: orderProduct.quantity,
                 price: orderProduct.product.price,
+                ratingScore: orderProduct.product.score,
                 size: orderProduct.size.length < 1 || orderProduct.size == undefined ? '' : this.getOrderSize(orderProduct.size, orderProduct.product.sizes),
                 color: orderProduct.color.length < 1 || orderProduct.color == undefined ? '' : this.getOrderColor(orderProduct.color, orderProduct.product.colors),
                 businessId: orderProduct.business
@@ -379,6 +380,7 @@ module.exports = class GetOrders extends OrderController {
                         image: data.product.primary_image,
                         quantity: data.quantity,
                         price: data.product.price,
+                        ratingScore: data.product.score,
                         size: data.size.length < 1 || data.size == undefined ? '' : this.getOrderSize(data.size, data.product.sizes),
                         color: data.color.length < 1 || data.color == undefined ? '' : this.getOrderColor(data.color, data.product.colors),
                         businessId: data.product.business_id

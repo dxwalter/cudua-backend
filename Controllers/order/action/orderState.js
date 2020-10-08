@@ -84,7 +84,7 @@ module.exports = class OrderStatus extends OrderController {
 
     }
 
-    async rejectOrder(businessId, customerId, orderId, reason, userId) {
+    async businessRejectOrder(businessId, customerId, orderId, reason, userId) {
         
         if (businessId.length < 1) return this.returnMethod(200, false, "Your business credential was not provided. Refresh and try again")  
         if (customerId.length < 1) return this.returnMethod(200, false, "The customer's credential was not provided. Refresh and try again")  
@@ -118,6 +118,28 @@ module.exports = class OrderStatus extends OrderController {
         let alertCustomer = await this.createNotification.createCustomerNotification(customerId, orderId, "order", "Rejected order", `Your order was rejected by ${businessData.result.businessname}. Click to find out more`);
 
         return this.returnMethod(202, true, `Order was rejected successfully`);
+    }
+
+
+    async customerCancelOrder(businessId, orderId, reason, userId) {
+        
+        if (businessId.length < 1) return this.returnMethod(200, false, "Your business credential was not provided. Refresh and try again")  
+        if (orderId.length < 1) return this.returnMethod(200, false, "The order id was not provided was not provided. Refresh and try again")  
+
+        // reject order
+        let updateOrder = {
+            customer_cancel_order: 1,
+            customer_cancel_order_reason: reason
+        }
+
+        let findAndUpdate = await this.confirmCustomerOrder(businessId, userId, orderId, updateOrder);
+
+        if (findAndUpdate.error || findAndUpdate.result == false) await this.returnMethod(500, false, "An error occurred while cancelling this order. Please try again");
+
+        //notify customer
+        let alertBusinessOwner = await this.createNotification.createBusinessNotification(businessId, orderId, "order", "Cancelled order", `The order with ID ${orderId} was cancelled by the customer. Click to learn more`);
+
+        return this.returnMethod(202, true, `Order was cancelled successfully`);
     }
 
     async updateDeliveryCharge (businessId, customerId, orderId, deliveryPrice, userId, startTime, endTime) {
@@ -179,6 +201,25 @@ module.exports = class OrderStatus extends OrderController {
 
         return this.returnMethod(200, true, `Delivery rejected successfully`);
 
+    }
+
+    async ConfirmOrderDelivery (businessId, orderId, userId) {
+        if (businessId.length < 1) return this.returnMethod(200, false, "The business credential was not provided. Refresh and try again")
+
+        if (orderId.length < 1) return this.returnMethod(200, false, "Your order ID was not provided. Refresh and try again");
+
+        let updateOrder = {
+            delivery_status: 1
+        }
+
+        let findAndUpdate = await this.confirmCustomerOrder(businessId, userId, orderId, updateOrder);
+
+        if (findAndUpdate.error || findAndUpdate.result == false) await this.returnMethod(500, false, "An error occurred while updating rejecting delivery. Please try again");
+
+        //notify business owner
+        let alertBusinessOwner = await this.createNotification.createBusinessNotification(businessId, orderId, "order", "Confirmed delivery", `The delivery with order ID ${orderId} was confirmed. Click to learn more`);
+
+        return this.returnMethod(200, true, `Delivery confirmed successfully`);
     }
 
 }
