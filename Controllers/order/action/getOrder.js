@@ -336,7 +336,6 @@ module.exports = class GetOrders extends OrderController {
         let mainData = [];
 
         for (const [index, y] of activeOrders.entries()) {
-            console.log(index)
             mainData.push({
                 businessData: {
                     businessName: y.business.businessname,

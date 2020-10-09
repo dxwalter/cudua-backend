@@ -392,4 +392,24 @@ module.exports = class OrderController extends FunctionRepo {
             }
         }
     }
+
+    async checkIfProductExistsInOrder (customerId, productId) {
+        try {
+            
+            let find = await OrderProductModel.findOne({
+                $and: [{ customer: customerId, product: productId }]
+            })
+
+            return {
+                result: find,
+                error: false
+            }
+           
+        } catch (error) {
+            return {
+                message: error.message,
+                error: true
+            }
+        }
+    }
 }

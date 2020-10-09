@@ -1,9 +1,11 @@
 "use-strict";
 
-let ProductReviewController = require('../ProductReviewController');
-let ProductController = require('../../product/ProductController');
-let BusinessController = require('../../business/BusinessController');
-let ProductReviewModel = require('../../../Models/productReview');
+const ProductReviewController = require('../ProductReviewController');
+const ProductController = require('../../product/ProductController');
+const BusinessController = require('../../business/BusinessController');
+const ProductReviewModel = require('../../../Models/productReview');
+
+const OrderController = require('../../order/orderController')
 
 module.exports = class CreateProductReview extends ProductReviewController {
 
@@ -11,6 +13,7 @@ module.exports = class CreateProductReview extends ProductReviewController {
         super();
         this.ProductController = new ProductController();
         this.BusinessController = new BusinessController();
+        this.OrderController = new OrderController()
     }
 
     returnData (code, success, message) {
@@ -53,11 +56,17 @@ module.exports = class CreateProductReview extends ProductReviewController {
         let getBusinessDetails = await this.BusinessController.getBusinessData(getProductDetails.business_id);
         if (getBusinessDetails.error == true) return this.returnData(500, false, `An error occurred. This business has been moved or deleted`)
         
+        // when a business owner tries to write a review for their own product
         getBusinessDetails = getBusinessDetails.result;
-
-
         if (userId == getBusinessDetails.owner) return this.returnData(200, false, "You cannot write a review for your own product")
 
+        // check if this customer has ordered this product before
+        let checkIfCustomerHasOrderedProduct = await this.OrderController.checkIfProductExistsInOrder(userId, productId);
+        if (checkIfCustomerHasOrderedProduct.error) return this.returnData(500, false, `An error occurred while checking your review status`)
+
+        if (checkIfCustomerHasOrderedProduct.result == null) return this.returnData(500, false, `You can't write a review for a product you have not ordered and used`);
+        
+        
         // check if user has reviewed product before
         // a user can only review a product once. If the user wants to review it again, the previous review will be updated
         let check = await this.CheckIfUserHasReviewedProduct(userId, productId);
