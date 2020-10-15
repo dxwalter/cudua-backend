@@ -246,5 +246,40 @@ module.exports = class FunctionRepo extends EmailClass{
         return newSortedCategories
 
     }
+
+    checkReservedWords (username) {
+
+        let reservedWords = [
+            'cudua',
+            'username',
+            'notification',
+            'following',
+            'orders',
+            'cart',
+            'logout',
+            'business',
+            'saved',
+            'items',
+            'profile',
+            'dashboard',
+            'page',
+            'plugins',
+            'review',
+            'fashion',
+            'beauty',
+            'studio',
+            'search'
+        ];
+
+        for (let index = 0; index < reservedWords.length; index++) {
+            if (reservedWords[index] == username.toLowerCase()) {
+                return true
+                break
+            }
+        }
+
+        return false
+
+    }
     
 }

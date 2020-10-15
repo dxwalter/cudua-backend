@@ -142,8 +142,14 @@ module.exports = class ViralRegistration extends BusinessController{
 
     async activateViralRegistrationGift(businessId, viralId, userId) {
         
-        if (businessId.length < 1 || viralId.length < 1) return this.returnMethodForNewSubscription(null, 200, false, "An error occurred. Kindly refresh page and try again");
+        if (businessId.length < 1) return this.returnMethodForNewSubscription(null, 200, false, "An error occurred. Kindly refresh page and try again");
+        
+        // get business invite id
+        let getViralIdFromDB = await this.getViralIdDetailsByBusinessId(businessId)
+        if (getViralIdFromDB.error || getViralIdFromDB.result == null) return this.returnMethodForNewSubscription(null, 200, false, "An error occurred. Kindly refresh page and try again");
+        viralId = getViralIdFromDB.result.invite_id
 
+        
         let createSubscription = await this.createSubscription.createNewSubscription(businessId, viralId, "Basic", 0, userId);
 
         if(createSubscription.success == false) return createSub

@@ -20,6 +20,10 @@ const UserNotificationSchema = mongoose.Schema({
         required: true,
         default: 0
     },
+    header: {
+        type: String,
+        default: "Notification"
+    },
     message: {
         type: String, trim: true, 
     },

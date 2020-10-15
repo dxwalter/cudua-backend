@@ -83,7 +83,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         if (username != businessData.result.username) {
             //update
             
-            if (username == "cudua") {
+            if (this.checkReservedWords(username)) {
                 return this.returnRequestStatus(200, false, "Cudua is a reserved name. Enter a different username");
             }
             

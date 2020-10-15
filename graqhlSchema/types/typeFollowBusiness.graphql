@@ -13,7 +13,7 @@
         # logo of the business. eg. Tammy.jpg
         logo: String
         # business review score
-        review: Int!
+        review: Float!
     }
 
     # business category
@@ -61,7 +61,7 @@
         # profile photo of the user
         profilePhoto: String,
         # This is the customer review score
-        reviewScore: Int!
+        reviewScore: Float!
         # userId
         userId: String!
     }
