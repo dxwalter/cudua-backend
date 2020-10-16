@@ -18,7 +18,8 @@ const SaveForLaterResolver = require('./SaveForLaterResolver');
 const AnonymousUserResolver = require('./AnonymousUserResolver');
 const MoveCategoriesResolver = require('./MoveCategoriesResolver');
 const SubscriptionResolver = require('./SubscriptionResolver');
-const CuduaCustomersResolver = require('./CuduaCustomersResolver')
+const CuduaCustomersResolver = require('./CuduaCustomersResolver');
+const SearchResolver = require('./Search')
 
 const resolvers = [
   UserResolver,
@@ -39,7 +40,8 @@ const resolvers = [
   AnonymousUserResolver,
   MoveCategoriesResolver,
   SubscriptionResolver,
-  CuduaCustomersResolver
+  CuduaCustomersResolver,
+  SearchResolver
 ];
 
 module.exports = mergeResolvers(resolvers);

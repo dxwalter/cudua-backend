@@ -388,4 +388,38 @@ module.exports = class ProductController extends BusinessController {
 
     }
 
+    async RegularProductSearch(keyword, page) {
+
+        try {
+
+            let limit = 50
+            
+            let getProducts = await ProductModel
+            .find({
+                $and: [
+                    {
+                        name: { $regex: '.*' + keyword + '.*', $options: 'i'}, 
+                        hide: 0
+                    }
+                ]
+            })
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            
+            return {
+                result: getProducts,
+                error: false
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
 }

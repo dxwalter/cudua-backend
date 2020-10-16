@@ -1,0 +1,16 @@
+type searchResult {
+    products: [Product]
+    businesses: [BusinessAccount]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+input searchInput {
+    queryString: String!
+    page: Int!
+}
+
+type Query {
+    RegularSearch(input: searchInput): searchResult
+}

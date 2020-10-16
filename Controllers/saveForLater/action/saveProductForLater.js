@@ -3,7 +3,6 @@
 const SaveForLaterController = require('../SaveForLaterController');
 const CreateCart = require('../../cart/action/addItemToCart');
 const ProductController = require('../../product/ProductController');
-const res = require('express/lib/response');
 
 
 module.exports = class SaveProductForLater extends SaveForLaterController {

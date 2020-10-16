@@ -431,8 +431,6 @@ module.exports = class BusinessController extends FunctionRepo {
         }
     }
 
-    
-
     async CountRegisteredDownliners(businessId) {
         try {
             let getCount = await BusinessInvite.countDocuments({upliner: businessId});
@@ -486,6 +484,38 @@ module.exports = class BusinessController extends FunctionRepo {
             }
 
         }
+    }
+
+    async RegularBusinessSearch(keyword, page) {
+
+        try {
+
+            let limit = 50
+            
+            let getBusiness = await BusinessModel
+            .find({businessname: { $regex: '.*' + keyword + '.*', $options: 'i'}})
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .populate('address.street')
+            .populate('address.community')
+            .populate('address.lga')
+            .populate('address.state')
+            .populate('address.country')
+            
+            return {
+                result: getBusiness,
+                error: false
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
     }
 
 }
