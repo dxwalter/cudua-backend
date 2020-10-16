@@ -57,6 +57,9 @@ type Product {
 
     # product description
     description: String
+
+    # business ID
+    businessId: String
 }
 
 type Size {

@@ -85,12 +85,14 @@ module.exports = class RegularSearch {
     }
 
     formatProductData(productData) {
+        console.log(productData)
         return {
             id: productData.id,
             name: productData.name,
             price: productData.price,
             reviewScore: productData.score,
-            primaryImage: productData.primary_image
+            primaryImage: productData.primary_image,
+            businessId: productData.business_id
         }
     }
 
