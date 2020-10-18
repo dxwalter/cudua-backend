@@ -493,7 +493,12 @@ module.exports = class BusinessController extends FunctionRepo {
             let limit = 50
             
             let getBusiness = await BusinessModel
-            .find({businessname: { $regex: '.*' + keyword + '.*', $options: 'i'}})
+            .find({
+                $or: [
+                    { businessname: { $regex: '.*' + keyword + '.*', $options: 'i'}},
+                    { username: { $regex: '.*' + keyword + '.*', $options: 'i'}}
+                ]
+            })
             .sort({_id: -1})
             .limit(limit * 1)
             .skip((page - 1) * limit)
@@ -501,7 +506,9 @@ module.exports = class BusinessController extends FunctionRepo {
             .populate('address.community')
             .populate('address.lga')
             .populate('address.state')
-            .populate('address.country')
+            .populate('address.country');
+
+            console.log(getBusiness)
             
             return {
                 result: getBusiness,
