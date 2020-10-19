@@ -12,8 +12,8 @@ input searchInput {
 }
 
 type RegularSearchResultCountResponse {
-    products: Int!
-    businesses: Int!
+    products: Int
+    businesses: Int
     code: Int!
     success: Boolean!
     message: String!
