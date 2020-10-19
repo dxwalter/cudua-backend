@@ -507,8 +507,6 @@ module.exports = class BusinessController extends FunctionRepo {
             .populate('address.lga')
             .populate('address.state')
             .populate('address.country');
-
-            console.log(getBusiness)
             
             return {
                 result: getBusiness,
@@ -523,6 +521,20 @@ module.exports = class BusinessController extends FunctionRepo {
             }
         }
 
+    }
+
+    async businessSearchCount (keyword) {
+        try {
+            let countResult = await BusinessModel.countDocuments({
+                $or: [
+                    { businessname: { $regex: '.*' + keyword + '.*', $options: 'i'}},
+                    { username: { $regex: '.*' + keyword + '.*', $options: 'i'}}
+                ]
+            });
+            return countResult
+        } catch (error) {
+            return 0;
+        }
     }
 
 }

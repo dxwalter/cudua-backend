@@ -11,6 +11,19 @@ input searchInput {
     page: Int!
 }
 
+type RegularSearchResultCountResponse {
+    products: Int!
+    businesses: Int!
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+input searchResultCountInput {
+    queryString: String!
+}
+
 type Query {
     RegularSearch(input: searchInput): searchResult
+    RegularSearchResultCount(input: searchResultCountInput): RegularSearchResultCountResponse
 }

@@ -422,4 +422,20 @@ module.exports = class ProductController extends BusinessController {
 
     }
 
+    async productSearchCount (keyword) {
+        try {
+            let countResult = await ProductModel.countDocuments({
+                $and: [
+                    {
+                        name: { $regex: '.*' + keyword + '.*', $options: 'i'}, 
+                        hide: 0
+                    }
+                ]
+            });
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
 }
