@@ -41,11 +41,11 @@ class startServer {
     constructor(app) {
         
         app.use(bodyParser.urlencoded({ extended: true }));
-        app.use(bodyParser.json());
+        app.use(bodyParser.json({limit: '50mb', extended: true}));
 
         app.use("/v1",
             bodyParser.json(), 
-                apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+                apolloUploadExpress({ maxFileSize: 1000000000000000, maxFiles: 100 }),
                     graphqlHTTP((req, res) => 
                         ({
                             schema,

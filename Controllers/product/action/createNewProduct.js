@@ -49,40 +49,27 @@ module.exports = class CreateNewProduct extends ProductController {
         }
 
         let businessCategory = await this.BusinessCategory.addASingleCategoryOrSubcategory(businessId, category, subcategory)
-
         
         if (businessCategory.code == 500) {
             return this.returnData(null, 500, false, `An error occurred. The category or subcategory you chose is not recognised.`)
         }
 
-        const { filename, mimetype, createReadStream } = await file;
-
-        if (filename.length < 1) {
-            return this.returnData(null, 200, false, "Choose a photo of the product you want to upload")
-        }
 
         // encrypt file name
-        let encryptedName = this.encryptFileName(filename)
-        let newFileName = encryptedName + "." + mimetype.split('/')[1];
 
-        const stream = createReadStream();
+        let encryptedName = this.encryptFileName(await this.generateId())
+        let newFileName = encryptedName + "." + "jpg";
 
-
-        const pathObj = await this.uploadImageFile(stream, newFileName, this.businessProductPath);
-
-        if (pathObj.error == true) {
-            return this.returnData(null, 500, false, "An error occurred uploading your product photo. Please try again")
-        }
 
         //upload to cloudinary
         let folder = "cudua_commerce/business/"+businessId+"/product/";
         let publicId = encryptedName;
         let tag = 'product';
-        let imagePath = pathObj.path;
+        // let imagePath = pathObj.path;
 
-        let moveToCloud = await this.moveToCloudinary(folder, imagePath, publicId, tag);
+        let moveToCloud = await this.moveToCloudinary(folder, file, publicId, tag);
 
-        let deleteFile = await this.deleteFileFromFolder(imagePath)
+        // let deleteFile = await this.deleteFileFromFolder(imagePath)
 
         if (moveToCloud.error == true) {
             return this.returnData(null, 500, false, `An error occurred creating ${name}`)

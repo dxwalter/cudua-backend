@@ -412,4 +412,24 @@ module.exports = class OrderController extends FunctionRepo {
             }
         }
     }
+
+    async findOneOrderForBusiness (businessId, orderId) {
+        try {
+            
+            let find = await OrderProductModel.findOne({
+                $and: [{ business: businessId, order_id: orderId }]
+            })
+
+            return {
+                result: find,
+                error: false
+            }
+           
+        } catch (error) {
+            return {
+                message: error.message,
+                error: true
+            }
+        }
+    }
 }

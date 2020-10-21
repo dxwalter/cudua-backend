@@ -557,7 +557,6 @@ module.exports = class EditProduct extends ProductController {
 
     async addMorePhotos(file, productId, businessId, userId) {
 
-        const { filename, mimetype, createReadStream } = await file;
 
         let businessData = await this.getBusinessData(businessId);
 
@@ -570,10 +569,6 @@ module.exports = class EditProduct extends ProductController {
             }
         }
 
-        if (filename.length < 1) {
-            return this.uploadProductPhotoResponse(200, false, "Choose a photo to upload for" + " " + getProductDetails.name)
-        }
-
         let getProductDetails = await this.FindProductById(productId);
 
         if (getProductDetails.error == true) return this.uploadProductPhotoResponse(200, false, "This product has been moved or does not exist.")
@@ -582,26 +577,16 @@ module.exports = class EditProduct extends ProductController {
         getProductDetails = getProductDetails.result;
 
         // encrypt file name
-        let encryptedName = this.encryptFileName(filename)
-        let newFileName = encryptedName + "." + mimetype.split('/')[1];
-        const stream = createReadStream();
-
-        const pathObj = await this.uploadImageFile(stream, newFileName, this.businessProductPath);
-
-        if (pathObj.error == true) {
-            return this.uploadProductPhotoResponse(null, 500, false, "An error occurred uploading your product photo. Please try again")
-        }
+        let encryptedName = this.encryptFileName(await this.generateId())
+        let newFileName = encryptedName + "." + "jpg";
 
         //upload to cloudinary
 
         let folder = "cudua_commerce/business/"+businessId+"/product/";
         let publicId = encryptedName;
         let tag = 'product';
-        let imagePath = pathObj.path;
 
-        let moveToCloud = await this.moveToCloudinary(folder, imagePath, publicId, tag);
-
-        let deleteFile = await this.deleteFileFromFolder(imagePath)
+        let moveToCloud = await this.moveToCloudinary(folder, file, publicId, tag);
 
         if (moveToCloud.error == true) {
             return this.uploadProductPhotoResponse(null, 500, false, `An error uploading an image for ${getProductDetails.name}`)

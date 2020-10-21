@@ -37,7 +37,7 @@ module.exports = {
             args = args.input
 
             let getOrder = new GetOrders();
-            return getOrder.businessGetProductsInOrder(args.businessId, args.customerId, args.orderId, userId)
+            return getOrder.businessGetProductsInOrder(args.businessId, args.orderId, userId)
         },
 
         GetNewOrderCount(_, args, context) {

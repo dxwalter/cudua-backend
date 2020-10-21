@@ -133,7 +133,7 @@ input createProduct {
     # the subcategory id of the subcategory the business chose
     subcategory: String!
     # the primary image (Image that will show first) of the product
-    file: Upload!
+    file: String!
     # the business ID of the business that is uploading the product
     businessId: String!
 }
@@ -205,7 +205,7 @@ input createProductColor {
 # you can only add one photo at a time
 input addMorePhotos {
     # image file
-    file: Upload!
+    file: String!
     # product id
     productId: String!
     # business id

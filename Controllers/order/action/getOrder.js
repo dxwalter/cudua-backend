@@ -191,10 +191,9 @@ module.exports = class GetOrders extends OrderController {
 
     }
 
-    async businessGetProductsInOrder(businessId, customerId, orderId, userId) {
+    async businessGetProductsInOrder(businessId, orderId, userId) {
 
         if (businessId.length < 1) return this.returnProductMethod(null, null, null, 200, false, "Your business credential was not provided.")  
-        if (customerId.length < 1) return this.returnProductMethod(null, null, null, 200, false, "The customer's credential was not provided.")  
         if (orderId.length < 1) return this.returnProductMethod(null, null, null, 200, false, "The order id was not provided was not provided.")  
 
         // check if business exists
@@ -208,6 +207,13 @@ module.exports = class GetOrders extends OrderController {
                 return this.returnProductMethod(null, null, null, 200, false, `You can not access this functionality. Sign out and sign in to continue`)
             }
         }
+
+        // get customer id
+        let findCustomer = await this.findOneOrderForBusiness(businessId, orderId);
+        
+        if (findCustomer.error) return this.returnProductMethod(null, null, null, 200, false, "An error occurred from our end. Kindly try again.")
+        
+        let customerId = findCustomer.result.customer;
 
         let findProductsInOrder = await this.findProductsInOrder(businessId, customerId, orderId);
         
