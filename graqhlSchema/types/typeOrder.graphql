@@ -179,6 +179,24 @@ input deleteOrderInput {
     customerId: String!
 }
 
+type customerOrder {
+    orderId: String!
+    timeStamp: DateTime!
+}
+
+type customerOrderIdListing {
+    new: [customerOrder]
+    pending: [customerOrder]
+    cleared: [customerOrder]
+}
+
+type customerOrderIdResponse {
+    orders: customerOrderIdListing
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
 type Query {
     BusinessGetOrders(input: businessGetOrder): OrdersResponse
     BusinessGetProductsInOrder(input: orderInput): productsInOrderResponse
@@ -188,6 +206,8 @@ type Query {
 
     GetOrderItemsForCustomer(input: customerOrderDetailsInput): orderDetailsResponse
     SearchForOrder(input: SearchForOrderInput): searchOrdersResponse
+    
+    GetCustomerOrderIds: customerOrderIdResponse
 }
 
 type Mutation {

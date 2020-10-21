@@ -394,9 +394,10 @@ module.exports = class GetOrders extends OrderController {
             }
         }
 
-        return this.returnCustomerOrderDetails(mainData, 200, true, "Order details retrieved successfully")
+        return this.returnCustomerOrderDetails(mainData, 200, true, "Order details retrieved successfully");
+    }
 
+    async GetCustomerOrderListingIds (userId) {
         
-
     }
 }

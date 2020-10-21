@@ -60,6 +60,15 @@ module.exports = {
 
             let getOrder = new GetOrders();
             return getOrder.GetCustomerOrderDetails(args.orderId, userId)
+        },
+        GetCustomerOrderIds () {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+            let getOrder = new GetOrders();
+            return getOrder.GetCustomerOrderListingIds(userId)
         }
     },
     Mutation: {
