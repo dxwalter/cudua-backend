@@ -397,7 +397,89 @@ module.exports = class GetOrders extends OrderController {
         return this.returnCustomerOrderDetails(mainData, 200, true, "Order details retrieved successfully");
     }
 
+    removeDuplicate (orderData) {
+        let orderIdArray = [];
+
+        if (orderData.length == 0) return []
+
+        // Select all order id
+        for (let x of orderData) {
+            orderIdArray.push(x.orderId);
+        }
+
+        // new orderId Array
+        let newOrderIdArray = new Set(orderIdArray);
+
+        let formattedData = []
+
+        for (let d of newOrderIdArray) {
+            for (let y of orderData) {
+                if(d === y.orderId) {
+                    formattedData.push(y)
+                    break
+                }
+            }
+        }
+
+        return formattedData
+    }
+
     async GetCustomerOrderListingIds (userId) {
         
+        let getAllOrder = await this.getAllOrdersByCustomer(userId);
+        if (getAllOrder.error) return this.returnMethod(null, 500, false, "An error occurred from our end. Kindly try again.")
+
+        if (getAllOrder.result.length == 0) return this.returnMethod({
+            new: [],
+            pending: [],
+            cleared: []
+        }, 200, true, "You are yet to order any product.");
+
+
+        let newOrder = [];
+        let pendingOrder = [];
+        let clearedOrder = [];
+
+        for (let order of getAllOrder.result) {
+            if (order.order_status == -1) {
+                newOrder.push({
+                    orderId: order.order_id,
+                    timeStamp: order.created
+                })
+            }
+
+            if (order.order_status == 0) {
+                newOrder.push({
+                    orderId: order.order_id,
+                    timeStamp: order.created
+                })
+            }
+
+            if (order.order_status == 1 && order.delivery_charge > 0 && order.delivery_status == 0) {
+                pendingOrder.push({
+                    orderId: order.order_id,
+                    timeStamp: order.created
+                })
+            } 
+
+            if (order.order_status == 1 && order.delivery_charge > 0 && order.delivery_status == 1) {
+                clearedOrder.push({
+                    orderId: order.order_id,
+                    timeStamp: order.created
+                })
+            } 
+        }
+
+        let formatNewOrder = this.removeDuplicate(newOrder)
+        let formatPendingOrder = this.removeDuplicate(pendingOrder)
+        let formatClearedOrder = this.removeDuplicate(clearedOrder)
+
+        let orders = {
+            new: formatNewOrder,
+            pending: formatPendingOrder,
+            cleared: formatClearedOrder
+        }
+        
+        return this.returnMethod(orders, 200, true, "Order retrieved")
     }
 }

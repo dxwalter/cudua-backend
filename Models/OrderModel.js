@@ -23,7 +23,7 @@ const OrderSchema = mongoose.Schema({
     order_status: {
         type: Number,
         /**
-         * 0 means pending
+         * 0 means new
          * 1 means confirmed
          * -1 means rejected
         */

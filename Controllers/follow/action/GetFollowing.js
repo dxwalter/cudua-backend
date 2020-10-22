@@ -3,12 +3,14 @@
 const FollowController = require('../FollowController');
 const CategoryController = require('../../category/CategoryController')
 const BusinessController = require('../../business/BusinessController');
+const LocationController = require('../../Location/LocationController');
 
 module.exports = class GetFollowing extends FollowController {
     constructor() { 
         super();
-        this.CategoryController = new CategoryController()
-        this.BusinessController = new BusinessController()
+        this.CategoryController = new CategoryController();
+        this.BusinessController = new BusinessController();
+        this.LocationController = new LocationController();
     }
 
     returnBusinessMethod (customerData, code, success, message) {
@@ -26,6 +28,27 @@ module.exports = class GetFollowing extends FollowController {
             code: code,
             success: success,
             message: message
+        }
+    }
+
+    async formatAddress (addressData) {
+
+        if (addressData.street == undefined || addressData.street.length == 0) {
+            return null
+        }
+
+        let streetData = await this.LocationController.SearchStreetById(addressData.street);
+
+        if (streetData.error) return null
+
+
+        return {
+            number: addressData.number,
+            street: streetData.result.name,
+            community: streetData.result.community_id.name,
+            lga: streetData.result.lga_id.name,
+            state: streetData.result.state_id.name,
+            country: streetData.result.country_id.name
         }
     }
 
@@ -57,6 +80,7 @@ module.exports = class GetFollowing extends FollowController {
                 businessName: businessData.business_id.businessname,
                 logo: businessData.business_id.logo.length > 0 ? businessData.business_id.logo : "",
                 review: businessData.business_id.review_score,
+                address: await this.formatAddress(businessData.business_id.address),
                 businessCategory: businessData.categories.length > 0 ? await this.FormatCategories(businessData.categories) : null
             }
         }

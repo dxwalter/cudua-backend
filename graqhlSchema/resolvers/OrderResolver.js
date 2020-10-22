@@ -61,7 +61,7 @@ module.exports = {
             let getOrder = new GetOrders();
             return getOrder.GetCustomerOrderDetails(args.orderId, userId)
         },
-        GetCustomerOrderIds () {
+        GetCustomerOrderIds (_, args, context) {
             let userId = context.authFunction(context.accessToken);
             if (userId.error === true) return userId
             userId = userId.message

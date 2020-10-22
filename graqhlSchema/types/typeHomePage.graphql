@@ -1,0 +1,33 @@
+type homePageBookmark {
+    logo: String
+    businessName: String!
+    username: String!
+    address: AddressType
+    businessId: String!
+}
+
+type homePageProducts {
+    image: String!
+    productId: String!
+    name: String!
+    price: Int!
+}
+
+type homePageBusiness {
+    logo: String
+    reviewScore: Float!
+    username: String!
+    businessName: String!
+    categoryString: String!
+}
+
+type homePageBookmarkResponse {
+    following: [homePageBookmark]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+type Query {
+    getHomePageFollowing: homePageBookmarkResponse
+}

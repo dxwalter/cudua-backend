@@ -78,7 +78,7 @@ module.exports = class EditUserProfile extends UserController {
 
 
         if (updateStatus == 0) {
-            return this.returnMethod(200, false, "No profile update was made. Enter new details to profile")
+            return this.returnMethod(200, false, "No profile update was made. Enter new details to update your profile")
         }
 
         let updateRecord = await this.findOneAndUpdate(userId, updateData);

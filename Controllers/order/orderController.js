@@ -432,4 +432,22 @@ module.exports = class OrderController extends FunctionRepo {
             }
         }
     }
+
+    async getAllOrdersByCustomer (userId) {
+        try {
+            let findOrder = await OrderModel.find({customer: userId})
+            .sort({_id: -1})
+            
+            return {
+                error: false,
+                result: findOrder
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
 }
