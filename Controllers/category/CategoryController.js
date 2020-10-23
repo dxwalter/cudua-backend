@@ -87,7 +87,9 @@ module.exports = class CategoryController extends FunctionRepo {
         try {
             const result = await CategoryModel.find(
                 {status: 1},
-            ).populate({
+            )
+            .populate('industry')
+            .populate({
                 path: 'subcategoryList',
             });
             

@@ -63,6 +63,8 @@
         categoryName: String!
         # an array of subcategories of this category
         subcategories: [Subcategory!]
+        # industry
+        industry: String
     }
     
     # get all category response

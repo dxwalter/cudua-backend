@@ -37,6 +37,7 @@ module.exports = class AllCategories extends CategoryController {
             newDataArray[index] = {
                 id: data._id,
                 categoryName: data.name,
+                industry: data.industry == null ? "" : data.industry.name,
                 subcategories: []
             }
 

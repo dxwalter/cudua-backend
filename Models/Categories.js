@@ -7,6 +7,11 @@ const CategorySchema = mongoose.Schema({
     ms_id: {
         type: Number
     },
+    industry: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "industries",
+        required: true
+    },
     icon: {
         type: String, required: false
     },

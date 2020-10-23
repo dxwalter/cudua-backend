@@ -166,7 +166,7 @@ module.exports = class CreateBusiness extends BusinessController {
 
         }
 
-        if (this.inviteId.length > 0){
+        if (this.inviteId != undefined && this.inviteId.length > 0) {
             this.saveViralRegistration(this.inviteId, data._id)
         }
     
