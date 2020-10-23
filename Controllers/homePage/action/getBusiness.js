@@ -117,7 +117,7 @@ module.exports = class HomePageGetBusiness extends BusinessController {
 
         let totalCount = this.scoreZero.length + this.scoreOne.length + this.scoreTwo.length;
 
-        if (this.totalCount < 20 && data.length > 0) {
+        if (totalCount < 20 && data.length > 0) {
             this.page = this.page + 1;
             this.getBusinessForHomePage();
         }
