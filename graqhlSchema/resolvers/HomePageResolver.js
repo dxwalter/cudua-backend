@@ -1,6 +1,8 @@
 'use-strict'
 
-let GetFollowingForHomePage = require('../../Controllers/homePage/action/getFollowing')
+let GetFollowingForHomePage = require('../../Controllers/homePage/action/getFollowing');
+let GetProductsForHomePage = require('../../Controllers/homePage/action/getProducts');
+let GetBusinessForHomePage = require('../../Controllers/homePage/action/getBusiness');
 
 module.exports = {
     Query: {
@@ -13,6 +15,14 @@ module.exports = {
 
             let getBookmark = new GetFollowingForHomePage();
             return getBookmark.getfollowingList(userId)
+        },
+        getHomePageProducts (_) {
+            let getProducts = new GetProductsForHomePage();
+            return getProducts.getNewProducts();
+        },
+        getNewBusinessListing (_) {
+            let getBusiness = new GetBusinessForHomePage();
+            return getBusiness.getBusinessForHomePage()
         }
     }
 }

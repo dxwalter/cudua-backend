@@ -537,4 +537,31 @@ module.exports = class BusinessController extends FunctionRepo {
         }
     }
 
+    async homePageBusiness (page) {
+        
+        try {
+
+            // total number of returned products per request
+            let limit = 20;
+
+            let getBusiness = await BusinessModel.find({
+                subscription_status: 0
+            })
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+
+            return {
+                error: false,
+                result: getBusiness
+            } 
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }   
+        }
+    }
+
 }

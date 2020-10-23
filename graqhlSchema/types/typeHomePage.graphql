@@ -9,6 +9,7 @@ type homePageBookmark {
 type homePageProducts {
     image: String!
     productId: String!
+    businessId: String!
     name: String!
     price: Int!
 }
@@ -18,7 +19,8 @@ type homePageBusiness {
     reviewScore: Float!
     username: String!
     businessName: String!
-    categoryString: String!
+    categoryString: String
+    businessId: String!
 }
 
 type homePageBookmarkResponse {
@@ -28,6 +30,22 @@ type homePageBookmarkResponse {
     message: String!
 }
 
+type homePageProductsResponse {
+    products: [homePageProducts]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+type homePageBusinessListingResponse {
+    business: [homePageBusiness],
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
 type Query {
     getHomePageFollowing: homePageBookmarkResponse
+    getHomePageProducts: homePageProductsResponse
+    getNewBusinessListing: homePageBusinessListingResponse
 }

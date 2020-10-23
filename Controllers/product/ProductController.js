@@ -438,4 +438,30 @@ module.exports = class ProductController extends BusinessController {
         }
     }
 
+    async homePageProducts (page) {
+        
+        try {
+
+            // total number of returned products per request
+            let limit = 30;
+
+            let getProducts = await ProductModel.find()
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .populate('business_id')
+
+            return {
+                error: false,
+                result: getProducts
+            } 
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }   
+        }
+    }
+
 }
