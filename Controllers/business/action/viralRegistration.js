@@ -152,11 +152,16 @@ module.exports = class ViralRegistration extends BusinessController{
         
         let createSubscription = await this.createSubscription.createNewSubscription(businessId, viralId, "Basic", 0, userId);
 
-        if(createSubscription.success == false) return createSub
+        if(createSubscription.success == false) return createSubscription
 
         let updateRecord = await this.updateViralData(viralId, {'redeem_price': 1});
 
         if (updateRecord.error) return this.returnMethodForNewSubscription(null, 500, false, "An error occurred updating your subscription status")
+
+        // update business record
+        let updateData = {subscription_status: 0};
+
+        let updateBusinessRecord = await this.findOneAndUpdate(businessId, updateData);
 
         return createSubscription
     }
