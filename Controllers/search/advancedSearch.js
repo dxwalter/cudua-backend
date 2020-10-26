@@ -288,6 +288,37 @@ module.exports = class AdvancedSearch extends ProductController {
 
     }
 
+    ArrangeProductByTime (productResult) {
+        
+        let productTime = [];
+
+        for (let product of productResult) {
+            productTime.push({
+                productId: product.id,
+                timer: product.created.getTime()
+            })
+        }
+
+        console.log(productTime);
+
+        return
+
+        productTime.sort((a,b) => a-b)
+        
+        let newRecord = [];
+
+        for (let product of productResult) {
+            for (let timeOfUpload of productTime) {
+                if (timeOfUpload == product.created.getTime()) {
+                    newRecord.push(product)
+                    break
+                }
+            }
+        }
+
+        return newRecord
+    }
+
     async initiateAdvancedSearch(communityId, queryString, page = 1) {
 
         if (queryString.length < 1 || communityId.length == 0) return this.returnMethod(null, null, 500, false, "You did not provide a search string")
@@ -308,6 +339,7 @@ module.exports = class AdvancedSearch extends ProductController {
         } else {
 
             productResult = productSearch.result;
+
             let scoreProduct = this.scoreProductResult(productResult);
             productResult = scoreProduct
         }
