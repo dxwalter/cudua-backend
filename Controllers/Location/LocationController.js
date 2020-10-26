@@ -111,6 +111,52 @@ module.exports = class LocationController extends MainFunction{
         }
     }
 
+    async SearchCommunityById (id) {
+        try {
+
+            let findCommunity = await CommunityModel.findOne({_id: id})
+            .populate('country_id')
+            .populate('state_id')
+            .populate('lga_id')
+            .sort({_id: -1})
+            .limit(5)
+
+            return {
+                error: false,
+                result: findCommunity
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+    async SearchCommunityByName (name) {
+        try {
+
+            let findCommunity = await CommunityModel.findOne({name: name})
+            .populate('country_id')
+            .populate('state_id')
+            .populate('lga_id')
+            .sort({_id: -1})
+            .limit(5)
+
+            return {
+                error: false,
+                result: findCommunity
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async GetAllStatesQuery (countryId) {
         
         try {

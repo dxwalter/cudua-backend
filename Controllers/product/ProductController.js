@@ -1,6 +1,7 @@
 'use-strict'
 
 const ProductModel = require('../../Models/Product')
+const BusinessModel = require('../../Models/BusinessModel')
 const BusinessController = require('../business/BusinessController')
 
 module.exports = class ProductController extends BusinessController {
@@ -403,6 +404,7 @@ module.exports = class ProductController extends BusinessController {
                     }
                 ]
             })
+            .populate('business_id')
             .sort({_id: -1})
             .limit(limit * 1)
             .skip((page - 1) * limit)
@@ -445,7 +447,7 @@ module.exports = class ProductController extends BusinessController {
             // total number of returned products per request
             let limit = 30;
 
-            let getProducts = await ProductModel.find()
+            let getProducts = await ProductModel.find({hide: 0})
             .sort({_id: -1})
             .limit(limit * 1)
             .skip((page - 1) * limit)
@@ -464,4 +466,64 @@ module.exports = class ProductController extends BusinessController {
         }
     }
 
+    async performAdvancedSearch (communityId, queryString, page) {
+        try {
+            let limit = 50
+
+            let searchBusiness = await BusinessModel.find({
+                $and: [
+                    {
+                        'address.community': communityId, 
+                        subscription_status: 0
+                    }
+                ]
+            })
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .map(async function(business) {  
+                // return business.id;
+                if (business.length > 0) {
+                    
+                    let productArray = []
+
+                    for (let businessData of business) {
+
+                        let searchProduct = await ProductModel.find({
+                            $and: [
+                                {
+                                    name: { $regex: '.*' + queryString + '.*', $options: 'i'}, 
+                                    hide: 0,
+                                    business_id: businessData.id
+                                }
+                            ]
+                        }).limit(10)
+                        .populate('business_id');
+                        
+                        if (searchProduct.length > 0) {
+                            searchProduct.forEach(element => {
+                                productArray.push(element)
+                            });
+                        }
+                    }
+
+                    return productArray
+
+                } else {
+                    return []
+                }
+            })
+
+            return {
+                error: false,
+                result: searchBusiness
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
 }

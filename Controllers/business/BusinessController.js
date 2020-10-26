@@ -564,4 +564,36 @@ module.exports = class BusinessController extends FunctionRepo {
         }
     }
 
+    async advancedBusinessSearch(communityId, page) {
+        try {
+            
+            let limit  = 50
+
+            let searchBusiness = await BusinessModel.find({
+                $and: [
+                    {
+                        'address.community': communityId, 
+                        subscription_status: 0
+                    }
+                ]
+            })
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+
+            return {
+                error: false,
+                result: searchBusiness
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+
 }

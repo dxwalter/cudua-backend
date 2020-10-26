@@ -19,7 +19,7 @@ const AnonymousUserResolver = require('./AnonymousUserResolver');
 const MoveCategoriesResolver = require('./MoveCategoriesResolver');
 const SubscriptionResolver = require('./SubscriptionResolver');
 const CuduaCustomersResolver = require('./CuduaCustomersResolver');
-const SearchResolver = require('./Search')
+const SearchResolver = require('./SearchResolver')
 const HomePageResolver = require('./HomePageResolver')
 
 const resolvers = [

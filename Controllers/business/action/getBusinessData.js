@@ -147,6 +147,7 @@ module.exports = class GetBusinessData extends BusinessController {
             review: businessReview,
             logo: getBusinessData.logo.length < 1 || getBusinessData.logo == undefined ? "" : getBusinessData.logo,
             coverPhoto: getBusinessData.coverPhoto.length < 1 || getBusinessData.coverPhoto == undefined ? "" :  getBusinessData.coverPhoto,
+            subscriptionStatus: getBusinessData.subscription_status,
             businessCategories: businessCategories
         }
 

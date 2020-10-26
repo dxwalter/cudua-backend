@@ -268,7 +268,8 @@ module.exports = class FunctionRepo extends EmailClass{
             'fashion',
             'beauty',
             'studio',
-            'search'
+            'search',
+            'businesss'
         ];
 
         for (let index = 0; index < reservedWords.length; index++) {

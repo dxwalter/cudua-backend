@@ -27,6 +27,7 @@
         username: String
         # subscription
         subscription: Subscription
+        subscriptionStatus: Int!
         # reviews
         reviews: [ReviewType]
     }

@@ -154,7 +154,7 @@ module.exports = class FindLocation extends LocationController {
         }
 
         if (getCommunity.result.length < 1) {
-            return this.returnCommunityMethod(null, 200, false, 'No result was found')
+            return this.returnCommunityMethod(null, 200, true, 'No result was found')
         }
 
         let sortCommunity = this.SortLocationAlphabetically(getCommunity.result)
@@ -202,7 +202,7 @@ module.exports = class FindLocation extends LocationController {
     }
 
     async GetAllStates (countryId) {
-        countryId = '5f41789d3affd42e5892fac2';
+        countryId = '5f92f2a66f4c8907a4ac4142';
 
         if (countryId.length < 1) return this.returnStateMethod(null, null, 200, false, "Select a country to continue");
 
