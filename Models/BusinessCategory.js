@@ -13,6 +13,8 @@ const BusinessCategoriesSchema = mongoose.Schema({
     },
     hide: {
         type: Number, required: false, default: 0
+        // 0 means visible
+        // 1 means hide
     },
     subcategories: [{
         subcategory_id: {

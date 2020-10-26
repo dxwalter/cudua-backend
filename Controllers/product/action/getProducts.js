@@ -4,7 +4,8 @@ const ProductController = require('../ProductController');
 const ProductReviewController = require('../../productReview/ProductReviewController');
 const CategoryController = require('../../category/CategoryController');
 const SubategoryController = require('../../subcategories/SubcategoryController');
-const FormatBusinessData = require('../../business/action/getBusinessData')
+const FormatBusinessData = require('../../business/action/getBusinessData');
+const BusinessCatgories = require('../../businessCategory/BusinessCategoryController')
 
 
 module.exports = class EditProduct extends ProductController {
@@ -15,6 +16,7 @@ module.exports = class EditProduct extends ProductController {
         this.CategoryController = new CategoryController();
         this.SubcategoryController = new SubategoryController();
         this.formatBusinessData = new FormatBusinessData()
+        this.BusinessCatgories = new BusinessCatgories()
     }
 
     returnData (product, code, success, message, business = null) {
@@ -377,7 +379,33 @@ module.exports = class EditProduct extends ProductController {
 
         return this.returnProductSearchResult(formatProduct, 200, true, `Product search was successful`, productSearch.result.totalNumberOfProducts)
 
-
-        
     }
+
+    async getProductSuggestions(businessId, productId) {
+
+        if (businessId.length == 0 || productId.length == 0) return this.returnMultipleDataFromSubcategory([], 500, false, "Incomplete data");
+
+        let getProductDetails = await this.FindProductById(productId);
+
+        if (getProductDetails.error) return this.returnMultipleDataFromSubcategory([], 500, false, getProductDetails.message);
+
+        let categoryId = getProductDetails.result.category
+        let subcategoryId = getProductDetails.result.subcategory
+
+        // get business product categories
+        let getBusinessCategories = await this.BusinessCatgories.getbusinessCategories(businessId);
+
+        if (getBusinessCategories.error) return this.returnMultipleDataFromSubcategory([], 500, false, getBusinessCategories.message);
+
+        let scoreOne = [];
+        
+        let scoreTwo = [];
+
+        let scoreThree = [];
+
+
+        let allCategories = getBusinessCategories.result
+
+    }
+
 }

@@ -77,7 +77,14 @@ module.exports = class ProductController extends BusinessController {
             // total number of returned products per request
             let limit = 12;
 
-            let getProducts = await ProductModel.find({business_id: businessId, category: categoryId})
+            let getProducts = await ProductModel.find({
+                $and: [
+                    {
+                        category: categoryId,
+                        business_id: businessId
+                    }
+                ]
+            })
             .sort({_id: -1})
             .limit(limit * 1)
             .skip((page - 1) * limit)
@@ -133,7 +140,14 @@ module.exports = class ProductController extends BusinessController {
             // total number of returned products per request
             let limit = 12;
 
-            let getProducts = await ProductModel.find({business_id: businessId, subcategory: subcategoryId})
+            let getProducts = await ProductModel.find({
+                $and: [
+                    {
+                        subcategory: subcategoryId,
+                        business_id: businessId
+                    }
+                ]
+            })
             .sort({_id: -1})
             .limit(limit * 1)
             .skip((page - 1) * limit)

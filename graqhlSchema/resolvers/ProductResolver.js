@@ -54,6 +54,11 @@ module.exports = {
             args = args.input
             let getProducts = new GetProduct();
             return getProducts.getProductByBusinessId(args.businessId, args.page)
+        },
+        GetProductSuggestion(_, args) {
+            args = args.input
+            let getProducts = new GetProduct();
+            return getProducts.getProductSuggestions(args.businessId, args.productId)
         }
     },
     Mutation: {

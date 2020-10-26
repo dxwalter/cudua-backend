@@ -387,6 +387,11 @@ input businessSearchbusinessProduct {
     page: Int!
 }
 
+input getProductSuggestionInput {
+    productId: String!
+    businessId: String!
+}
+
 type Query {
     # a user can get the details of a product with its reviews
     GetProductById(input: productId): SingleProductResponse
@@ -407,6 +412,9 @@ type Query {
 
     # Get products using business Id
     GetProductsUsingBusinessId(input: getBusinessProduct): GetMultipleProductResponse
+
+    # Get product suggestion
+    GetProductSuggestion(input: getProductSuggestionInput): GetMultipleProductResponse
 }
 
 
