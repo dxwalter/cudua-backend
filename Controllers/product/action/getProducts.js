@@ -84,7 +84,7 @@ module.exports = class EditProduct extends ProductController {
 
     formatProductDetails (details) {
 
-        let productArray = [];
+        let productArray = []
 
         for (const detail of details) {
             let data = {
@@ -96,6 +96,7 @@ module.exports = class EditProduct extends ProductController {
                 name: detail.name,
                 price: detail.price,
                 hide: detail.hide,
+                businessId: detail.business_id.id,
                 reviewScore: detail.score,
                 description: detail.description,
                 category: {
@@ -405,6 +406,57 @@ module.exports = class EditProduct extends ProductController {
 
 
         let allCategories = getBusinessCategories.result
+
+        if (allCategories.length == 0) return this.returnMultipleDataFromSubcategory([], 200, false, "This business has no category")
+
+        let visibleSubCategories = [];
+
+        for (let allCat of allCategories) {
+            if (allCat.hide == 0) {
+                for (let subcat of allCat.subcategories) {
+                    if (subcat.hide == 0) {
+                        visibleSubCategories.push(subcat.subcategory_id._id);
+                    }
+                }
+            }
+        }
+
+        // get products from subcategory
+        
+        for (let ids of visibleSubCategories) {
+
+            let getProductFromSubcatgory = await this.GetBusinessProductsBySubcategory(businessId, ids, 1);
+            if (getProductFromSubcatgory.error == false) {
+
+                let productCount = 0
+
+                if (ids.toString() == subcategoryId) {
+                    for (let product of getProductFromSubcatgory.result) {
+                        if (product.hide == 0 && product.id != productId) {
+                            productCount = scoreOne.length + scoreTwo.length
+                            if (productCount >= 10) break;
+                            scoreOne.push(product)
+                        } 
+                    }
+                } else {
+                    for (let product of getProductFromSubcatgory.result) {
+                        if (product.hide == 0 && product.id != productId) {
+                            productCount = scoreOne.length + scoreTwo.length
+                            if (productCount >= 10) break;
+                            scoreTwo.push(product)
+                        } 
+                    }
+                }
+            }
+        }
+
+        
+        let mergeArray = [...scoreOne, ...scoreTwo];
+
+        let formatProduct = this.formatProductDetails(mergeArray)
+
+        return this.returnMultipleDataFromSubcategory(formatProduct, 200, true, "successful")
+        
 
     }
 

@@ -90,6 +90,7 @@ module.exports = class ProductController extends BusinessController {
             .skip((page - 1) * limit)
             .populate('category')
             .populate('subcategory')
+            .populate('business_id')
         
             return {
                 error: false,
@@ -153,6 +154,7 @@ module.exports = class ProductController extends BusinessController {
             .skip((page - 1) * limit)
             .populate('category')
             .populate('subcategory')
+            .populate('business_id')
 
             
 
