@@ -122,4 +122,34 @@ module.exports = class SaveForLaterController extends FunctionRepository {
         }
 
     }
+
+    async deleteProductById(productId, businessId) {
+        
+        try {
+            let deleteItem = await SaveForLaterModel.deleteOne({
+                $and: [{product_id: productId, business_id: businessId}]    
+            });
+
+            if (deleteItem.ok == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
+            }
+
+        } catch (error) {
+            
+            return {
+                message: error.message,
+                error: true
+            }
+
+        }
+
+    }
 }

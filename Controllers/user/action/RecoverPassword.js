@@ -1,12 +1,5 @@
 "use-strict";
 
-const express = require('express');
-const router = express.Router();
-const app = express();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
-
 let UserController = require('../UserController');
 let UserModel = require('../../../Models/UserModel');
 let RecoverPasswordModel = require('../../../Models/RecoverPassword')
@@ -32,7 +25,7 @@ module.exports = class RecoverPassword extends UserController{
         // check if email exists in db
         let checkEmailExist = await this.emailExists(this.email);
         if (checkEmailExist.error == true) {
-            return this.returnType(200 , false, checkEmailExist.message)
+            return this.returnType(200 , false, "An error occurred. Kindly try again")
         }
 
         checkEmailExist = checkEmailExist.result
@@ -56,7 +49,7 @@ module.exports = class RecoverPassword extends UserController{
             }
 
             // generate secret key
-            let secret = Math.floor(Math.random()*90000) + 10000;
+            let secret = this.HashFileName(await this.generateId());
 
             // insert
             const insertForgotPassword = new RecoverPasswordModel ({
@@ -65,32 +58,36 @@ module.exports = class RecoverPassword extends UserController{
             });
 
             let createForgotPassword = await this.createForgotPassword(insertForgotPassword);
+
             if (createForgotPassword.error == true) {
-                return this.returnType(200 , false, error.message)
+                return this.returnType(200 , false, "An error occurred")
             } else {
                 createForgotPassword = createForgotPassword.result;
             }
             
+            console.log(createForgotPassword)
+
             if(createForgotPassword._id) {
 
-                let emailObject = {
-                    to: this.email,
-                    from: 'test@example.com',
-                    subject: 'Sending with Twilio SendGrid is Fun',
-                    text: 'and easy to do anywhere, even with Node.js',
-                    html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-                }
+                // let emailObject = {
+                //     to: this.email,
+                //     from: 'test@example.com',
+                //     subject: 'Sending with Twilio SendGrid is Fun',
+                //     text: 'and easy to do anywhere, even with Node.js',
+                //     html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+                // }
 
                 // send mail
-                console.log(this.sendEmail(emailObject));
+                // console.log(this.sendEmail(emailObject));
 
-                return this.returnType(200 , true, `A password recovery message has been sent to you ${this.email}`)
+
+                return this.returnType(200 , true, `A recovery email was sent to your account`)
             } else {
                 return this.returnType(200 , false, `An error occured`)
             }
 
         } else {
-            return this.returnType(200 , false, `Your email address is not recognised`);
+            return this.returnType(200 , false, `A recovery email was sent to the email above`);
         }
     
 

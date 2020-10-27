@@ -4,13 +4,20 @@ const ProductModel = require('../../../Models/Product');
 const ProductController = require('../ProductController');
 const createBusinessCategory = require('../../businessCategory/action/createBusinessCategories');
 const Categories = require('../../../Models/Categories');
-
+const SaveForLaterController = require('../../saveForLater/SaveForLaterController')
+const CartController = require('../../cart/CartController');
+const OrderController = require('../../order/orderController');
+const AnonymousCartController = require('../../anonymousCart/anonymousCartController');
 
 module.exports = class EditProduct extends ProductController {
 
     constructor () {
         super();
         this.BusinessCategory = new createBusinessCategory();
+        this.SaveForLaterController = new SaveForLaterController()
+        this.CartController = new CartController()
+        this.OrderController = new OrderController()
+        this.AnonymousCartController = new AnonymousCartController()
         this.businessProductPath = 'uploads/product/';
     }
 
@@ -83,10 +90,22 @@ module.exports = class EditProduct extends ProductController {
         images.forEach(async image => {
             let publicID = `cudua_commerce/business/${businessId}/product/${image.split('.')[0]}`;
             await this.removeFromCloudinary(publicID, 'image');
-        })
+        });
+
+        // delete from cart
+        await this.CartController.deleteProductById(productId, businessId)
+
+        // delete from saved items
+        await this.SaveForLaterController.deleteProductById(productId, businessId)
+
+        // delete from order product
+        await this.OrderController.deleteProductById(productId, businessId);
+
+        // delete from anonymous cart
+        await this.AnonymousCartController.deleteProductById(productId, businessId)
+
 
         return this.returnData(200, true, `"${getProduct.result.name}" was deleted successfully`);
-
     }
 
     async editProductBasicDetails (name, price, category, subcategory, businessId, productId, userId) {

@@ -213,6 +213,37 @@ module.exports = class OrderController extends FunctionRepo {
         }
     }
 
+
+    async deleteProductById(productId, businessId) {
+        // when a business owner deletes a product from their store that has an order placed on it
+        try {
+            let deleteItem = await CartModel.deleteOne({
+                $and: [{product: productId, business: businessId}]    
+            });
+
+            if (deleteItem.ok == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
+            }
+
+        } catch (error) {
+            
+            return {
+                message: error.message,
+                error: true
+            }
+
+        }
+
+    }
+
     async getOrdersForBusiness(businessId) {
 
         try {

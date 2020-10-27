@@ -135,7 +135,15 @@ module.exports = class GetItemsInCart extends CartController {
 
         if (getCartItems.result.length == 0 || getCartItems == null) return this.returnMethod(null, 200, true, `You do not have any item in your cart`);
 
-        let formatCartItems = await this.formatCartItems(getCartItems.result);
+        let cartItemList = [];
+
+        for (let item of getCartItems.result) {
+            if(item.product != null) {
+                cartItemList.push(item)
+            }
+        }
+
+        let formatCartItems = await this.formatCartItems(cartItemList);
 
         return this.returnMethod(formatCartItems, 200, true, `Products in cart retrieved successfully`);
 

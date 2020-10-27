@@ -75,6 +75,36 @@ module.exports = class CartController extends FunctionRepo {
         }
     }
 
+    async deleteProductById(productId, businessId) {
+        
+        try {
+            let deleteItem = await CartModel.deleteOne({
+                $and: [{product: productId, business: businessId}]    
+            });
+
+            if (deleteItem.ok == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
+            }
+
+        } catch (error) {
+            
+            return {
+                message: error.message,
+                error: true
+            }
+
+        }
+
+    }
+
     async deleteAllCartItemsByUserId(userId) {
         try {
             

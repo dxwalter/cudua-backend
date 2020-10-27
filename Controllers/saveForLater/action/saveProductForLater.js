@@ -121,6 +121,8 @@ module.exports = class SaveProductForLater extends SaveForLaterController {
                 }
             }
 
+            if (productArray.length == 0) return this.returnGetProductMethod(null, 0, 200, false, "You do not have a saved item.") 
+
             return this.returnGetProductMethod(productArray, count, 200, true, "Saved items successfully retrieved")
         }
 

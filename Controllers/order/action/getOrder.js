@@ -220,7 +220,8 @@ module.exports = class GetOrders extends OrderController {
         if (findProductsInOrder.error) return this.returnProductMethod(null, null, null, 500, false, `An error occurred getting the products for order ${orderId}. Please try again`)
         
         findProductsInOrder = findProductsInOrder.result
-        if (findProductsInOrder < 1) return this.returnProductMethod(null, null, null, 200, false, `No product was found for order ${orderId}. Please try again`)
+
+        if (findProductsInOrder.length == 0) return this.returnProductMethod(null, null, null, 200, false, `No product was found for order ${orderId}. Please try again`)
 
         let customerReviews = findProductsInOrder.length < 1 || null ? [] : await this.CustomerReviews.getCustomerReviews(customerId);
 
@@ -291,22 +292,22 @@ module.exports = class GetOrders extends OrderController {
         let productList = [];
 
         for (const [index, orderProduct] of findProductsInOrder.entries()) {
-            productList[index] = {
-                name: orderProduct.product.name,
-                productId: orderProduct.product._id,
-                image: orderProduct.product.primary_image,
-                quantity: orderProduct.quantity,
-                price: orderProduct.product.price,
-                ratingScore: orderProduct.product.score,
-                size: orderProduct.size.length < 1 || orderProduct.size == undefined ? '' : this.getOrderSize(orderProduct.size, orderProduct.product.sizes),
-                color: orderProduct.color.length < 1 || orderProduct.color == undefined ? '' : this.getOrderColor(orderProduct.color, orderProduct.product.colors),
-                businessId: orderProduct.business
+            if (orderProduct.product != null) {
+                productList.push({
+                    name: orderProduct.product.name,
+                    productId: orderProduct.product._id,
+                    image: orderProduct.product.primary_image,
+                    quantity: orderProduct.quantity,
+                    price: orderProduct.product.price,
+                    ratingScore: orderProduct.product.score,
+                    size: orderProduct.size.length < 1 || orderProduct.size == undefined ? '' : this.getOrderSize(orderProduct.size, orderProduct.product.sizes),
+                    color: orderProduct.color.length < 1 || orderProduct.color == undefined ? '' : this.getOrderColor(orderProduct.color, orderProduct.product.colors),
+                    businessId: orderProduct.business
+                })
             }
         }
-
-        return this.returnProductMethod(productList, customerObject, orderInfo, 200, true, "ordered products retrieved successfully")
-
         
+        return this.returnProductMethod(productList, customerObject, orderInfo, 200, true, "ordered products retrieved successfully")
 
     }
 
@@ -365,31 +366,35 @@ module.exports = class GetOrders extends OrderController {
                 orderProduct: []
             })
 
-            let allProductsInOrder = await this.findProductsInOrder(y.business.id, userId, orderId);
+            let allProductsInOrder = await this.findProductsInOrder(y.business.id, userId, orderId)
+
 
             if (allProductsInOrder.error) {
                 return this.returnCustomerOrderDetails(null, 500, false, "An error occurred. Please try again")
                 break;
             }
 
-            if (allProductsInOrder.result.length == 0) {
+            if (allProductsInOrder.result.length == 0 || allProductsInOrder.result == null) {
                 mainData[index].orderProduct = []
             } else {
 
                 let dataProduct = allProductsInOrder.result;
                 
                 for (let data of dataProduct) {
-                    mainData[index].orderProduct.push({
-                        name: data.product.name,
-                        productId: data.product.id,
-                        image: data.product.primary_image,
-                        quantity: data.quantity,
-                        price: data.product.price,
-                        ratingScore: data.product.score,
-                        size: data.size.length < 1 || data.size == undefined ? '' : this.getOrderSize(data.size, data.product.sizes),
-                        color: data.color.length < 1 || data.color == undefined ? '' : this.getOrderColor(data.color, data.product.colors),
-                        businessId: data.product.business_id
-                    })
+                    
+                    if (data.product != null) {
+                        mainData[index].orderProduct.push({
+                            name: data.product.name,
+                            productId: data.product.id,
+                            image: data.product.primary_image,
+                            quantity: data.quantity,
+                            price: data.product.price,
+                            ratingScore: data.product.score,
+                            size: data.size.length < 1 || data.size == undefined ? '' : this.getOrderSize(data.size, data.product.sizes),
+                            color: data.color.length < 1 || data.color == undefined ? '' : this.getOrderColor(data.color, data.product.colors),
+                            businessId: data.product.business_id
+                        })
+                    }
                 }
             }
         }
