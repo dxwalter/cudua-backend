@@ -55,8 +55,8 @@ module.exports = class CreateUser extends UserController{
         let checkEmailExistence = await this.emailExists(this.email);
 
         if (checkEmailExistence.error == true) {
-            return this.returnMethod(null, false, checkEmailExistence.message,  200);
-        } else if (checkEmailExistence.result == true) {
+            return this.returnMethod(null, false, "An error occurred. Kindly try again",  500);
+        } else if (checkEmailExistence.result != null) {
             return this.returnMethod(null, false, `The email address: ${this.email}, already exists`,  200);   
         }
 

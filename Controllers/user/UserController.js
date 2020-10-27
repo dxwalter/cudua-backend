@@ -67,16 +67,9 @@ module.exports = class UserController extends FunctionRepo{
             .populate('address.country')
             .exec();   
 
-            if (findResult != null) {
-                return {
-                    error: false,
-                    result: true   
-                }
-            } else {
-                return {
-                    error: false,
-                    result: false   
-                }
+            return {
+                error: false,
+                result: findResult
             }
     
         } catch (error) {
@@ -87,23 +80,20 @@ module.exports = class UserController extends FunctionRepo{
         }
     }
 
-    async checkRecoverySecret (secret) {
+    async checkRecoverySecret (secret, userId) {
         try {
             const findResult = await RecoverPasswordModel.findOne({
-                secret: secret
+                $and: [
+                    {
+                        userId: userId, 
+                        secret: secret
+                    }
+                ]
             }).exec();   
     
-            if (findResult != null) {
-                return {
-                    error: false,
-                    result: true   
-                }
-
-            } else {
-                return {
-                    error: false,
-                    result: false   
-                }
+            return {
+                error: false,
+                result: findResult
             }
     
         } catch (error) {
@@ -121,17 +111,10 @@ module.exports = class UserController extends FunctionRepo{
             }).exec();   
     
             
-            if (findResult != null) {
-                return {
-                    error: false,
-                    result: false   
-                }
-            } else {
-                return {
-                    error: false,
-                    result: true   
-                }
-            }
+           return {
+               error: false,
+               result: findResult
+           }
     
         } catch (error) {
             return {

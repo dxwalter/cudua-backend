@@ -78,7 +78,7 @@
     }
 
     # This method allows a user to reset the password without logging in
-    input resetPassword {
+    input resetPasswordInput {
         # this is the new password the user will provide as input and it must be greater that 5 characters
         password: String!
 
@@ -240,6 +240,10 @@
         inviteId: String
     }
 
+    input recoverPasswordInput {
+        email: String!
+    }
+
     #This is the mutation type that will handle create account, forgot and recover pasword
     type Mutation {
         # create a new user
@@ -249,9 +253,9 @@
         createUserAndBusiness(input: createUserAndBusinessInput): createUserAndBusinessResponse
 
         # recover a lost or forgotten password
-        recoverPassword(email: String): DatalessResponse
+        recoverPassword(input: recoverPasswordInput): DatalessResponse
         # change to a new password
-        resetPassword(input: resetPassword): DatalessResponse
+        resetPassword(input: resetPasswordInput): DatalessResponse
 
         # this is to edit contact info of the user
         editUserContact(input: editUserContact): DatalessResponse

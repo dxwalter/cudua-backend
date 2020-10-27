@@ -43,7 +43,7 @@ module.exports = {
         },
         recoverPassword (parent, args, context, info) {
             let recoverPassword = new RecoverPassword();
-            return recoverPassword.recoverPasswordCheck(args)
+            return recoverPassword.recoverPasswordCheck(args.input)
         },
         resetPassword(parent, args, context, info) {
             let recoverPassword = new RecoverPassword();
