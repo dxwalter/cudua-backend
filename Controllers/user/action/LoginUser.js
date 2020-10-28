@@ -124,6 +124,8 @@ module.exports = class LoginUser extends UserController{
         // business data
         let getBusinessData = businessDetails;
 
+        console.log(getBusinessData)
+
         // business address
         let businessAddress = getBusinessData.address == null || getBusinessData.address == undefined ? null : await this.formatAddress(getBusinessData.address)
 
@@ -184,7 +186,8 @@ module.exports = class LoginUser extends UserController{
             logo: getBusinessData.logo.length < 1 || getBusinessData.logo == undefined ? null : getBusinessData.logo,
             coverPhoto: getBusinessData.coverPhoto.length < 1 || getBusinessData.coverPhoto == undefined ? null :  getBusinessData.coverPhoto,
             businessCategories: businessCategories,
-            subscription: subscription
+            subscription: subscription,
+            paystackPublicKey: getBusinessData.paystackPublicKey
         }
 
 
@@ -205,6 +208,7 @@ module.exports = class LoginUser extends UserController{
                 if (findEmail != null) {
                     
                     let userDbDetails = findEmail;
+
                     let userId = userDbDetails._id
                     let dbPassword = userDbDetails.password;
 

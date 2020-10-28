@@ -35,6 +35,9 @@ const BusinessSchema = mongoose.Schema({
         required: false,
         trim: true
     },
+    paystackPublicKey: {
+        type: String, required: false, default: ""
+    },
     logo: {type: String, default: ""},
     coverPhoto: {type: String, default: ""},
     description: {type: String, default: ""},

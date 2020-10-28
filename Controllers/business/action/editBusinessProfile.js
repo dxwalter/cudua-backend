@@ -483,4 +483,27 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
     }
 
+    async updatePaystackPublicKey (businessId, key, userId) {
+        
+        if (businessId.length == 0 || key.length == 0) return this.returnData(500, false, "An error occurred, Enter the required data")
+
+        let businessData = await this.getBusinessData(businessId);
+
+        if (businessData.error == true) {
+            return this.returnData(500, false, "An error occurred. Please try again")
+        } else {
+            // check if user is a valid business owner
+            if (businessData.result.owner != userId) return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+        }
+
+        let updateData = await this.findOneAndUpdate(businessId, {paystackPublicKey: key});
+
+        if (updateData.error == false) {
+            return this.returnData(202, true, "Your public key was saved successufully. You can now receive payment online")
+        } else {
+            return this.returnData(500, false, "An error occurred updating your public key")
+        }
+
+    }
+
 }

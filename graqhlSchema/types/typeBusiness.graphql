@@ -30,6 +30,8 @@
         subscriptionStatus: Int!
         # reviews
         reviews: [ReviewType]
+        # public key for online payment
+        paystackPublicKey: String
     }
 
     # This is a category choosen by  a business
@@ -322,6 +324,11 @@
         message: String!
     }
 
+    input updatePublicKeyInput {
+        key: String!
+        businessId: String!
+    }
+
     type Query {
         # get business details
         GetSingleBusinessDetailsByUsername(input: checkUsernameInput):  getBusinessDetailsResponse
@@ -372,4 +379,7 @@
         CreateBusinessReview(input: createReviewInput): DatalessResponse
 
         ActivateViralInvitationGift(input: activateSubscriptionGift): createSubscriptionResponse
+
+        # update paystack public key
+        UpdatePaystackPublicKey(input: updatePublicKeyInput): DatalessResponse
     }

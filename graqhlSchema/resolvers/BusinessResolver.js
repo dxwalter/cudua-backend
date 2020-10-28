@@ -179,6 +179,14 @@ module.exports = {
 
             let activateGift = new ViralRegistration();
             return activateGift.activateViralRegistrationGift(args.input.businessId, args.input.viralId, userId)
+        },
+        UpdatePaystackPublicKey(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            let updateKey = new EditBusinessProfile();
+            return updateKey.updatePaystackPublicKey(args.input.businessId, args.input.key, userId)
         }
     }
 }
