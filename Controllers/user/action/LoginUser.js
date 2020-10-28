@@ -124,8 +124,6 @@ module.exports = class LoginUser extends UserController{
         // business data
         let getBusinessData = businessDetails;
 
-        console.log(getBusinessData)
-
         // business address
         let businessAddress = getBusinessData.address == null || getBusinessData.address == undefined ? null : await this.formatAddress(getBusinessData.address)
 

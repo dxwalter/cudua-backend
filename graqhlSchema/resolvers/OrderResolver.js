@@ -98,7 +98,7 @@ module.exports = {
             args = args.input
 
             let confirm = new OrderState();
-            return confirm.confirmOrder(args.businessId, args.customerId, args.orderId, args.deliveryCharge, userId, args.startTime, args.endTime)
+            return confirm.confirmOrder(args.businessId, args.customerId, args.orderId, args.deliveryCharge, userId, args.startTime, args.endTime, args.paymentMethod)
         },
         RejectOrder(_, args, context) {
             let userId = context.authFunction(context.accessToken);
@@ -128,7 +128,7 @@ module.exports = {
             args = args.input
 
             let updateDelivery = new OrderState();
-            return updateDelivery.updateDeliveryCharge(args.businessId, args.customerId, args.orderId, args.deliveryCharge, userId, args.startTime, args.endTime);
+            return updateDelivery.updateDeliveryCharge(args.businessId, args.customerId, args.orderId, args.deliveryCharge, userId, args.startTime, args.endTime, args.paymentMethod);
         },
         RejectOrderDelivery(_, args, context) {
             let userId = context.authFunction(context.accessToken);
@@ -159,6 +159,16 @@ module.exports = {
 
             let deleteOrder = new OrderState();
             return deleteOrder.deleteOrder(args.orderId, args.businessId, args.customerId)
+        },
+        ConfirmOnlinePayment(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+
+            let confirmOnlinePayment = new OrderState();
+            return confirmOnlinePayment.ConfirmOnlinePayment(args.orderId, args.businessId, args.refrenceId, userId)
         }
     }
 }

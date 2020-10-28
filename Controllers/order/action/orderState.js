@@ -2,7 +2,9 @@
 
 const OrderController = require('../orderController');
 const BusinessController = require('../../business/BusinessController');
-const CreateNotification = require('../../notifications/action/createNotification')
+const CreateNotification = require('../../notifications/action/createNotification');
+const AccountingController = require('../../accounting/AccountingController');
+const AccountingModel = require('../../../Models/AccountingModel');
 
 module.exports = class OrderStatus extends OrderController {
 
@@ -10,6 +12,7 @@ module.exports = class OrderStatus extends OrderController {
         super();
         this.businessController = new BusinessController();
         this.createNotification = new CreateNotification();
+        this.accountingController = new AccountingController()
     }
 
     
@@ -21,11 +24,12 @@ module.exports = class OrderStatus extends OrderController {
         }
     }
 
-    async confirmOrder(businessId, customerId, orderId, deliveryPrice, userId, startTime, endTime) {
+    async confirmOrder(businessId, customerId, orderId, deliveryPrice, userId, startTime, endTime, paymentMethod) {
 
         if (businessId.length < 1) return this.returnMethod(200, false, "Your business credential was not provided. Refresh and try again")  
         if (customerId.length < 1) return this.returnMethod(200, false, "The customer's credential was not provided. Refresh and try again")  
         if (orderId.length < 1) return this.returnMethod(200, false, "The order id was not provided was not provided. Refresh and try again")  
+        if (paymentMethod.length < 1) return this.returnMethod(200, false, "The payment method for this order was not specified.")  
 
         if (startTime.length == 0 || endTime.length == 0) return this.returnMethod(200, false, "The delivery time span for this order was not provided")
 
@@ -48,7 +52,8 @@ module.exports = class OrderStatus extends OrderController {
             delivery_time: {
                 start: startTime,
                 end: endTime
-            }
+            },
+            payment_method: paymentMethod
         }
 
         let findAndUpdate = await this.confirmCustomerOrder(businessId, customerId, orderId, updateOrder);
@@ -142,11 +147,12 @@ module.exports = class OrderStatus extends OrderController {
         return this.returnMethod(202, true, `Order was cancelled successfully`);
     }
 
-    async updateDeliveryCharge (businessId, customerId, orderId, deliveryPrice, userId, startTime, endTime) {
+    async updateDeliveryCharge (businessId, customerId, orderId, deliveryPrice, userId, startTime, endTime, paymentMethod) {
 
         if (businessId.length < 1) return this.returnMethod(200, false, "Your business credential was not provided. Refresh and try again")  
         if (customerId.length < 1) return this.returnMethod(200, false, "The customer's credential was not provided. Refresh and try again")  
         if (orderId.length < 1) return this.returnMethod(200, false, "The order id was not provided was not provided. Refresh and try again")  
+        if (paymentMethod.length < 1) return this.returnMethod(200, false, "The payment method for this order was not specified.")  
         
         if (startTime.length == 0 || endTime.length == 0) return this.returnMethod(200, false, "The delivery time span for this order was not provided")
 
@@ -169,7 +175,8 @@ module.exports = class OrderStatus extends OrderController {
             delivery_time: {
                 start: startTime,
                 end: endTime
-            }
+            },
+            payment_method: paymentMethod
         }
 
         let findAndUpdate = await this.confirmCustomerOrder(businessId, customerId, orderId, updateOrder);
@@ -177,7 +184,7 @@ module.exports = class OrderStatus extends OrderController {
         if (findAndUpdate.error || findAndUpdate.result == false) await this.returnMethod(500, false, "An error occurred while updating delivery price for order. Please try again");
 
         //notify customer
-        let alertCustomer = await this.createNotification.createCustomerNotification(customerId, orderId, "order", "New delivery price", `The delivery price and time for your order with ID ${orderId} has been updated. Click to find out more details.`);
+        let alertCustomer = await this.createNotification.createCustomerNotification(customerId, orderId, "order", "Order update", `The delivery price, payment method and delivery time for your order with ID ${orderId} has been updated. Click to find out more details.`);
 
         return this.returnMethod(202, true, `Order was updated successfully`);
 
@@ -220,6 +227,57 @@ module.exports = class OrderStatus extends OrderController {
         let alertBusinessOwner = await this.createNotification.createBusinessNotification(businessId, orderId, "order", "Confirmed delivery", `The delivery with order ID ${orderId} was confirmed. Click to learn more`);
 
         return this.returnMethod(200, true, `Delivery confirmed successfully`);
+    }
+
+    async ConfirmOnlinePayment (orderId, businessId, referenceId, userId) {
+
+        if (orderId.length == 0 || businessId.length == 0 || referenceId.length == 0) return this.returnMethod(500, false, `An error occurred while confirming your payment`);
+
+        let getAllProductsInOrder = await this.findProductsInOrder(businessId, userId, orderId);
+
+        if (getAllProductsInOrder.error) return this.returnMethod(500, false, `An error occurred while confirming your payment`);
+
+        let totalProductPrice = 0
+
+        for (let x of getAllProductsInOrder.result) {
+            totalProductPrice = totalProductPrice + (x.quantity * x.product.price)
+        }
+
+
+        let orderMetadata = await this.getOrderMetaData(userId, businessId, orderId)
+        if (orderMetadata.error) return this.returnMethod(500, false, `An error occurred while confirming your payment`);
+
+        let totalOrderPrice = totalProductPrice + orderMetadata.result.delivery_charge
+
+        // confirm payment
+        let data = {payment_status: 1};
+
+        let confirmOrderPayment = await this.confirmCustomerOrder(businessId, userId, orderId, data);
+
+        if (confirmOrderPayment.error == true)  return this.returnMethod(500, false, `An error occurred while confirming your payment`);
+
+        // upload to accounting
+
+        let newData = new AccountingModel({
+            userId: userId,
+            orderId: orderId,
+            business: businessId,
+            referenceId: referenceId,
+            totalPrice: totalOrderPrice
+        })
+
+        let saveData = await this.accountingController.createAccountingRecord(newData)
+
+        if (saveData.error) return this.returnMethod(500, false, `An error occurred while confirming your payment`);
+
+        let alertBusinessOwner = await this.createNotification.createBusinessNotification(businessId, orderId, "order", "New payment", `A customer just paid for an order online. Click to learn more`);
+
+        let alertCustomer = await this.createNotification.createCustomerNotification(userId, orderId, "Payment", "Confirmed payment", `You have successfully paid for your order with ID ${orderId}. Your order is awaiting delivery. Click to 
+        find out more details.`);
+
+        return this.returnMethod(200, true, `Your payment was confirmed`) 
+        
+
     }
 
 }
