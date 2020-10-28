@@ -1,5 +1,4 @@
-const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
+'use-strict'
 
 const UserModel = require('../../Models/UserModel');
 const RecoverPasswordModel = require('../../Models/RecoverPassword');
@@ -11,7 +10,14 @@ module.exports = class UserController extends FunctionRepo{
 
     async findOneEmail(email) {
         try {
-            let findResult = await UserModel.findOne({email: this.email}).populate('business_details').exec();   
+            let findResult = await UserModel.findOne({email: this.email})
+            .populate('address.street')
+            .populate('address.community')
+            .populate('address.lga')
+            .populate('address.state')
+            .populate('address.country')
+            .populate('business_details')
+            .exec();   
             return {
                 error: false,
                 result: findResult
@@ -28,7 +34,13 @@ module.exports = class UserController extends FunctionRepo{
         try {
             const findResult = await UserModel.findOne({
                 email: email
-            }).exec();  
+            })
+            .populate('address.street')
+            .populate('address.community')
+            .populate('address.lga')
+            .populate('address.state')
+            .populate('address.country')
+            .exec();  
     
             return {
                 error: false,
@@ -47,18 +59,17 @@ module.exports = class UserController extends FunctionRepo{
         try {
             const findResult = await UserModel.findOne({
                 email: email
-            }).exec();   
+            })
+            .populate('address.street')
+            .populate('address.community')
+            .populate('address.lga')
+            .populate('address.state')
+            .populate('address.country')
+            .exec();   
 
-            if (findResult != null) {
-                return {
-                    error: false,
-                    result: true   
-                }
-            } else {
-                return {
-                    error: false,
-                    result: false   
-                }
+            return {
+                error: false,
+                result: findResult
             }
     
         } catch (error) {
@@ -69,23 +80,20 @@ module.exports = class UserController extends FunctionRepo{
         }
     }
 
-    async checkRecoverySecret (secret) {
+    async checkRecoverySecret (secret, userId) {
         try {
             const findResult = await RecoverPasswordModel.findOne({
-                secret: secret
+                $and: [
+                    {
+                        userId: userId, 
+                        secret: secret
+                    }
+                ]
             }).exec();   
     
-            if (findResult != null) {
-                return {
-                    error: false,
-                    result: true   
-                }
-
-            } else {
-                return {
-                    error: false,
-                    result: false   
-                }
+            return {
+                error: false,
+                result: findResult
             }
     
         } catch (error) {
@@ -103,17 +111,10 @@ module.exports = class UserController extends FunctionRepo{
             }).exec();   
     
             
-            if (findResult != null) {
-                return {
-                    error: false,
-                    result: false   
-                }
-            } else {
-                return {
-                    error: false,
-                    result: true   
-                }
-            }
+           return {
+               error: false,
+               result: findResult
+           }
     
         } catch (error) {
             return {
@@ -144,7 +145,36 @@ module.exports = class UserController extends FunctionRepo{
         try {
             const findResult = await UserModel.findOne({
                 _id: userId
-            }).exec();  
+            })
+            .populate('address.street')
+            .populate('address.community')
+            .populate('address.lga')
+            .populate('address.state')
+            .populate('address.country')
+            .exec();  
+            
+            return {
+                error: false,
+                result: findResult
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+    async findUsersByField (fieldAndDataObject) {
+        try {
+            const findResult = await UserModel.findOne(fieldAndDataObject)
+            .populate('address.street')
+            .populate('address.community')
+            .populate('address.lga')
+            .populate('address.state')
+            .populate('address.country')
+            .exec();  
             
             return {
                 error: false,
@@ -194,5 +224,13 @@ module.exports = class UserController extends FunctionRepo{
         }
     }
 
+
+    async deleteUserFromDB(userId) {
+        try {
+            await UserModel.findOneAndDelete({_id: userId})   
+        } catch (error) {
+            
+        }
+    }
 
 }

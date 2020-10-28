@@ -1,3 +1,4 @@
+'use-strict'
 
 const CartController = require('../CartController'); 
 const BusinessController = require('../../business/BusinessController');
@@ -31,7 +32,7 @@ module.exports = class AddItemToCart extends CartController {
         
         if (getBusinessDetails.error) return this.returnMethod(500, false, `An error occurred. Please try again`);
 
-        if (getBusinessDetails.result._id != businessId) return this.returnMethod(500, false,  `This business has has either been moved or deleted`);
+        if (getBusinessDetails.result._id.toString() != businessId) return this.returnMethod(500, false,  `This business has has either been moved or deleted`);
 
         // get user details
         let findUserData = await this.userController.findUsersById(userId);
@@ -40,8 +41,7 @@ module.exports = class AddItemToCart extends CartController {
         if (findUserData.result == null || findUserData.result.business_details == userId) return this.returnMethod(200, false, `You cannot add your poduct to cart.`)
 
         // check if this item has been added to cart before
-
-        let checkIfExists = await this.findItemInCart(businessId, productId);
+        let checkIfExists = await this.findItemInCart(businessId, productId, userId);
 
         if (checkIfExists.error) return this.returnMethod(500, false, 'An error occurred. Please try again')
 
@@ -50,14 +50,14 @@ module.exports = class AddItemToCart extends CartController {
         let findProduct = await this.productController.FindProductById(productId);
         
         if (findProduct.error) return this.returnMethod(500, false, `An error occurred. Please try again`);
-        if (findProduct.result._id != productId && findProduct.result._id != business_id) return this.returnMethod(500, false,  `This product is not recognised`);
+        if (findProduct.result._id.toString() != productId && findProduct.result.business_id.toString() != business_id) return this.returnMethod(500, false,  `This product is not recognised`);
 
         let createItem = new CartModel({
             owner: userId,
             product: productId,
             business: businessId,
-            size: size.length > 1 ? size : null,
-            color: color.length > 1 ? color : null
+            size: size.length > 1 ? size : "",
+            color: color.length > 1 ? color : ""
         });
 
         let create = await this.createCartItem(createItem);
@@ -66,5 +66,6 @@ module.exports = class AddItemToCart extends CartController {
 
         return this.returnMethod(200, true, `${findProduct.result.name} was successfully added to your cart.`)
     }
+
 
 }

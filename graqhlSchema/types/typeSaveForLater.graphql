@@ -1,0 +1,44 @@
+
+type SavedItems {
+    productId: String!
+    name: String!
+    image: String!
+    review: Float!
+    price: Int!
+    businessId: String!
+}
+
+type SavedItemsResponse implements ResponseType {
+    products: [SavedItems]
+    count: Int!
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+input getSavedProduct {
+    page: Int!
+}
+
+input saveProduct {
+    productId: String!
+    businessId: String!
+}
+
+input removeProduct {
+    productId: String!
+}
+
+input movetoCart {
+    productId: String!
+}
+
+type Query {
+    GetSavedItems(input: getSavedProduct): SavedItemsResponse
+}
+
+type Mutation {
+    SaveProductForLater(input: saveProduct): DatalessResponse
+    RemoveProductFromSavedProducts(input: removeProduct): DatalessResponse
+    MoveToCart(input: movetoCart): DatalessResponse
+}

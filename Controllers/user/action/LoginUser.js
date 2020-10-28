@@ -3,11 +3,14 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-let UserController = require('../UserController');
-let UserModel = require('../../../Models/UserModel');
-let BusinessController = require('../../business/BusinessController');
-let BusinessCategoryController = require('../../businessCategory/BusinessCategoryController');
-let LocationController = require('../../Location/LocationController');
+const UserController = require('../UserController');
+const UserModel = require('../../../Models/UserModel');
+const BusinessController = require('../../business/BusinessController');
+const BusinessCategoryController = require('../../businessCategory/BusinessCategoryController');
+const LocationController = require('../../Location/LocationController');
+const MoveToOnymousCart = require('../../anonymousCart/action/anonymousAddItemToCart');
+
+const SubscriptionController = require('../../subscription/subscriptionController')
 
 module.exports = class LoginUser extends UserController{
 
@@ -15,10 +18,13 @@ module.exports = class LoginUser extends UserController{
         super();
         this.email = args.email.toLowerCase();
         this.password = args.password.toLowerCase();
+        this.anonymousId = args.anonymousId;
         this.model = UserModel;
         this.BusinessController = new BusinessController();
         this.LocationController = new LocationController();
         this.BusinessCategoryInstance = new BusinessCategoryController();
+        this.MoveToOnymousCart = new MoveToOnymousCart();
+        this.SubscriptionController = new SubscriptionController();
     }
 
     returnType (code, success, message) {
@@ -26,21 +32,6 @@ module.exports = class LoginUser extends UserController{
             code: code,
             success: success,
             message: message
-        }
-    }
-
-    async comparePassword (password) {
-        try {
-            let compare = await bcrypt.compare(this.password, password);
-            return {
-                error: false,
-                result: compare
-            }
-        } catch (error) {
-            return {
-                error: true,
-                message: error.message
-            }
         }
     }
 
@@ -76,47 +67,70 @@ module.exports = class LoginUser extends UserController{
                 })
             }
 
+            // format subcategories in alphabetical order using their names
+            let subcategorytoFormat = this.SortSubcategories(newData.subcategories);
+
+            newData.subcategories = subcategorytoFormat;
+
             businessCategoryArray[categoryCount] = newData;
             
             categoryCount = categoryCount + 1;
 
         }
 
-        return businessCategoryArray;
+        return this.SortCategories(businessCategoryArray);
+
     }
 
-    async formatBusinessAddress (businessData) {
+    
+    returnAddress(addressObject) {
+        return {
+            number: addressObject.number,
+            street: addressObject.street.name,
+            community:  addressObject.community.name,
+            lga:  addressObject.lga.name,
+            state:  addressObject.state.name,
+            country: addressObject.country.name,
+            busStop: addressObject.bus_stop
+        }
 
-        let streetId = businessData.address.street;
+    }
+
+    async formatAddress (addressObject) {
+
+        let streetId = addressObject.street
         if (streetId == undefined) return null
 
         let findStreet = await this.LocationController.SearchStreetById(streetId);
 
         if (findStreet.error) return null
 
-        findStreet = findStreet.result[0];
+        findStreet = findStreet.result;
 
         return {
-            number: businessData.address.number,
+            number: addressObject.number,
             street: findStreet.name,
             community: findStreet.community_id.name,
             lga: findStreet.lga_id.name,
             state: findStreet.state_id.name,
-            country: findStreet.country_id.name
+            country: findStreet.country_id.name,
+            busStop: addressObject.bus_stop
         }
 
     }
 
     async getBusinessDetails (businessDetails) {
-
+        
         // business data
         let getBusinessData = businessDetails;
 
-        // business address
-        let businessAddress = await this.formatBusinessAddress(getBusinessData)
+        console.log(getBusinessData)
 
+        // business address
+        let businessAddress = getBusinessData.address == null || getBusinessData.address == undefined ? null : await this.formatAddress(getBusinessData.address)
 
         let businessId = getBusinessData._id;
+        let businessReview = getBusinessData.review_score;
 
         let businessCategories = await this.BusinessCategoryInstance.getbusinessCategories(businessId);
     
@@ -124,7 +138,7 @@ module.exports = class LoginUser extends UserController{
             return this.returnType(500 , false, 'An error occurred while retrieving your business category')
         }
 
-        if (businessCategories.error == false && businessCategories.result == false ) {
+        if (businessCategories.error == false && businessCategories.result == null ) {
             businessCategories = null;
         } else {
             // this is the array of business categories and subcategories chosen by this business owner
@@ -133,11 +147,30 @@ module.exports = class LoginUser extends UserController{
 
         // business contact
         let businessContact =  {
-            email: getBusinessData.contact.email.length < 1 ? getBusinessData.contact.email.length : null,
-            phone: getBusinessData.contact.phone.length > 0 ? getBusinessData.contact.phone: null,
+            email: getBusinessData.contact.email == undefined || getBusinessData.contact.email.length < 1 ? null : getBusinessData.contact.email,
+            phone: getBusinessData.contact.phone == undefined || getBusinessData.contact.phone.length < 1 ? null: getBusinessData.contact.phone,
             whatsapp: {
                 status: getBusinessData.contact.whatsapp.status,
                 number: getBusinessData.contact.whatsapp.number
+            }
+        }
+
+        // get subscription
+        let subscription = await this.SubscriptionController.getSubscriptionById(businessDetails.subscription)
+        if (subscription.error) {
+            subscription = null
+        } else {
+            let subscriptionData = subscription.result
+
+            if (subscriptionData == null ){
+                subscription = null
+            } else {
+                subscription = {
+                    subscriptionDate: subscriptionData.subscription_date,
+                    expiryDate: subscriptionData.expiry_date,
+                    subscriptionId: subscriptionData._id,
+                    subscriptionType: this.MakeFirstLetterUpperCase(subscriptionData.type)
+                }
             }
         }
         
@@ -146,12 +179,15 @@ module.exports = class LoginUser extends UserController{
             id: getBusinessData._id,
             businessname: getBusinessData.businessname,
             username: getBusinessData.username,
-            description: getBusinessData.description.length > 0 ? getBusinessData.description : null,
+            description: getBusinessData.description.length < 1 ||  getBusinessData.description == undefined ? null : getBusinessData.description,
             address: businessAddress,
             contact: businessContact,
-            logo: getBusinessData.logo.length > 0 ? getBusinessData.logo : null,
-            coverPhoto: getBusinessData.coverPhoto.length > 0 ? getBusinessData.coverPhoto : null,
-            businessCategories: businessCategories
+            review: businessReview,
+            logo: getBusinessData.logo.length < 1 || getBusinessData.logo == undefined ? null : getBusinessData.logo,
+            coverPhoto: getBusinessData.coverPhoto.length < 1 || getBusinessData.coverPhoto == undefined ? null :  getBusinessData.coverPhoto,
+            businessCategories: businessCategories,
+            subscription: subscription,
+            paystackPublicKey: getBusinessData.paystackPublicKey
         }
 
 
@@ -172,17 +208,19 @@ module.exports = class LoginUser extends UserController{
                 if (findEmail != null) {
                     
                     let userDbDetails = findEmail;
+
                     let userId = userDbDetails._id
                     let dbPassword = userDbDetails.password;
 
-                    let comparePassword = await this.comparePassword(dbPassword)
+                    let comparePassword = await this.comparePassword(dbPassword, this.password)
                     if (comparePassword.error == true) {
-                        return this.returnType(200 , false, comparePassword.message)
+                        return this.returnType(500 , false, "An error occurred. Please try again")
                     }
 
                     comparePassword = comparePassword.result
+
                     if (comparePassword == true) {
-                        let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });
+                        let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '720h' });
 
                         let businessDetails = userDbDetails.business_details;
 
@@ -197,6 +235,10 @@ module.exports = class LoginUser extends UserController{
                             businessId = businessDetails._id
                         }
 
+                        // check if anonymous Id exists
+                        if(this.anonymousId != null && this.anonymousId.length > 0) {
+                            this.MoveToOnymousCart.MoveAnonymousCartToOnymousCart(this.anonymousId, userId)
+                        }
 
                         return {
                             // user object
@@ -204,9 +246,11 @@ module.exports = class LoginUser extends UserController{
                                 userId : userDbDetails._id,
                                 fullname: userDbDetails.fullname,
                                 email: userDbDetails.email,
-                                email_notification: userDbDetails.email_notification,
+                                email_notification: userDbDetails.email_notification == null || undefined ? 1 : userDbDetails.email_notification,
                                 phone: userDbDetails.phone == null || undefined ? null : userDbDetails.phone,
-                                displaPicture: userDbDetails.profilePicture = null || undefined ? null : userDbDetails.profilePicture,
+                                displayPicture: userDbDetails.profilePicture == null || undefined ? null : userDbDetails.profilePicture,
+                                review: userDbDetails.review_score == null || undefined ? null : userDbDetails.review_score,
+                                address: userDbDetails.address.street == null || undefined ? null : this.returnAddress(userDbDetails.address),
                                 businessId: businessId,
                             },
                             // business details
@@ -217,11 +261,11 @@ module.exports = class LoginUser extends UserController{
                             message: "Hurray! Your sign in was successfully"
                         };
                     } else {
-                       return this.returnType(200 , false, `Your sign in details is incorrect`)
+                       return this.returnType(200 , false, `Incorrect sign in details`)
                     }
                     
                 } else {
-                    return this.returnType(200 , false, `Your sign in details is incorrect`)
+                    return this.returnType(200 , false, `Incorrect sign in details`)
                 }
 
         } else {

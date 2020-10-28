@@ -1,11 +1,7 @@
 "use-strict";
 
-const express = require('express');
-const router = express.Router();
-const app = express();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
 
 let UserController = require('../UserController');
 let UserModel = require('../../../Models/UserModel');
@@ -29,34 +25,37 @@ module.exports = class RecoverPassword extends UserController{
         
         this.email = args.email;
 
+        if (this.email.length == 0) return this.returnType(500 , false, "Enter a valid email address")
+
         // check if email exists in db
         let checkEmailExist = await this.emailExists(this.email);
-        if (checkEmailExist.error == true) {
-            return this.returnType(200 , false, checkEmailExist.message)
+        if (checkEmailExist.error == true || checkEmailExist.result == null) {
+            return this.returnType(200 , false, "An error occurred. Kindly try again")
         }
 
         checkEmailExist = checkEmailExist.result
-        if (checkEmailExist) {
+        
+        if (checkEmailExist._id) {
             
             let userDetails = await this.findUserByEmail(this.email);
             if (userDetails.error == true) {
-                return this.returnType(200 , false, checkEmailExist.message)
+                return this.returnType(200 , false, "An error occurred")
             } else {
                 userDetails = userDetails.result;
             }
             
-            let userId = userDetails[0]._id;
+            let userId = userDetails._id;
 
             let checkEmailExistInRecovery = await this.emailExistsInForgotPassword(this.email);
            
             if (checkEmailExistInRecovery.error == true) {
-                return this.returnType(200 , false, checkEmailExistInRecovery.message)
+                return this.returnType(200 , false, "An error occurred. Please try again")
             } else if (checkEmailExistInRecovery.result) {
                 this.deleteOneFromPasswordRecovery(userId);
             }
 
             // generate secret key
-            let secret = Math.floor(Math.random()*90000) + 10000;
+            let secret = this.HashFileName(await this.generateId());
 
             // insert
             const insertForgotPassword = new RecoverPasswordModel ({
@@ -65,32 +64,39 @@ module.exports = class RecoverPassword extends UserController{
             });
 
             let createForgotPassword = await this.createForgotPassword(insertForgotPassword);
+
             if (createForgotPassword.error == true) {
-                return this.returnType(200 , false, error.message)
+                return this.returnType(200 , false, "An error occurred")
             } else {
                 createForgotPassword = createForgotPassword.result;
             }
-            
+
             if(createForgotPassword._id) {
 
-                let emailObject = {
-                    to: this.email,
-                    from: 'test@example.com',
-                    subject: 'Sending with Twilio SendGrid is Fun',
-                    text: 'and easy to do anywhere, even with Node.js',
-                    html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-                }
+                // let emailObject = {
+                //     to: this.email,
+                //     from: 'test@example.com',
+                //     subject: 'Sending with Twilio SendGrid is Fun',
+                //     text: 'and easy to do anywhere, even with Node.js',
+                //     html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+                // }
 
                 // send mail
-                console.log(this.sendEmail(emailObject));
+                // console.log(this.sendEmail(emailObject));
 
-                return this.returnType(200 , true, `A password recovery message has been sent to you ${this.email}`)
+                // action string
+                let url = `https://cudua.com/auth/create-new-password?sub=${userId}&init=${secret}`
+
+                console.log(url)
+
+
+                return this.returnType(200 , true, `A recovery email was sent to your account`)
             } else {
                 return this.returnType(200 , false, `An error occured`)
             }
 
         } else {
-            return this.returnType(200 , false, `Your email address is not recognised`);
+            return this.returnType(200 , false, `A recovery email was sent to the email above`);
         }
     
 
@@ -103,19 +109,17 @@ module.exports = class RecoverPassword extends UserController{
         this.secret = args.secret;
         this.userId = args.userId;
 
-        let checkSecret = await this.checkRecoverySecret(this.secret);
+        let checkSecret = await this.checkRecoverySecret(this.secret, this.userId);
         if (checkSecret.error == true) {
-            return this.returnType(200 , false, checkSecret.message)
+            return this.returnType(200 , false, "An error occurred. Kindly try again")
         }
         
-        if (this.secret && checkSecret.result) {
-            
+        if (this.secret && checkSecret.result != null) {
+
             if (this.password.length < 6) {
-
-                return this.returnType(200 , false, "Your password must be greater than 6 characters");
-
+                return this.returnType(200 , false, "Your password must be greater than 5 characters");
             } else {
-                this.password = bcrypt.hashSync(this.password, 10);
+                this.password = await bcrypt.hashSync(this.password, 10)
             }
                 
             // update 
@@ -126,21 +130,13 @@ module.exports = class RecoverPassword extends UserController{
             let changePassword = await this.findOneAndUpdate(this.userId, newData);
             
             if (changePassword.error == true) {
-                return this.returnType(200 , false, changePassword.message);
+                return this.returnType(200 , false, "An error occurred. Kindly try again");
             }
 
-            console.log(changePassword.result)
+            // delete from  recoverypasswords collection
+            await this.deleteOneFromPasswordRecovery(this.userId)
 
-            if (changePassword.result) {
-
-                // delete from  recoverypasswords collection
-                await this.deleteOneFromPasswordRecovery(this.userId)
-
-                return this.returnType(202 , true, `Your password reset was successful. Sign in to continue`);
-
-            } else {
-                return this.returnType(200 , false, `An error occured reseting your password`);
-            }
+            return this.returnType(202 , true, `Your password was successful changed. Sign in to continue`);
 
 
         } else {

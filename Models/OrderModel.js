@@ -6,25 +6,10 @@ const OrderSchema = mongoose.Schema({
         ref: "users",
         required: true
     },
-    product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "product",
-        required: true
-    },
     business: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "business-accounts",
         required: true
-    },
-    size: {
-        type: String, trim: true
-    },
-    color: {
-        type: String, trim: true
-    },
-    quantity: {
-        type: Number,
-        default: 1
     },
     order_id: {
         type: String,
@@ -38,12 +23,22 @@ const OrderSchema = mongoose.Schema({
     order_status: {
         type: Number,
         /**
-         * 0 means pending
+         * 0 means new
          * 1 means confirmed
          * -1 means rejected
         */
         default: 0,
-
+    },
+    reject_order_reason: {
+        type: String, trim: true, default: ""
+    },
+    delivery_time: {
+        start: {
+            type: String, trim: true, default: ""
+        },
+        end: {
+            type: String, trim: true, default: ""
+        }
     },
     delivery_status: {
         type: Number,
@@ -55,11 +50,11 @@ const OrderSchema = mongoose.Schema({
         default: 0,
 
     },
-    cancel_order: {
-        type: String, trim: true
+    customer_cancel_order_reason: {
+        type: String, trim: true, default: ""
     },
-    cancel_delivery: {
-        type: String, trim: true
+    customer_cancel_order: {
+        type: Number, default: 0
     },
     created : {
         type : Date,

@@ -5,6 +5,7 @@ let BusinessController = require('../BusinessController');
 let UserController = require('../../user/UserController');
 let LocationController = require('../../Location/LocationController');
 
+
 module.exports = class EditBusinessDetails extends BusinessController {
 
     constructor () {
@@ -17,6 +18,15 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
     returnData (code, success, message) {
         return {
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
+    returnDataImageFileName (imagePath, code, success, message) {
+        return {
+            imagePath: imagePath,
             code: code,
             success: success,
             message: message
@@ -72,13 +82,19 @@ module.exports = class EditBusinessDetails extends BusinessController {
         // business username
         if (username != businessData.result.username) {
             //update
+            
+            if (this.checkReservedWords(username)) {
+                return this.returnRequestStatus(200, false, "Cudua is a reserved name. Enter a different username");
+            }
+            
+
             if (username.length <= 3) {
                 return this.returnData(200, false, "Your business username must be greater than three characters");
             }
     
             // regex username
             
-            let checkUsername = new RegExp(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/ig).test(username)
+            let checkUsername = new RegExp(/^(?!.*\.\.\s)(?!.*\.$)[^\W][\w.]{0,29}$/ig).test(username)
     
             if (checkUsername == false) {
                 return this.returnData(200, false, "Enter a valid username. Username must not contain any space or special character");
@@ -108,7 +124,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
             //update
 
             if (businessDescription.length < 10) {
-                return this.returnData(200, false, "Describe your business to your customers");
+                return this.returnData(200, false, "Your business description must be greater than 10 words");
             }
 
             let newBusinessDescriptionObject = {description: businessDescription}
@@ -123,7 +139,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
         // check if any update was made at all
         if (newDatacheck == 0) {
-            return this.returnData(200, true, "Your profile was not updated because not change in data was detected")
+            return this.returnData(200, false, "Your profile was not updated because not change in data was detected")
         } else {
             return this.returnData(202, true, "Your business profile was updated successfully")
         }
@@ -141,7 +157,8 @@ module.exports = class EditBusinessDetails extends BusinessController {
             }
         }
 
-        let newphoneNumbers = phoneNumbers.split(',')
+
+        let newphoneNumbers = phoneNumbers;
 
         if (newphoneNumbers.length < 1) {
             return this.returnData(200, false, `Add at least one or multiple phone numbers seperated by comma`)
@@ -244,17 +261,17 @@ module.exports = class EditBusinessDetails extends BusinessController {
         if (phoneNumber.length < 5) {
             return this.returnData(200, false, `Enter a valid phone number`)
         }
-
-        let updateNotification = await this.findOneAndUpdate(businessId, {'contact.whatsapp.status': notification});
-
         // check if whatsapp number exists for a business
         
-        if (phoneNumber == businessData.result.contact.whatsapp.number) {
+        if (phoneNumber == businessData.result.contact.whatsapp.number && notification == businessData.result.contact.whatsapp.status) {
             return this.returnData(200, false, "No update was made. Enter a new Whatsapp phone number for your business")
         }
 
+        let updateNotification = await this.findOneAndUpdate(businessId, {'contact.whatsapp.status': notification});
+
+
         // check if phone number exists in user 
-        let userNumberCheck = await this.UserController.findUserByEmail(phoneNumber);
+        let userNumberCheck = await this.UserController.findUsersByField({phone: phoneNumber});
 
         if (userNumberCheck.result != null) {
             if (userNumberCheck.result._id != userId) {
@@ -279,11 +296,11 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let businessData = await this.getBusinessData(businessId);
         
         if (businessData.error == true) {
-            return this.returnData(500, false, "An error occurred. Please try again")
+            return this.returnDataImageFileName(null, 500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
             if (businessData.result.owner != userId) {
-                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+                return this.returnDataImageFileName(null, 200, false, `You can not access this functionality. You do not own a business`)
             }
         }
 
@@ -292,7 +309,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         const { filename, mimetype, createReadStream } = await file;
 
         if (filename.length < 1) {
-            return this.returnData(200, false, "Choose a logo for your business")
+            return this.returnDataImageFileName(null, 200, false, "Choose a logo for your business")
         }
 
         // delete old logo from cloudinary
@@ -306,16 +323,18 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let path = this.businessLogoPath;
 
         const pathObj = await this.uploadImageFile(stream, newFileName, path);
-        console.log(pathObj)
+        
         if (pathObj.error == true) {
-            return this.returnData(500, false, "An error occurred uploading your business logo")
+            return this.returnDataImageFileName(null, 500, false, "An error occurred uploading your business logo")
         }
 
-        // move to cloudinary
-        let publicID = `cudua_commerce/business/${businessId}/logo/${businessData.logo.split('.')[0]}`;
-        
-        // remove from cloudinary
-        let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+
+        // public id used to remove data from cloudinary
+        if (businessData.logo != null || businessData.logo != undefined) {
+            let publicID = `cudua_commerce/business/${businessId}/logo/${businessData.logo.split('.')[0]}`;
+            // remove from cloudinary
+            let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+        }
 
         //upload to cloudinary
 
@@ -329,7 +348,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let deleteFile = await this.deleteFileFromFolder(imagePath)
 
         if (moveToCloud.error == true) {
-            return this.returnData(500, false, `An error occurred uploading your business logo`)
+            return this.returnDataImageFileName(null, 500, false, `An error occurred uploading your business logo`)
         }
 
 
@@ -339,9 +358,9 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let updateLogo = await this.findOneAndUpdate(businessId, newLogo)
         
         if (updateLogo.error == false) {
-            return this.returnData(202, true, "Your business logo was updated successfully")
+            return this.returnDataImageFileName(newFileName, 202, true, "Your business logo was updated successfully")
         } else {
-            return this.returnData(500, false, "An error occurred updating your business logo")
+            return this.returnDataImageFileName(null, 500, false, "An error occurred updating your business logo")
         }
     }
 
@@ -350,11 +369,11 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let businessData = await this.getBusinessData(businessId);
 
         if (businessData.error == true) {
-            return this.returnData(500, false, "An error occurred. Please try again")
+            return this.returnDataImageFileName(null,500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
             if (businessData.result.owner != userId) {
-                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+                return this.returnDataImageFileName(null, 500, false, `You can not access this functionality. You do not own a business`)
             }
         }
 
@@ -363,7 +382,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         const { filename, mimetype, createReadStream } = await file;
 
         if (filename.length < 1) {
-            return this.returnData(200, false, "Choose a cover photo for your business")
+            return this.returnDataImageFileName(null, 200, false, "Choose a cover photo for your business")
         }
 
         // encrypt file name
@@ -377,19 +396,17 @@ module.exports = class EditBusinessDetails extends BusinessController {
         const pathObj = await this.uploadImageFile(stream, newFileName, path);
 
         if (pathObj.error == true) {
-            return this.returnData(500, false, "An error occurred uploading your business cover photo")
+            return this.returnDataImageFileName(null, 500, false, "An error occurred uploading your business cover photo")
         }
 
-        
-
         // delete old cover from cloudinary
-        let publicID = `cudua_commerce/business/${businessId}/cover/${businessData.coverPhoto.split('.')[0]}`;
-
-        // remove from cloudinary
-        let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+        if (businessData.coverPhoto != null || businessData.coverPhoto != undefined) {
+            let publicID = `cudua_commerce/business/${businessId}/cover/${businessData.coverPhoto.split('.')[0]}`;
+            // remove from cloudinary
+            let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
+        }
 
         //upload to cloudinary
-
         let folder = "cudua_commerce/business/"+businessId+"/cover/";
         let publicId = encryptedName;
         let tag = 'cover';
@@ -400,7 +417,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let deleteFile = await this.deleteFileFromFolder(imagePath)
 
         if (moveToCloud.error == true) {
-            return this.returnData(500, false, `An error occurred uploading your business logo`)
+            return this.returnDataImageFileName(null, 500, false, `An error occurred uploading your business logo`)
         }
 
 
@@ -410,16 +427,18 @@ module.exports = class EditBusinessDetails extends BusinessController {
         let updateCover = await this.findOneAndUpdate(businessId, newCover)
         
         if (updateCover.error == false) {
-            return this.returnData(202, true, "Your business cover photo was updated successfully")
+            return this.returnDataImageFileName(newFileName, 202, true, "Your business cover photo was updated successfully")
         } else {
-            return this.returnData(500, false, "An error occurred updating your business cover photo")
+            return this.returnDataImageFileName(null, 500, false, "An error occurred updating your business cover photo")
         }
     }
 
-    async changeBusinessAddress (streetNumber, streetId, businessId, userId) {
+    async changeBusinessAddress (streetNumber, streetId, bustop, businessId, userId) {
 
         if (streetNumber < 1) return this.returnData(200, false, 'Your street number is not provided')
         if (streetId.length < 1) return this.returnData(200, false, 'Provide a street ID');
+
+        if (bustop.length < 1) return this.returnData(200, false, 'Provide the name of the closest bus stop to your business location');
 
         let businessData = await this.getBusinessData(businessId);
 
@@ -434,7 +453,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
         if (findStreet.error) return this.returnData(500, false, `An error occurred. The street you chose has either been moved or deleted`)
 
-        findStreet = findStreet.result[0];
+        findStreet = findStreet.result;
 
         let street = findStreet._id;
         let community = findStreet.community_id._id;
@@ -450,7 +469,8 @@ module.exports = class EditBusinessDetails extends BusinessController {
             community: community,
             lga: lga,
             state: state,
-            country: country
+            country: country,
+            bus_stop: bustop
         }
 
         let updateStreet = await this.findOneAndUpdate(businessId, {address: newObject})
@@ -459,6 +479,29 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnData(202, true, "Your address was saved successufully")
         } else {
             return this.returnData(500, false, "An error occurred updating your business address")
+        }
+
+    }
+
+    async updatePaystackPublicKey (businessId, key, userId) {
+        
+        if (businessId.length == 0 || key.length == 0) return this.returnData(500, false, "An error occurred, Enter the required data")
+
+        let businessData = await this.getBusinessData(businessId);
+
+        if (businessData.error == true) {
+            return this.returnData(500, false, "An error occurred. Please try again")
+        } else {
+            // check if user is a valid business owner
+            if (businessData.result.owner != userId) return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+        }
+
+        let updateData = await this.findOneAndUpdate(businessId, {paystackPublicKey: key});
+
+        if (updateData.error == false) {
+            return this.returnData(202, true, "Your public key was saved successufully. You can now receive payment online")
+        } else {
+            return this.returnData(500, false, "An error occurred updating your public key")
         }
 
     }

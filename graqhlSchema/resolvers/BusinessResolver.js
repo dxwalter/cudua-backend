@@ -2,18 +2,59 @@
 const UsernameActions = require('../../Controllers/business/action/usernameActions')
 const CreateBusiness = require('../../Controllers/business/action/createBusiness') 
 const EditBusinessProfile = require('../../Controllers/business/action/editBusinessProfile') 
+
+const BusinessReview = require('../../Controllers/business/action/businessReview');
+
+const GetbusinessData = require('../../Controllers/business/action/getBusinessData');
+
+const ViralRegistration = require('../../Controllers/business/action/viralRegistration')
+
 const { GraphQLUpload } = require('apollo-upload-server');
+const { GraphQLDateTime } = require('graphql-iso-date') ;
 
 
 module.exports = {
     Upload: GraphQLUpload,
+    DateTime: GraphQLDateTime,
     Query: {
-        GetSingleBusinessDetails (parent, args, context, info) {
-            console.log(args)
+        GetSingleBusinessDetailsByUsername (parent, args, context, info) {
+            
+            args = args.input.username
+            let getData = new GetbusinessData();
+            return getData.getData(args)
         },
         CheckUsernameExists(parent, args, context, info) {
             let check = new UsernameActions();
             return check.CheckUsernameExistence(args.input.username);
+        },
+        GetBusinessReview(_, args, context) {
+            let review = new BusinessReview();
+            args = args.input
+            return review.GetBusinessReview(args.businessId)
+        },
+        GetViralId(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            let getId = new ViralRegistration();
+            return getId.getBusinessViralId(args.input.businessId)
+        },
+        GetDownLiners(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            let getDownlines = new ViralRegistration();
+            return getDownlines.getDownLiners(args.input.businessId)
+        },
+        GetViralRedemptionStatus(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            let getViralStat = new ViralRegistration();
+            return getViralStat.getViralRedemptionStatus(args.input.businessId)
         }
     },
     Mutation: {
@@ -116,7 +157,36 @@ module.exports = {
 
             args = args.input
             let editAddress = new EditBusinessProfile();
-            return editAddress.changeBusinessAddress(args.streetNumber, args.streetId, args.businessId, userId)
+            return editAddress.changeBusinessAddress(args.streetNumber, args.streetId, args.closestBusStop, args.businessId, userId)
+        },
+        CreateBusinessReview(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+
+            args = args.input
+
+            let review = new BusinessReview();
+            return review.CreateReview(userId, args.businessId, args.description, args.score)
+        },
+        ActivateViralInvitationGift(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            let activateGift = new ViralRegistration();
+            return activateGift.activateViralRegistrationGift(args.input.businessId, args.input.viralId, userId)
+        },
+        UpdatePaystackPublicKey(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            let updateKey = new EditBusinessProfile();
+            return updateKey.updatePaystackPublicKey(args.input.businessId, args.input.key, userId)
         }
     }
 }

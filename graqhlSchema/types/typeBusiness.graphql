@@ -17,12 +17,21 @@
         businessCategories: [BusinessCategory]
         # business logo
         logo: String
+        # business review
+        review: Float
         # business cover photo
         coverPhoto: String
         # business description
         description: String
         # business username
         username: String
+        # subscription
+        subscription: Subscription
+        subscriptionStatus: Int!
+        # reviews
+        reviews: [ReviewType]
+        # public key for online payment
+        paystackPublicKey: String
     }
 
     # This is a category choosen by  a business
@@ -94,6 +103,8 @@
         state: String
         # business country
         country: String
+        # bus stop
+        busStop: String
     }
 
     # response type
@@ -121,12 +132,13 @@
         # it can have numbers, it can start with numbers
         # it can start can not start with all special characters except underscore
         # it can start with underscore
-        # "/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/ig" remove the quote around it
+        # "/^(?!.*\.\.\s)(?!.*\.$)[^\W][\w.]{0,29}$/ig" remove the quote around it
         # visit this link to learn more "https://regexr.com/3cg7r"
         username: String!
     }
 
     # Check if username exists
+    # note that GetSingleBusinessDetailsByUsername also uses this input 
     input checkUsernameInput {
         # check username string
         username: String!
@@ -159,6 +171,13 @@
 
     # when you edit business details, this is the response you get
     type editBasicDetailsResponse implements responseType{
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+    # when you edit business details, this is the response you get
+    type editBasicLogoResponse implements responseType{
+        imagePath: String
         code: Int!
         success: Boolean!
         message: String!
@@ -217,18 +236,118 @@
     # edit business address
     input editBusinessAddress {
         # This is the number the business is located on a street
-        streetNumber: Int!,
+        streetNumber: String!,
         # this is the street id
         streetId: String!
+        # this is the closest bus stop to the business location
+        closestBusStop: String!
         # this is the business id
+        businessId: String!
+    }
+
+    # create business review
+    input createReviewInput {
+        description: String
+        score: Int!
+        businessId: String!
+    }
+
+    input GetBusinessReviewInput {
+        businessId: String!
+    }
+
+    type ReviewType {
+        author: User!
+        description:String!
+        rating: Int!
+        timeStamp: DateTime!
+    }
+
+    type GetBusinessReviewResponse implements responseType{
+        score: Float!,
+        reviews: [ReviewType]
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+    type getBusinessDetailsResponse implements responseType{
+        businessData: BusinessAccount
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+    type getDownlineDetailsResponse implements responseType{
+        businessData: [BusinessAccount]
+        redeemPrice: Int
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+    type getViralIdResponse{
+        viralId: String
+        code: Int!
+        success: String!
+        message: String!
+    }
+
+    type getViralRedemptionStatusResponse {
+        status: Boolean
+        code: Int!
+        success: String!
+        message: String!
+    }
+
+    input getViralIdInput {
+        businessId: String!
+    }
+
+    input activateSubscriptionGift {
+        businessId: String!
+        viralId: String!
+    }
+
+    type SubscriptionTimer {
+        start: DateTime,
+        end: DateTime
+    }
+
+    type createSubscriptionResponse implements ResponseType{
+        subscriptionData: SubscriptionTimer,
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
+    input updatePublicKeyInput {
+        key: String!
         businessId: String!
     }
 
     type Query {
         # get business details
-        GetSingleBusinessDetails:  BusinessAccount
+        GetSingleBusinessDetailsByUsername(input: checkUsernameInput):  getBusinessDetailsResponse
         # check if username exists
         CheckUsernameExists(input: checkUsernameInput): checkUsernameInputResponse
+        
+        # Get business reviews
+        GetBusinessReview(input: GetBusinessReviewInput): GetBusinessReviewResponse
+
+        # generate invitation ID for a business
+        GetViralId(input: getViralIdInput): getViralIdResponse
+
+        # get all the businesses that registered under an invite link
+        GetDownLiners(input: getViralIdInput): getDownlineDetailsResponse
+
+        # when a business owner invites 3 businesses to register using a unique link, the
+        # business owner gets one month free subscription. This query is to check if the business owner is eligible
+        # to activate the free gift
+        GetViralRedemptionStatus(input: getViralIdInput): getViralRedemptionStatusResponse
     }
 
     type Mutation {
@@ -245,14 +364,22 @@
         EditBusinessEmailAddress(input: editbusinessEmailInput): editBasicDetailsResponse
 
         # edit business logo
-        EditBusinesslogo(input: editBusinessLogo): editBasicDetailsResponse
+        EditBusinesslogo(input: editBusinessLogo): editBasicLogoResponse
 
         # edit business cover photo
-        EditBusinessCoverPhoto(input: editBusinessLogo): editBasicDetailsResponse
+        EditBusinessCoverPhoto(input: editBusinessLogo): editBasicLogoResponse
 
         # edit business whatsapp contact
         EditWhatsappContact(input: editWhatsappContact): editBasicDetailsResponse
 
         # edit business address
         EditBusinessAddress(input: editBusinessAddress): editBasicDetailsResponse
+
+        # create business review
+        CreateBusinessReview(input: createReviewInput): DatalessResponse
+
+        ActivateViralInvitationGift(input: activateSubscriptionGift): createSubscriptionResponse
+
+        # update paystack public key
+        UpdatePaystackPublicKey(input: updatePublicKeyInput): DatalessResponse
     }

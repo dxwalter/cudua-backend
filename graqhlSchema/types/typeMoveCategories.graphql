@@ -1,0 +1,10 @@
+
+type response {
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+type Mutation {
+    MoveCategories: response
+}

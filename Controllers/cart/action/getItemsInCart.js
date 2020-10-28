@@ -1,4 +1,5 @@
-  
+'use-strict'
+
 const CartController = require('../CartController');
 const LocationController = require('../../Location/LocationController');
 
@@ -17,20 +18,23 @@ module.exports = class GetItemsInCart extends CartController {
         }
     }
 
-    async getColor(id, colorArray) {
+    getColor(id, colorArray) {
         for (let x of colorArray) {
             if (id == x._id) {
                 return x.color_codes;
             }
         }
+        return ""
     }
 
-    async getSize(id, sizeArray) {
+    getSize(id, sizeArray) {
         for (let x of sizeArray) {
             if (id == x._id) {
                 return x.sizes;
             }
         }
+
+        return ""
     }
 
     async formatCartItems(getCartItems) {
@@ -38,11 +42,13 @@ module.exports = class GetItemsInCart extends CartController {
         let cartArray = [];
         let streetObject = {};
 
+        
+
         for (const [index, item] of getCartItems.entries()) {
 
             cartArray[index] = {
                 itemId: item._id,
-                customer: item.owner,
+                customer: item.owner._id,
                 product: {
                     productId: item.product._id,
                     name: item.product.name,
@@ -53,10 +59,11 @@ module.exports = class GetItemsInCart extends CartController {
                 business: {
                     businessId: item.business._id,
                     name: item.business.businessname,
+                    username:item.business.username
                 },
                 // get color and size from product's color and sizes array
-                size: item.size == undefined ? null : await  this.getSize(item.size, item.product.sizes),
-                color: item.color == undefined ? null : await this.getColor(item.color, item.product.colors),
+                size: item.size == undefined ? "" : this.getSize(item.size, item.product.sizes),
+                color: item.color == undefined ? "" : this.getColor(item.color, item.product.colors),
 
                 quantity: item.quantity
             }
@@ -86,7 +93,7 @@ module.exports = class GetItemsInCart extends CartController {
                     } else {
                         // arrange and save to streetObject
 
-                        let locationDetails = getLocationDetails.result[0];
+                        let locationDetails = getLocationDetails.result;
 
                         streetObject[streetId] = {
                             street: locationDetails.name,
@@ -128,7 +135,15 @@ module.exports = class GetItemsInCart extends CartController {
 
         if (getCartItems.result.length == 0 || getCartItems == null) return this.returnMethod(null, 200, true, `You do not have any item in your cart`);
 
-        let formatCartItems = await this.formatCartItems(getCartItems.result);
+        let cartItemList = [];
+
+        for (let item of getCartItems.result) {
+            if(item.product != null) {
+                cartItemList.push(item)
+            }
+        }
+
+        let formatCartItems = await this.formatCartItems(cartItemList);
 
         return this.returnMethod(formatCartItems, 200, true, `Products in cart retrieved successfully`);
 

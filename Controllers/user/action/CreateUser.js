@@ -1,11 +1,12 @@
 "use-strict";
 
-const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-let UserController = require('../UserController')
-let UserModel = require('../../../Models/UserModel')    
+const UserController = require('../UserController')
+const UserModel = require('../../../Models/UserModel')    
+const MoveToOnymousCart = require('../../anonymousCart/action/anonymousAddItemToCart');
+const CreateNotification = require('../../notifications/action/createNotification')
 
 module.exports = class CreateUser extends UserController{
 
@@ -14,65 +15,49 @@ module.exports = class CreateUser extends UserController{
         this.fullname = args.fullname;
         this.email = args.email.toLowerCase();
         this.password = args.password.toLowerCase();
+        this.anonymousId = args.anonymousId
         this.model = UserModel;
 
+        this.MoveToOnymousCart = new MoveToOnymousCart();
+
+        this.CreateNotification = new CreateNotification()
+
     }
 
-    formatFullname (name) {
-        // if name contains space, break name into two variables
-        name = name.toLowerCase();
-        let whitespacePosition = name.search(" ");
-        if (whitespacePosition == -1) {
-            // no whitespace exists
-            this.fullname = this.MakeFirstLetterUpperCase(name)
-            return;
-        }
+    returnMethod (data, status, statusMessage, statusCode) {
 
-        let splitName = name.split(" ");
-        let formattedName = "";
-        splitName.forEach(element => {
-            let newName = this.MakeFirstLetterUpperCase(element);
-            formattedName = formattedName + " " + newName
-        });
-        this.fullname = formattedName.toString().trim();
-    }
-
-    returnMethod (fullname, email, status, statusMessage, statusCode) {
         return {
-            fullname: fullname,
-            email: email,
-            userId: '',
+            userData: data,
             code: statusCode,
             success: status,
             message: statusMessage,
-            accessToken: ""
-        };
+        }
     }
 
     async validateUserInput() {
         
         if (this.fullname.length < 3) {
-            return this.returnMethod('', '', false, "Your fullname must be greater than 2 characters", 200);
+            return this.returnMethod(null, false, "Your fullname must be greater than 2 characters", 200);
         }
 
-        this.formatFullname(this.fullname);
+        this.fullname = this.formatFullname(this.fullname);
 
         if (this.password.length < 6) {
-            return this.returnMethod('', '', false, "Your password must be greater than 6 characters",  200);
+            return this.returnMethod(null, false, "Your password must be greater than 5 characters",  200);
         } else {
-            this.password = bcrypt.hashSync(this.password, 10)
+            this.password = await bcrypt.hashSync(this.password, 10)
         }
 
         if (this.email.length < 5) {
-            return this.returnMethod('', '', false, "Enter a valid email address",  200);
+            return this.returnMethod(null, false, "Enter a valid email address",  200);
         }
         
         let checkEmailExistence = await this.emailExists(this.email);
 
         if (checkEmailExistence.error == true) {
-            return this.returnMethod('', '', false, checkEmailExistence.message,  200);
-        } else if (checkEmailExistence.result == true) {
-            return this.returnMethod('', '', false, `The email address: ${this.email}, already exists`,  200);   
+            return this.returnMethod(null, false, "An error occurred. Kindly try again",  500);
+        } else if (checkEmailExistence.result != null) {
+            return this.returnMethod(null, false, `The email address: ${this.email}, already exists`,  200);   
         }
 
         const createUser = new UserModel ({
@@ -81,27 +66,34 @@ module.exports = class CreateUser extends UserController{
             password: this.password
         });
 
+        createUser['reviews'] = createUser._id;
+
         let data = await this.createUserAccount(createUser);
         if (data.error == true) {
-            return this.returnMethod('', '', false, data.message,  200);
+            return this.returnMethod(null, false, "An error occurred while creating your account",  200);
         }
-        
         data = data.result;
 
+        if(this.anonymousId != null && this.anonymousId.length > 0) {
+            this.MoveToOnymousCart.MoveAnonymousCartToOnymousCart(this.anonymousId, data._id)
+        }
+
         let userId = data._id;
-        let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '24h' });
-        
-        return {
+        let accessToken = jwt.sign({ id: userId }, process.env.SHARED_SECRET, { expiresIn: '720h' });
+
+        await this.CreateNotification.createCustomerNotification(userId, userId, "customer_profile", "Account created", "Congratulations! Your account is up and running.")
+        await this.CreateNotification.createCustomerNotification(userId, userId, "customer_profile", "Update profile", "Update your profile to see products and businesses around you")
+
+        let newData =  {
             userId : data._id,
             fullname: data.fullname,
             email: data.email,
+            review: data.review_score,
             phone: null,
             displaPicture: null,
             businessId: null,
             accessToken: accessToken,
-            code: 200,
-            success: true,
-            message: "Your account was created successfully"
         };
+        return this.returnMethod(newData, true, "Your account was created successfully",  200);
     }
 }

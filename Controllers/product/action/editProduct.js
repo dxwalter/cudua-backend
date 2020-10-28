@@ -1,14 +1,23 @@
+'use-strict'
+
 const ProductModel = require('../../../Models/Product');
 const ProductController = require('../ProductController');
 const createBusinessCategory = require('../../businessCategory/action/createBusinessCategories');
 const Categories = require('../../../Models/Categories');
-
+const SaveForLaterController = require('../../saveForLater/SaveForLaterController')
+const CartController = require('../../cart/CartController');
+const OrderController = require('../../order/orderController');
+const AnonymousCartController = require('../../anonymousCart/anonymousCartController');
 
 module.exports = class EditProduct extends ProductController {
 
     constructor () {
         super();
         this.BusinessCategory = new createBusinessCategory();
+        this.SaveForLaterController = new SaveForLaterController()
+        this.CartController = new CartController()
+        this.OrderController = new OrderController()
+        this.AnonymousCartController = new AnonymousCartController()
         this.businessProductPath = 'uploads/product/';
     }
 
@@ -18,6 +27,85 @@ module.exports = class EditProduct extends ProductController {
             success: success,
             message: message
         }
+    }
+
+    returnAvailableSizes (code, success, message, sizes = null) {
+        return {
+            code: code,
+            success: success,
+            message: message,
+            sizes: sizes
+        }
+    }
+
+    formatReturnedColor (colors) {
+        let newArray = [];
+
+        for (let x of colors) {
+            newArray.push({
+                colorId: x._id,
+                color: x.color_codes
+            })
+        }
+
+        return newArray
+    }
+
+    returnColorData (code, success, message, newData = null) {
+        return {
+            code: code,
+            success: success,
+            message: message,
+            colors: newData
+        }
+    }
+
+    uploadProductPhotoResponse (code, success, message, photos = null) {
+        return {
+            code: code,
+            success: success,
+            message: message,
+            photos: photos
+        }
+    }
+
+    async deleteProduct (productId, businessId) {
+
+        if (productId.length == 0 || businessId.length == 0) return this.returnData(200, false, "An error occurred. Refresh page and try again");
+
+        let getProduct  = await this.GetProductById(productId);
+
+        if (getProduct.error) return this.returnData(500, false, "An error occurred deleting your product");
+
+        if (getProduct.result == null) return this.returnData(500, false, "This product has been moved or deleted");
+
+        // delete product
+        let deleteProduct = await this.deleteProductById(productId, businessId);
+
+        if (deleteProduct.error) return this.returnData(500, false, "An error occurred deleting your product");
+
+        let images = getProduct.result.images;
+
+        // delete image
+        images.forEach(async image => {
+            let publicID = `cudua_commerce/business/${businessId}/product/${image.split('.')[0]}`;
+            await this.removeFromCloudinary(publicID, 'image');
+        });
+
+        // delete from cart
+        await this.CartController.deleteProductById(productId, businessId)
+
+        // delete from saved items
+        await this.SaveForLaterController.deleteProductById(productId, businessId)
+
+        // delete from order product
+        await this.OrderController.deleteProductById(productId, businessId);
+
+        // delete from anonymous cart
+        await this.AnonymousCartController.deleteProductById(productId, businessId)
+
+
+        return this.returnData(200, true, `"${getProduct.result.name}" was deleted successfully`);
     }
 
     async editProductBasicDetails (name, price, category, subcategory, businessId, productId, userId) {
@@ -247,27 +335,27 @@ module.exports = class EditProduct extends ProductController {
 
     async createAvailableSizes (sizes, productId, businessId, userId) {
 
-        if (sizes.length < 1) return this.returnData(200, false, "Enter one or multiple sizes seperated by comma for this product");
+        if (sizes.length < 1) return this.returnAvailableSizes(200, false, "Enter one or multiple sizes seperated by comma for this product");
 
-        if (!productId || !businessId) return this.returnData(200, false, "Your business and product details were not provided. Kindly refresh the page and try again")
+        if (!productId || !businessId) return this.returnAvailableSizes(200, false, "Your business and product details were not provided. Kindly refresh the page and try again")
         
         // check if business exists
         let businessData = await this.getBusinessData(businessId);
 
         if (businessData.error == true) {
-            return this.returnData(200, false, "Your business is not recognised.")
+            return this.returnAvailableSizes(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
             if (businessData.result.owner != userId) {
-                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+                return this.returnAvailableSizes(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
 
         let getProductDetails = await this.FindProductById(productId);
 
-        if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.error == true) return this.returnAvailableSizes(200, false, "This product has been moved or does not exist.")
         
-        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
+        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnAvailableSizes(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result;
 
@@ -285,10 +373,19 @@ module.exports = class EditProduct extends ProductController {
             let sizeUpdate = await this.findOneAndUpdate(productId, newSizes);
 
             if (sizeUpdate.error == true) {
-                return this.returnData(500, false, `An error occurred updating the sizes for ${getProductDetails.name}`)
+                return this.returnAvailableSizes(500, false, `An error occurred updating the sizes for ${getProductDetails.name}`)
             }
 
-            return this.returnData(202, true, `The sizes for ${getProductDetails.name} was updated successfully`);
+
+            let newSizeUpdate = [];
+            for (let x of sizeUpdate.result.sizes) {
+                newSizeUpdate.push({
+                    sizeId: x._id,
+                    sizeNumber: x.sizes
+                })
+            }
+            
+            return this.returnAvailableSizes(202, true, `The sizes for ${getProductDetails.name} was updated successfully`, newSizeUpdate);
         }
         
 
@@ -297,10 +394,17 @@ module.exports = class EditProduct extends ProductController {
         let sizeUpdate = await this.findOneAndUpdate(productId, newSizeObject);
 
         if (sizeUpdate.error == true) {
-            return this.returnData(500, false, `An error occurred updating the sizes for ${getProductDetails.name}`)
+            return this.returnAvailableSizes(500, false, `An error occurred updating the sizes for ${getProductDetails.name}`)
         }
-
-        return this.returnData(202, true, `The sizes for ${getProductDetails.name} was updated successfully`);
+        
+        let newSize = [];
+        for (let y of sizeUpdate.result.sizes) {
+            newSize.push({
+                sizeId: y._id,
+                sizeNumber: y.sizes
+            })
+        }
+        return this.returnAvailableSizes(202, true, `The sizes for ${getProductDetails.name} was updated successfully`, newSize);
 
     }
     
@@ -358,25 +462,25 @@ module.exports = class EditProduct extends ProductController {
 
     async createAvailableColors (colors, productId, businessId, userId) {
         
-        if (colors.length < 1) return this.returnData(200, false, "Enter one or multiple colors to add to this product");
+        if (colors.length < 1) return this.returnColorData(200, false, "Enter one or multiple colors seperated by comma");
 
-        if (!productId || !businessId) return this.returnData(200, false, "Your business and product details were not provided. Kindly refresh the page and try again")
+        if (!productId || !businessId) return this.returnColorData(200, false, "Your business and product details were not provided. Kindly refresh the page and try again")
         
         // check if business exists
         let businessData = await this.getBusinessData(businessId);
 
         if (businessData.error == true) {
-            return this.returnData(200, false, "Your business is not recognised.")
+            return this.returnColorData(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
             if (businessData.result.owner != userId) {
-                return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+                return this.returnColorData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
 
         let getProductDetails = await this.FindProductById(productId);
 
-        if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.error == true) return this.returnColorData(200, false, "This product has been moved or does not exist.")
         if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result;
@@ -396,22 +500,23 @@ module.exports = class EditProduct extends ProductController {
             let colorUpdate = await this.findOneAndUpdate(productId, newColors);
 
             if (colorUpdate.error == true) {
-                return this.returnData(500, false, `An error occurred updating the colors for ${getProductDetails.name}`)
+                return this.returnColorData(500, false, `An error occurred updating the colors for ${getProductDetails.name}`)
             }
 
-            return this.returnData(202, true, `The color for ${getProductDetails.name} was updated successfully`);
+            let retrurnedColors = this.formatReturnedColor(colorUpdate.result.colors)
+
+            return this.returnColorData(202, true, `The color for "${getProductDetails.name}" was created successfully`, retrurnedColors);
         }
 
 
         // update color in db
         let newColorObject = {colors: newColorArray}
         let colorUpdate = await this.findOneAndUpdate(productId, newColorObject);
-
         if (colorUpdate.error == true) {
             return this.returnData(500, false, `An error occurred updating the color for ${getProductDetails.name}`)
         }
-
-        return this.returnData(202, true, `The color for ${getProductDetails.name} were updated successfully`);
+        let retrurnedColors = this.formatReturnedColor(colorUpdate.result.colors)
+        return this.returnColorData(202, true, `The colors for "${getProductDetails.name}" were updated successfully`, retrurnedColors);
 
 
     }
@@ -455,7 +560,7 @@ module.exports = class EditProduct extends ProductController {
         }
 
         if (check == 0) {
-            return this.returnData(200, true, `The color you are trying to remove, no longer exists.`);
+            return this.returnData(200, false, `The color you are trying to remove, no longer exists.`);
         }
 
         let newData = {colors: savedColor};
@@ -471,54 +576,39 @@ module.exports = class EditProduct extends ProductController {
 
     async addMorePhotos(file, productId, businessId, userId) {
 
-        const { filename, mimetype, createReadStream } = await file;
 
         let businessData = await this.getBusinessData(businessId);
 
         if (businessData.error == true) {
-            return this.returnData(null, 200, false, "Your business is not recognised.")
+            return this.uploadProductPhotoResponse(null, 200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
             if (businessData.result.owner != userId) {
-                return this.returnData(null, 200, false, `You can not access this functionality. You do not own a business`)
+                return this.uploadProductPhotoResponse(null, 200, false, `You can not access this functionality. You do not own a business`)
             }
-        }
-
-        if (filename.length < 1) {
-            return this.returnData(200, false, "Choose a photo to upload for" + " " + getProductDetails.name)
         }
 
         let getProductDetails = await this.FindProductById(productId);
 
-        if (getProductDetails.error == true) return this.returnData(200, false, "This product has been moved or does not exist.")
-        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.returnData(200, false, `This product does not exist`)
+        if (getProductDetails.error == true) return this.uploadProductPhotoResponse(200, false, "This product has been moved or does not exist.")
+        if (getProductDetails.result == null || getProductDetails.result.business_id != businessId) return this.uploadProductPhotoResponse(200, false, `This product does not exist`)
 
         getProductDetails = getProductDetails.result;
 
         // encrypt file name
-        let encryptedName = this.encryptFileName(filename)
-        let newFileName = encryptedName + "." + mimetype.split('/')[1];
-        const stream = createReadStream();
-
-        const pathObj = await this.uploadImageFile(stream, newFileName, this.businessProductPath);
-
-        if (pathObj.error == true) {
-            return this.returnData(null, 500, false, "An error occurred uploading your product photo. Please try again")
-        }
+        let encryptedName = this.encryptFileName(await this.generateId())
+        let newFileName = encryptedName + "." + "jpg";
 
         //upload to cloudinary
 
         let folder = "cudua_commerce/business/"+businessId+"/product/";
         let publicId = encryptedName;
         let tag = 'product';
-        let imagePath = pathObj.path;
 
-        let moveToCloud = await this.moveToCloudinary(folder, imagePath, publicId, tag);
-
-        let deleteFile = await this.deleteFileFromFolder(imagePath)
+        let moveToCloud = await this.moveToCloudinary(folder, file, publicId, tag);
 
         if (moveToCloud.error == true) {
-            return this.returnData(null, 500, false, `An error uploading an image for ${getProductDetails.name}`)
+            return this.uploadProductPhotoResponse(null, 500, false, `An error uploading an image for ${getProductDetails.name}`)
         }
 
         let productImages = getProductDetails.images;
@@ -532,7 +622,7 @@ module.exports = class EditProduct extends ProductController {
             return this.returnData(500, false, `An error occurred uploading your image`)
         }
 
-        return this.returnData(202, true, `Image upload was successful`);
+        return this.uploadProductPhotoResponse(202, true, `Image upload was successful`, productImages);
 
     }
 
@@ -598,7 +688,6 @@ module.exports = class EditProduct extends ProductController {
         let newArray = [fileName];
 
         newArray = newArray.concat(imageArray);
-
 
         let removeDuplicate =  Array.from(new Set(newArray))
 

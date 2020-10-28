@@ -1,0 +1,62 @@
+type searchResult {
+    products: [Product]
+    businesses: [BusinessAccount]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+input searchInput {
+    queryString: String!
+    page: Int!
+}
+
+type RegularSearchResultCountResponse {
+    products: Int
+    businesses: Int
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+input searchResultCountInput {
+    queryString: String!
+}
+
+type advancedSearchProducts {
+    image: String!
+    productId: String!
+    businessId: String!
+    name: String!
+    price: Int!
+    addressString: String!
+}
+
+type advancedSearchBusiness {
+    logo: String
+    reviewScore: Float!
+    username: String!
+    businessName: String!
+    categoryString: String
+    businessId: String!
+}
+
+type advancedSearchResult {
+    businesses: [advancedSearchBusiness]
+    products: [advancedSearchProducts]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+input advancedSearchInput {
+    communityId: String!
+    queryString: String!
+    page: Int!
+}
+
+type Query {
+    RegularSearch(input: searchInput): searchResult
+    RegularSearchResultCount(input: searchResultCountInput): RegularSearchResultCountResponse
+    AdvancedSearch(input: advancedSearchInput): advancedSearchResult
+}

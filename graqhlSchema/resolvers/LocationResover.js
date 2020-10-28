@@ -17,6 +17,25 @@ module.exports = {
             let findLocation = new GetLocation();
             return findLocation.FindCommunity(args);
 
+        },
+        GetLga(_, args) {
+            
+            args = args.input.keyword
+            let findLocation = new GetLocation();
+            return findLocation.FindLga(args);
+
+        },
+        GetAllStates(_, args) {
+            // args = args.input.countryId
+            let findLocation = new GetLocation();
+            return findLocation.GetAllStates()
+        }
+    },
+    Mutation: {
+        AddNewUserLocation (_, args) {
+            args = args.input;
+            let findLocation = new GetLocation();
+            return findLocation.addNewLocation(args)
         }
     }
 }

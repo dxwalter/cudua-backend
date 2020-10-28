@@ -12,6 +12,7 @@ const Product = mongoose.Schema({
         ref: "categories",
         required: true
     },
+    
     subcategory: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "subcategories",
@@ -26,7 +27,7 @@ const Product = mongoose.Schema({
         required: true
     },
     description: {
-        type: String
+        type: String, default: ""
     },
     sizes: [{ 
         sizes: {type: String, trim: true}

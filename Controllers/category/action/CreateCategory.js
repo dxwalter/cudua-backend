@@ -5,64 +5,62 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 let CategoryController = require('../CategoryController');
-const CategoryModel = require('../../../Models/Categories');
+const NewCategories = require('../../../Models/NewCategories');
 
 
 module.exports = class CreateCategory extends CategoryController {
 
-    constructor (args) { 
+    constructor () { 
         super(); 
-        this.name = this.MakeFirstLetterUpperCase(args.categoryName);
     }
 
     
-    returnMethod (categoryId, categoryName, code, success, message) {
+    returnMethod (code, success, message) {
         return {
-            categoryId: categoryId,
-            categoryName: categoryName,
             code: code,
             success: success,
             message: message
         }
     }
 
-    async validateInput () {
+    async createNewCategory (categoryName, subcategories, userId) {
         // validate 
         // check if category exist
         // add
 
-        if (this.name.length < 3) {
-            return this.returnMethod("", "", 200, false, "Enter a valid category name");
+
+
+        if (categoryName.length < 3) {
+            return this.returnMethod(200, false, "Enter a valid category name");
+        }
+
+        if (subcategories.length < 3) {
+            return this.returnMethod(200, false, "Type one or multiple subcatgories seperated by comma");
         }
 
         // check if it exists   
-        let checkCategoryExistence = await this.checkCategoryExists({name: this.name});
 
-        if (checkCategoryExistence.error == true) {
-            return this.returnMethod("", "", 500, false, `An error occurred: ${checkCategoryExistence.message}`);
-        } else if (checkCategoryExistence.error == false && checkCategoryExistence.result.length > 0) {
-            return this.returnMethod("", "", 200, false,   `The '${this.name}' category  already exists`);
-        }
 
         // create
-        const CreateCategory = new CategoryModel ({
-            name : this.name
+        const CreateCategory = new NewCategories ({
+            name : categoryName,
+            author: userId,
+            subcategories: subcategories
         });
 
-        let data = await this.CreateCategory(CreateCategory);
+        let data = await this.CreateNewCategory(CreateCategory);
 
-        if (data.error == true) {
-            return this.returnMethod('', '', false, `An error occurred: ${data.message}`,  200);
-        }
+        if (data.error) return this.returnMethod(500, false, "An error occurred from our end. Kindly try again");
 
-        data = data.result;
-        return this.returnMethod(data._id, this.MakeFirstLetterUpperCase(this.name), 202, true, "Category was added successfully. It will take 1 to 3 hours to be activated.")
+        return this.returnMethod(200, true, `"${categoryName}" has been saved and currently undergoing review and be up in 60 minutes`);
+
 
     }
 
-    async confirmCategory (categoryId) {
-        
-
+    async createNewSubcategory (categoryId, subcategories, userId) {
+        console.log(categoryId)
+        console.log(subcategories)
+        console.log(userId)
     }
 
     async getCategory (categoryId) {

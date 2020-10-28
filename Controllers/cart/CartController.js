@@ -1,3 +1,4 @@
+'use-strict'
 
 const FunctionRepo = require('../MainFunction');
 const CartModel = require('../../Models/CartModel');
@@ -20,7 +21,7 @@ module.exports = class CartController extends FunctionRepo {
         }
     }
 
-    async findItemInCart(businessId, productId) {
+    async findItemInCart(businessId, productId, userId) {
         try {
             
             let getItem = await CartModel
@@ -28,7 +29,8 @@ module.exports = class CartController extends FunctionRepo {
                 $and: [
                     {
                         business: businessId, 
-                        product: productId
+                        product: productId,
+                        owner: userId
                     }
                 ]
             })
@@ -73,11 +75,66 @@ module.exports = class CartController extends FunctionRepo {
         }
     }
 
+    async deleteProductById(productId, businessId) {
+        
+        try {
+            let deleteItem = await CartModel.deleteOne({
+                $and: [{product: productId, business: businessId}]    
+            });
+
+            if (deleteItem.ok == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
+            }
+
+        } catch (error) {
+            
+            return {
+                message: error.message,
+                error: true
+            }
+
+        }
+
+    }
+
+    async deleteAllCartItemsByUserId(userId) {
+        try {
+            
+            let deleteItem = await CartModel.deleteMany({owner: userId})
+
+            if (deleteItem.ok == 1) {
+                return {
+                    result: true,
+                    error: false
+                }
+            } else {
+                return {
+                    result: false,
+                    error: false
+                }
+            }
+           
+        } catch (error) {
+            return {
+                message: error.message,
+                error: true
+            }
+        }
+    }
+
     async findItemsByUserId(userId) {
         
         try {
             let getItems = await CartModel.find({owner: userId})
-            .sort({_id: -1})
+            .populate("owner")
             .populate('business')
             .populate('product')
 
@@ -108,4 +165,23 @@ module.exports = class CartController extends FunctionRepo {
             }
         }
     }
+
+    async saveMultipleCart(cart) {
+        try {
+            
+            let saveData = await CartModel.insertMany(cart);
+
+            return {
+                error: false,
+                result: saveData
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                messgae: error.message
+            }
+        }
+    }
+
 }

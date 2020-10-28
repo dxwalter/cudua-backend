@@ -54,6 +54,12 @@ type Product {
     images: [String]
     # Primary image is the image that will show first before other images can show in the slider
     primaryImage: String!
+
+    # product description
+    description: String
+
+    # business ID
+    businessId: String
 }
 
 type Size {
@@ -77,6 +83,36 @@ type Color {
     color: String
 }
 
+type CreateColorResponse implements ResponseType {
+    colors: [Color]!
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type AddMorePhotoResponse implements ResponseType {
+    photos: [String]!
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type CreateSizeResponse implements ResponseType {
+    sizes: [Size]!
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
 type createProductResponse implements ResponseType {
     productId: String
     # Response status code
@@ -97,7 +133,7 @@ input createProduct {
     # the subcategory id of the subcategory the business chose
     subcategory: String!
     # the primary image (Image that will show first) of the product
-    file: Upload!
+    file: String!
     # the business ID of the business that is uploading the product
     businessId: String!
 }
@@ -169,7 +205,7 @@ input createProductColor {
 # you can only add one photo at a time
 input addMorePhotos {
     # image file
-    file: Upload!
+    file: String!
     # product id
     productId: String!
     # business id
@@ -218,10 +254,18 @@ input hideProduct {
     businessId: String!
 }
 
+input deleteProduct {
+    # product id
+    productId: String!
+    # business id
+    businessId: String!
+}
+
 type SingleProductResponse {
     #  a single product
     product: Product
     # Response status code
+    business: BusinessAccount
     code: Int!
     # This boolean value is used to check if an operation ran successfully
     success: Boolean!
@@ -235,6 +279,17 @@ type MultipleProductResponse {
     # This is the total number of products a business has in a category
     # Not the total number of products returned from this route in a request
     totalProductsInCategoryCount: Int
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type GetMultipleProductResponse {
+    # an array of products
+    products: [Product]
     # Response status code
     code: Int!
     # This boolean value is used to check if an operation ran successfully
@@ -274,6 +329,12 @@ type MultipleProductResponseSubcategory {
 input productId {
     # product id
     productId: String!
+}
+
+input getBusinessProduct {
+    # business Id
+    businessId: String!
+    page: Int!
 }
 
 input businessGetProductByCategory {
@@ -316,18 +377,44 @@ input businessSearchProduct {
     businessId: String!
 }
 
+
+input businessSearchbusinessProduct {
+    # product search keyword.
+    keyword: String!
+    # business id
+    businessId: String!
+    # page
+    page: Int!
+}
+
+input getProductSuggestionInput {
+    productId: String!
+    businessId: String!
+}
+
 type Query {
-    # A business or a user can get the details of a product with its reviews
+    # a user can get the details of a product with its reviews
     GetProductById(input: productId): SingleProductResponse
+    
+    # a business can get the details of a product with its reviews
+    BusinessGetProductById(input: productId): SingleProductResponse
 
     # A business can get all the products under a category
-    BusinessGetProductByCategory (input: businessGetProductByCategory): MultipleProductResponse
+    GetProductByCategory (input: businessGetProductByCategory): MultipleProductResponse
     
     # A business can get all the products under a subcategory
-    BusinessGetProductBysubCategory(input: businessGetProductBySubcategory): MultipleProductResponseSubcategory
+    GetProductBysubCategory(input: businessGetProductBySubcategory): MultipleProductResponseSubcategory
 
     # A business can search for a product she has uploaded. Please note that this search is basically a business searching for his/her product not all products uploaded to Cudua
     BusinessSearchProduct(input: businessSearchProduct): BusinessSearchResultResponse
+
+    BusinessSearchProductByCustomer(input: businessSearchbusinessProduct): BusinessSearchResultResponse
+
+    # Get products using business Id
+    GetProductsUsingBusinessId(input: getBusinessProduct): GetMultipleProductResponse
+
+    # Get product suggestion
+    GetProductSuggestion(input: getProductSuggestionInput): GetMultipleProductResponse
 }
 
 
@@ -349,19 +436,19 @@ type Mutation {
     RemoveProductTag(input: removeProductTag): DatalessResponse
 
     # create/edit product sizes
-    CreateProductSizes(input: createProductSize): DatalessResponse
+    CreateProductSizes(input: createProductSize): CreateSizeResponse
 
     # remove product sizes
-    RemoveProductSize(input: removeProductSize): DatalessResponse
+    RemoveProductSize(input: removeProductSize): CreateSizeResponse
 
     # add/edit product colors
-    CreateProductColors(input: createProductColor): DatalessResponse
+    CreateProductColors(input: createProductColor): CreateColorResponse
 
     # remove product color
-    RemoveProductColor(input: removeProductColor): DatalessResponse
+    RemoveProductColor(input: removeProductColor): CreateColorResponse
 
     # add more photos(secondary photos) to a product
-    AddmorePhotos(input: addMorePhotos): DatalessResponse
+    AddmorePhotos(input: addMorePhotos): AddMorePhotoResponse
 
     # make an image a primary image
     MakePrimaryImage (input: makePrimaryInput): ImageArrayResponse
@@ -374,4 +461,7 @@ type Mutation {
 
     # show a product
     ShowProduct(input: hideProduct): DatalessResponse
+
+    # DELETE product
+    DeleteProduct(input: deleteProduct): DatalessResponse
 }   

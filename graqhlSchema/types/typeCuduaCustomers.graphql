@@ -1,0 +1,30 @@
+type customers {
+    name: String!
+    location: String!
+    type: String!
+    phone_one: String!
+    phone_two: String
+}
+
+input createCustomerInput {
+    name: String!
+    location: String!
+    type: String!
+    phone_one: String!
+    phone_two: String
+}
+
+type DataCountResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    countData: Int!
+}
+
+type Query {
+    getCustomers: DatalessResponse
+}
+
+type Mutation {
+    createIdealCustomer(input: createCustomerInput): DataCountResponse
+}

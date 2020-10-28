@@ -1,0 +1,223 @@
+
+type Order {
+    customerName: String!
+    customerId: String!
+    profilePicture: String
+    orderTime: DateTime!
+    orderId: String!
+}
+
+input deleteItemInOrder {
+    orderId: String!
+    productId: String!    
+}
+
+input businessGetOrder {
+    businessId: String!
+}
+
+type OrderStatus {
+    newOrder: [Order]
+    pendingOrder: [Order]
+    clearedOrder: [Order]
+}
+
+type OrdersResponse implements ResponseType {
+    orders: OrderStatus
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+type searchOrdersResponse implements ResponseType {
+    orders: [Order]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+type orderCountResponse implements ResponseType {
+    count: Int!
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+type orderCustomer {
+    fullname: String!
+    customerId: String!
+    phoneNumber: String
+    email: String!
+    ratingScore: Float!
+    address: AddressType
+    profilePicture: String
+    reviews: [CustomerReview]
+}
+
+type CustomerReview {
+    rating: Int!
+    description: String
+    businessId: String!
+    customerId: String
+    author: String!
+    logo: String
+    timeStamp: DateTime!
+}
+
+type orderProduct {
+    name: String!
+    productId: String!
+    image: String!
+    quantity: Int!
+    price: Int!
+    size: String
+    ratingScore: Float!
+    color: String
+    businessId: String!
+}
+
+type deliveryTime {
+    start: String
+    end: String
+}
+
+type orderInfo {
+    deliveryCharge: Int!
+    orderStatus: Int!
+    deliveryStatus: Int!
+    deliveryTime: deliveryTime
+    orderTime: DateTime
+    cancelOrderReason: String
+    BusinessRejectOrderReason: String
+    customerCancelOrder: Int
+}
+
+type productsInOrderResponse implements ResponseType {
+    orderDetails: [orderProduct]
+    orderInfo: orderInfo
+    customerDetails: orderCustomer
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+
+input orderInput {
+    businessId: String!
+    orderId: String!
+}
+
+input confirmOrderInput {
+    businessId: String!
+    customerId: String!
+    orderId: String!
+    deliveryCharge: Int
+    startTime: String!
+    endTime: String!
+}
+
+input rejectOrder {
+    businessId: String!
+    customerId: String!
+    orderId: String!
+    reason: String!
+}
+
+input customrRejectOrder {
+    businessId: String!
+    orderId: String!
+    reason: String
+}
+
+type businessData {
+    businessName: String!
+    username: String!
+    businessId: String!
+    logo: String
+}
+
+type productsInOrderResponseWithBusinessData {
+    orderProduct: [orderProduct]!
+    businessData: businessData!
+    orderInfo: orderInfo!
+}
+
+type orderDetailsResponse {
+    orderDetails: [productsInOrderResponseWithBusinessData]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+# A customer 
+input rejectDeliveryInput {
+    businessId: String!
+    orderId: String!
+}
+
+# create order response
+
+type createOrderResponse implements ResponseType {
+    orderId: String
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+input SearchForOrderInput {
+    orderId: String!
+    businessId: String!
+}
+
+input customerOrderDetailsInput {
+    orderId: String!
+}
+
+input deleteOrderInput {
+    orderId: String!
+    businessId: String!
+    customerId: String!
+}
+
+type customerOrder {
+    orderId: String!
+    timeStamp: DateTime!
+}
+
+type customerOrderIdListing {
+    new: [customerOrder]
+    pending: [customerOrder]
+    cleared: [customerOrder]
+}
+
+type customerOrderIdResponse {
+    orders: customerOrderIdListing
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+type Query {
+    BusinessGetOrders(input: businessGetOrder): OrdersResponse
+    BusinessGetProductsInOrder(input: orderInput): productsInOrderResponse
+
+    GetNewOrderCount(input: businessGetOrder): orderCountResponse
+    # CustomerGetNewOrderCount
+
+    GetOrderItemsForCustomer(input: customerOrderDetailsInput): orderDetailsResponse
+    SearchForOrder(input: SearchForOrderInput): searchOrdersResponse
+    
+    GetCustomerOrderIds: customerOrderIdResponse
+}
+
+type Mutation {
+    CreateOrder: createOrderResponse
+    CustomerDeleteProductInOrder (input: deleteItemInOrder): DatalessResponse
+    ConfirmOrder(input: confirmOrderInput): DatalessResponse
+    RejectOrder(input: rejectOrder): DatalessResponse
+    UpdateDeliveryCharge(input: confirmOrderInput): DatalessResponse
+    RejectOrderDelivery(input: rejectDeliveryInput): DatalessResponse
+    ConfirmDelivery(input: rejectDeliveryInput): DatalessResponse
+    DeleteOrder(input: deleteOrderInput): DatalessResponse
+    CustomerCancelOrder(input: customrRejectOrder): DatalessResponse
+}

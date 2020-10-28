@@ -1,7 +1,14 @@
-const Sengrid  = require('@sendgrid/mail');
-Sengrid.setApiKey(process.env.SENDGRID_API_KEY);
+'use-strict'
+
+
 const fs = require('fs');
 const crypto = require("crypto");
+const bcrypt = require('bcrypt');
+
+const shortId = require('shortid');
+shortId.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ- ');
+
+
 
 let cloudinary = require('cloudinary').v2;
 
@@ -11,16 +18,27 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-module.exports = class FunctionRepo {
+const EmailClass = require('./EmailClass');
 
-    constructor () {}
-    
-    sendEmail (emailObj) {
-        try {
-            return Sengrid.send(emailObj);   
-        } catch (error) {  
-            console.log(error)            
+module.exports = class FunctionRepo extends EmailClass{
+
+    constructor () {
+        super()
+    }
+
+    async generateId () {
+        let orderId = shortId.generate();
+
+        if (orderId.search(" ") > -1 ){
+            orderId = orderId.replace(" ", "")
+        } 
+        
+        if (orderId.search("-") > -1 ) {
+            orderId = orderId.replace("-", "")
         }
+
+        return orderId.toUpperCase();
+
     }
 
     MakeFirstLetterUpperCase (string) {
@@ -105,4 +123,168 @@ module.exports = class FunctionRepo {
             }
         });
     }
+
+
+    formatFullname (name) {
+        // if name contains space, break name into two variables
+        name = name.toLowerCase();
+        let whitespacePosition = name.search(" ");
+        if (whitespacePosition == -1) {
+            // no whitespace exists
+            return this.MakeFirstLetterUpperCase(name);
+        }
+
+        let splitName = name.split(" ");
+        let formattedName = "";
+        splitName.forEach(element => {
+            let newName = this.MakeFirstLetterUpperCase(element);
+            formattedName = formattedName + " " + newName
+        });
+        
+        return formattedName.toString().trim();
+    }
+
+    async comparePassword (dbPassword, inputPassword) {
+        try {
+            let compare = await bcrypt.compare(inputPassword, dbPassword);
+            return {
+                error: false,
+                result: compare
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+    
+
+    SortLocationAlphabetically(dataArray) {
+        let dataNames = [];
+
+        // set name
+        Array.from(dataArray, x => {
+            dataNames.push(x.name);
+        });
+
+        let sortedNames = dataNames.sort();
+
+        let newSortedLocation  = [];
+
+        // from the sorted names
+        for (let sortedName of sortedNames) {
+
+            // from unsorted subcategories
+            for (let unsortedLocation of dataArray) {
+
+                if (sortedName == unsortedLocation.name) {
+                    newSortedLocation.push(unsortedLocation)
+                }
+            }
+        }
+
+        return newSortedLocation
+        
+
+    }
+
+    SortSubcategories(data) {
+        let subcategoryNames = [];
+
+        // set name
+        Array.from(data, x => {
+            subcategoryNames.push(x.subcategoryName)
+        });
+
+        // sort names 
+        let sortedNames = subcategoryNames.sort();
+
+        let newSortedsubcategories = [];
+
+        // from the sorted names
+        for (let sortedName of sortedNames) {
+
+            // from unsorted subcategories
+            for (let unsortedsubCategory of data) {
+
+                if (sortedName == unsortedsubCategory.subcategoryName) {
+                    newSortedsubcategories.push(unsortedsubCategory)
+                }
+            }
+        }
+
+        return newSortedsubcategories
+
+    }
+
+
+    SortCategories (categories) {
+        let categoryNames = [];
+        
+        // set name
+        Array.from(categories, x => {
+            categoryNames.push(x.categoryName)
+        });
+
+        
+        let sortCategoryNames = categoryNames.sort();
+
+        let newSortedCategories = [];
+
+        // from the sorted names
+        for (let sortedName of sortCategoryNames) {
+
+            // from unsorted categories
+            for (let unsortedCategory of categories) {
+
+                if (sortedName == unsortedCategory.categoryName) {
+                    newSortedCategories.push(unsortedCategory)
+                }
+            }
+        }
+        return newSortedCategories
+
+    }
+
+    checkReservedWords (username) {
+
+        let reservedWords = [
+            'cudua',
+            'username',
+            'notification',
+            'following',
+            'orders',
+            'cart',
+            'logout',
+            'business',
+            'saved',
+            'items',
+            'profile',
+            'dashboard',
+            'page',
+            'plugins',
+            'review',
+            'fashion',
+            'beauty',
+            'studio',
+            'search',
+            'businesss',
+            'info',
+            'about',
+            'contact',
+            'terms'
+        ];
+
+        for (let index = 0; index < reservedWords.length; index++) {
+            if (reservedWords[index] == username.toLowerCase()) {
+                return true
+                break
+            }
+        }
+
+        return false
+
+    }
+    
 }

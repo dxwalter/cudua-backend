@@ -1,0 +1,115 @@
+# # This is the response type that returns no data
+type DatalessResponse implements ResponseType {
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type CartItemsResponse implements ResponseType {
+    cart: [CartItem]
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type CartItem {
+    # Item id is the unique id of a product in cart
+    itemId: String!
+    # userId
+    customer: String!
+    # product Details. This includes product id, price, image, review
+    product: ProductCartInfo!
+    # This is the business that owns the product that is in cart. this includes business id, name of business and address
+    business: BusinessCartInfo!
+    # this is the size of the product selected by the customer
+    size: String
+    # this is the color of the product selected by the customer
+    color: String
+    # this is the quantity of the product the customer wants
+    quantity: Int!
+}
+
+type ProductCartInfo {
+    # product id
+    productId: String!
+    # name of product
+    name: String!
+    # price of the product
+    price: Int!
+    # image of product
+    image: String!
+    # this is the review score for the product between 1-5
+    review: Float!
+}
+
+# this is the info of the business that owns the product
+type BusinessCartInfo {
+    # business id
+    businessId: String!
+    # business name
+    name: String!
+    # business address
+    address: AddressType
+    username: String!
+}
+
+# add item to cart
+input anonymousAddItemToCart {
+    # anonymousId
+    anonymousId: String!    
+    # business id
+    businessId: String!,
+    # product id
+    productId: String!,
+    # color id not color code or name
+    colorId: String
+    # size id
+    sizeId: String
+}
+
+# detele item from cart
+input anonymousDeleteItemFromCart {
+    # this is the unique id of the item in cart. this is not product id
+    itemId: String!
+    anonymousId: String! 
+}
+
+input anonymousId {
+    anonymousId: String!
+}
+
+input editProductQuanity {
+    quantity: Int!
+    itemId: String!
+}
+
+input editProductSizeAndColor {
+    sizeId: String
+    colorId: String
+    itemId: String!
+}
+
+type Query {
+    # get items from cart
+    # Please note that when the "accessToken" is not provided/expired, it will retrieve data for anonymous users
+    AnonymousGetCartItems(input: anonymousId): CartItemsResponse
+}
+
+type Mutation {
+    # add an item to cart
+    AnonymousAddItemToCart(input: anonymousAddItemToCart): DatalessResponse
+    # edit product quantity
+    AnonymousEditProductQuanityInCart(input: editProductQuanity): DatalessResponse
+    
+    # edit product color and size
+    AnonymousEditProductSizeAndColorInCart(input: editProductSizeAndColor): DatalessResponse
+
+    # delete an item from cart
+    AnonymousDeleteItemFromCart(input: anonymousDeleteItemFromCart): DatalessResponse
+}

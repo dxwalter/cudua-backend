@@ -1,42 +1,35 @@
 
 const { GraphQLUpload } = require('apollo-upload-server');
+
 let CreateProduct = require('../../Controllers/product/action/createNewProduct');
 let EditProduct = require('../../Controllers/product/action/editProduct');
 let ProductVisibility = require('../../Controllers/product/action/hideAndShowProduct');
-let GetProduct = require('../../Controllers/product/action/getProducts')
+let GetProduct = require('../../Controllers/product/action/getProducts');
+const { GraphQLDateTime } = require('graphql-iso-date') ;
 
 module.exports = {
     Upload: GraphQLUpload,
+    DateTime: GraphQLDateTime,
     Query: {
         GetProductById(_, args) {
             let getProduct  = new GetProduct();
             return getProduct.getProductById(args.input.productId);
         },
-        BusinessGetProductByCategory(_, args, context) {
-            let accessToken = context.accessToken;
-            let userId = context.authFunction(accessToken);
-            if (userId.error == true) {
-                return userId
-            } else {
-                userId = userId.message;
-            }
-            args = args.input;
-
-            let getProductByCategory = new GetProduct();
-            return getProductByCategory.businessGetProductByCategory(args.businessId, args.categoryId, args.page, userId)
+        BusinessGetProductById(_, args) {
+            let getProduct  = new GetProduct();
+            return getProduct.businessGetProductById(args.input.productId);
         },
-        BusinessGetProductBysubCategory(_, args, context) {
-            let accessToken = context.accessToken;
-            let userId = context.authFunction(accessToken);
-            if (userId.error == true) {
-                return userId
-            } else {
-                userId = userId.message;
-            }
+        GetProductByCategory(_, args, context) {
             args = args.input;
 
             let getProductByCategory = new GetProduct();
-            return getProductByCategory.businessGetProductBySubcategory(args.businessId, args.subcategoryId, args.page, userId)            
+            return getProductByCategory.GetProductByCategory(args.businessId, args.categoryId, args.page)
+        },
+        GetProductBysubCategory(_, args, context) {
+            args = args.input;
+
+            let getProductByCategory = new GetProduct();
+            return getProductByCategory.GetProductBySubcategory(args.businessId, args.subcategoryId, args.page)            
         },
         BusinessSearchProduct(_, args, context) {
             let accessToken = context.accessToken;
@@ -50,6 +43,22 @@ module.exports = {
 
             let searchForProduct = new GetProduct();
             return searchForProduct.SearchForBusinessProduct(args.businessId, args.keyword.trim(), userId)            
+        },
+        BusinessSearchProductByCustomer(_, args, context) {
+            args = args.input;
+
+            let searchForProduct = new GetProduct();
+            return searchForProduct.SearchForBusinessProductByCustomer(args.businessId, args.keyword.trim(), args.page)            
+        },
+        GetProductsUsingBusinessId(_, args) {
+            args = args.input
+            let getProducts = new GetProduct();
+            return getProducts.getProductByBusinessId(args.businessId, args.page)
+        },
+        GetProductSuggestion(_, args) {
+            args = args.input
+            let getProducts = new GetProduct();
+            return getProducts.getProductSuggestions(args.businessId, args.productId)
         }
     },
     Mutation: {
@@ -228,6 +237,17 @@ module.exports = {
 
             let showProduct = new ProductVisibility();
             return showProduct.ShowProduct(args.input.productId, args.input.businessId, userId)
+        },
+        DeleteProduct (parent, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) {
+                return userId
+            } else {
+                userId = userId.message
+            }
+
+            let deleteProduct = new EditProduct();
+            return deleteProduct.deleteProduct(args.input.productId, args.input.businessId)
         }
     }
 }

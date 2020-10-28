@@ -1,8 +1,11 @@
+'use-strict'
 
 const ProductController = require('../ProductController');
 const ProductReviewController = require('../../productReview/ProductReviewController');
 const CategoryController = require('../../category/CategoryController');
 const SubategoryController = require('../../subcategories/SubcategoryController');
+const FormatBusinessData = require('../../business/action/getBusinessData');
+const BusinessCatgories = require('../../businessCategory/BusinessCategoryController')
 
 
 module.exports = class EditProduct extends ProductController {
@@ -12,14 +15,17 @@ module.exports = class EditProduct extends ProductController {
         this.ProductReviewController = new ProductReviewController();
         this.CategoryController = new CategoryController();
         this.SubcategoryController = new SubategoryController();
+        this.formatBusinessData = new FormatBusinessData()
+        this.BusinessCatgories = new BusinessCatgories()
     }
 
-    returnData (product, code, success, message) {
+    returnData (product, code, success, message, business = null) {
         return {
             product: product,
             code: code,
             success: success,
-            message: message
+            message: message,
+            business: business
         }
     }
 
@@ -62,10 +68,11 @@ module.exports = class EditProduct extends ProductController {
                 author: {
                     authorId: review.author._id,
                     fullname: review.author.fullname,
-                    profilePicture: review.author.profilePicture
+                    displayPicture: review.author.profilePicture
                 },
                 rating: review.rating,
-                description: review.description
+                description: review.description,
+                timeStamp: review.created
             }
 
             newReviewArray.push(data)
@@ -77,19 +84,21 @@ module.exports = class EditProduct extends ProductController {
 
     formatProductDetails (details) {
 
-        let productArray = [];
+        let productArray = []
 
         for (const detail of details) {
             let data = {
-                images: detail.images.length > 0 ? detail.images : null,
-                colors: detail.colors.length > 0 ? [] : null,
-                tags: detail.tags.length > 0 ? [] : null,
-                sizes: detail.sizes.length > 0 ? [] : null,
+                images: detail.images.length > 0 ? detail.images : [],
+                colors: detail.colors.length > 0 ? [] : [],
+                tags: detail.tags.length > 0 ? [] : [],
+                sizes: detail.sizes.length > 0 ? [] : [],
                 id: detail._id,
                 name: detail.name,
                 price: detail.price,
                 hide: detail.hide,
+                businessId: detail.business_id.id,
                 reviewScore: detail.score,
+                description: detail.description,
                 category: {
                     categoryId: detail.category._id,
                     categoryName: detail.category.name
@@ -139,44 +148,73 @@ module.exports = class EditProduct extends ProductController {
 
         let productDetails = getProduct.result
 
+        if (productDetails.hide == 1) return this.returnData(null, 500, false, `An error occurred. This product has been moved or deleted`)
+
         let getProductReview = await this.ProductReviewController.getReviewByProductId(productId);
 
         let reviews;
 
         if (getProductReview.error == false) {
-            reviews = getProductReview.result.length > 0 ? this.formatReview(getProductReview.result) : null;
+            reviews = getProductReview.result.length > 0 ? this.formatReview(getProductReview.result) : [];
         } else {
-            reviews = null
+            reviews = []
         }
 
         let formatProduct = this.formatProductDetails([productDetails]);
+        let formatBusinessDetails = await this.formatBusinessData.formatBusinessDetails(productDetails.business_id, null);
+
 
         formatProduct[0].reviews = reviews
 
-        return this.returnData(formatProduct[0], 200, true, `Product successfully retrieved`)
+        return this.returnData(formatProduct[0], 200, true, `Product successfully retrieved`, formatBusinessDetails)
         
     }
 
-    async businessGetProductBySubcategory (businessId, subcategoryId, page, userId) {
+    async businessGetProductById (productId) {
+
+        if (productId.length < 1) return this.returnData(null, 200, false, `An error occurred. The details of the product was not provided`)
+
+        let getProduct = await this.GetProductById(productId);
+
+        if (getProduct.error ||  getProduct.result == null) return this.returnData(null, 500, false, `An error occurred. This product has been moved or deleted`)
+
+        let productDetails = getProduct.result
+
+        let getProductReview = await this.ProductReviewController.getReviewByProductId(productId);
+
+        let reviews;
+
+        if (getProductReview.error == false) {
+            reviews = getProductReview.result.length > 0 ? this.formatReview(getProductReview.result) : [];
+        } else {
+            reviews = []
+        }
+
+        let formatProduct = this.formatProductDetails([productDetails]);
+        let formatBusinessDetails = await this.formatBusinessData.formatBusinessDetails(productDetails.business_id, null);
+
+
+        formatProduct[0].reviews = reviews
+
+        return this.returnData(formatProduct[0], 200, true, `Product successfully retrieved`, formatBusinessDetails)
+        
+    }
+
+    async GetProductBySubcategory (businessId, subcategoryId, page) {
 
         if (page < 1) {
             return this.returnMultipleDataFromSubcategory(null, 200, false, `Set the page field for this request. The default value is 1`)
         }
 
         if (businessId.length == false || subcategoryId.length == false) {
-            return this.returnMultipleDataFromSubcategory(null, 200, false, `An error occurred. Your business details or category details was not provided`)
+            return this.returnMultipleDataFromSubcategory(null, 200, false, `An error occurred. The business details or subcategory details was not provided`)
         }
 
         // check if business exists
         let businessData = await this.getBusinessData (businessId);
 
         if (businessData.error == true) {
-            return this.returnMultipleDataFromSubcategory(null, 200, false, "Your business is not recognised.")
-        } else {
-            // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
-                return this.returnMultipleDataFromSubcategory(null, 200, false, `You can not access this functionality. You do not own a business`)
-            }
+            return this.returnMultipleDataFromSubcategory(null, 200, false, "This business is not recognised.")
         }
 
         let getSubategoryDetails = await this.SubcategoryController.GetOneSubcategory(subcategoryId)
@@ -193,23 +231,18 @@ module.exports = class EditProduct extends ProductController {
             return this.returnMultipleDataFromSubcategory(null, 500, false, `An error occurred retrieving your products for ${subcategoryName} subcategory.`)
         }
 
-        if (getProducts.result.products == null) {
-            // check if no product has been added to this subcategory
-            if (getProducts.result.totalNumberOfProducts == 0) {
-                return this.returnMultipleDataFromSubcategory(null, 200, false, `No product has been added to ${subcategoryName} subcategory under ${categoryName} category.`)
-            }
-
-            return this.returnMultipleDataFromSubcategory(null, 200, false, `That was all the products in ${subcategoryName} subcategory.`, getProducts.result.totalNumberOfProducts)
+        if (getProducts.result == null) {
+            return this.returnMultipleDataFromSubcategory(null, 200, true, `That was all the products in ${subcategoryName} subcategory.`, getProducts.result.totalNumberOfProducts)
         }
 
 
-        let formatProduct = this.formatProductDetails(getProducts.result.products);
+        let formatProduct = this.formatProductDetails(getProducts.result);
 
         return this.returnMultipleDataFromSubcategory(formatProduct, 200, true, `Products for ${subcategoryName} category successfully retrieved`, getProducts.result.totalNumberOfProducts)
 
     }
 
-    async businessGetProductByCategory (businessId, categoryId, page, userId) {
+    async GetProductByCategory (businessId, categoryId, page) {
         
         if (page < 1) {
             return this.returnMultipleData(null, 200, false, `Set the page field for this request. The default value is 1`)
@@ -223,12 +256,7 @@ module.exports = class EditProduct extends ProductController {
         let businessData = await this.getBusinessData (businessId);
 
         if (businessData.error == true) {
-            return this.returnMultipleData(null, 200, false, "Your business is not recognised.")
-        } else {
-            // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
-                return this.returnMultipleData(null, 200, false, `You can not access this functionality. You do not own a business`)
-            }
+            return this.returnMultipleData(null, 200, false, "This business is not recognised.")
         }
 
         let getCategoryDetails = await this.CategoryController.GetOneCategory(categoryId)
@@ -241,23 +269,40 @@ module.exports = class EditProduct extends ProductController {
 
         let getProducts = await this.GetBusinessProductsByCategory(businessId, categoryId, page);
         if (getProducts.error == true) {
-            return this.returnMultipleData(null, 500, false, `An error occurred retrieving your products for ${categoryName} category.`)
+            return this.returnMultipleData(null, 500, false, `An error occurred retrieving the products for ${categoryName} category.`)
         }
 
-        if (getProducts.result.products == null) {
-            
-            // check if no product has been added to this subcategory
-            if (getProducts.result.totalNumberOfProducts == 0) {
-                return this.returnMultipleData(null, 200, false, `No product has been added to ${categoryName} category.`)
-            }
-
-            return this.returnMultipleData(null, 200, false, `That was all the products in ${categoryName} category.`, getProducts.result.totalNumberOfProducts)
+        if (getProducts.result == null) {
+            return this.returnMultipleData(null, 200, true, `No product has been added to ${categoryName} category.`)
         }
 
-
-        let formatProduct = this.formatProductDetails(getProducts.result.products);
+        let formatProduct = this.formatProductDetails(getProducts.result);
 
         return this.returnMultipleData(formatProduct, 200, true, `Products for ${categoryName} category successfully retrieved`, getProducts.result.totalNumberOfProducts)
+
+    }
+
+    async getProductByBusinessId (businessId, page = 1) {
+        
+        if (businessId.length < 1) return this.returnMultipleDataFromSubcategory(null, 200, false, "This business does not exist. It has either been moved or deleted");
+
+        // check if business exists
+        let businessData = await this.getBusinessData (businessId);
+
+        if (businessData.error == true) {
+            return this.returnMultipleDataFromSubcategory(null, 200, false, "This business does not exist. It has either been moved or deleted")
+        }
+        
+        let query = await this.FindProductByBusinessId(businessId, page);
+
+        if (query.error) return this.returnMultipleDataFromSubcategory(null, 500, false, "An error occurred from our end. Kindly refresh the page and try again");
+    
+
+        if (query.result.length == null) return this.returnMultipleDataFromSubcategory(null, 200, true, "No product has been uploaded by this business");
+
+        let formatProduct = this.formatProductDetails(query.result);
+
+        return this.returnMultipleDataFromSubcategory(formatProduct, 200, true, "successful")
 
     }
 
@@ -289,7 +334,7 @@ module.exports = class EditProduct extends ProductController {
             
             // check if no product has been added to this subcategory
             if (productSearch.result.totalNumberOfProducts == 0) {
-                return this.returnProductSearchResult(null, 200, false, `No result was found for '${keyword}'.`)
+                return this.returnProductSearchResult(null, 200, true, `No result was found for '${keyword}'.`)
             }
         }
 
@@ -301,4 +346,118 @@ module.exports = class EditProduct extends ProductController {
 
         
     }
+
+    async SearchForBusinessProductByCustomer (businessId, keyword, page = 1) {
+
+        page = page == 0 ? 1 : page
+
+        if (businessId.length == false || keyword.length == false) {
+            return this.returnProductSearchResult(null, 200, false, `An error occurred. Your business details or search keyword was not provided`)
+        }
+
+        // check if business exists
+        let businessData = await this.getBusinessData (businessId);
+
+        if (businessData.error == true) {
+            return this.returnProductSearchResult(null, 200, false, "This business is not recognised.")
+        }
+
+        let productSearch = await this.businessProductSearchCustomer(businessId, keyword, page);
+
+        if (productSearch.error == true) {
+            return this.returnProductSearchResult(null, 500, false, `An error occurred while searching for '${keyword}'.`)
+        }
+
+        if (productSearch.result.products == null) {
+            if (page > 1){
+                return this.returnProductSearchResult(null, 200, true, `That was all the results for '${keyword}'.`, productSearch.result.totalNumberOfProducts)
+            } else {
+                return this.returnProductSearchResult(null, 200, true, `No result was found for '${keyword}'.`, productSearch.result.totalNumberOfProducts)
+            }
+        }
+
+        let formatProduct = this.formatProductDetails(productSearch.result.products);
+
+        return this.returnProductSearchResult(formatProduct, 200, true, `Product search was successful`, productSearch.result.totalNumberOfProducts)
+
+    }
+
+    async getProductSuggestions(businessId, productId) {
+
+        if (businessId.length == 0 || productId.length == 0) return this.returnMultipleDataFromSubcategory([], 500, false, "Incomplete data");
+
+        let getProductDetails = await this.FindProductById(productId);
+
+        if (getProductDetails.error) return this.returnMultipleDataFromSubcategory([], 500, false, getProductDetails.message);
+
+        let categoryId = getProductDetails.result.category
+        let subcategoryId = getProductDetails.result.subcategory
+
+        // get business product categories
+        let getBusinessCategories = await this.BusinessCatgories.getbusinessCategories(businessId);
+
+        if (getBusinessCategories.error) return this.returnMultipleDataFromSubcategory([], 500, false, getBusinessCategories.message);
+
+        let scoreOne = [];
+        
+        let scoreTwo = [];
+
+        let scoreThree = [];
+
+
+        let allCategories = getBusinessCategories.result
+
+        if (allCategories.length == 0) return this.returnMultipleDataFromSubcategory([], 200, false, "This business has no category")
+
+        let visibleSubCategories = [];
+
+        for (let allCat of allCategories) {
+            if (allCat.hide == 0) {
+                for (let subcat of allCat.subcategories) {
+                    if (subcat.hide == 0) {
+                        visibleSubCategories.push(subcat.subcategory_id._id);
+                    }
+                }
+            }
+        }
+
+        // get products from subcategory
+        
+        for (let ids of visibleSubCategories) {
+
+            let getProductFromSubcatgory = await this.GetBusinessProductsBySubcategory(businessId, ids, 1);
+            if (getProductFromSubcatgory.error == false) {
+
+                let productCount = 0
+
+                if (ids.toString() == subcategoryId) {
+                    for (let product of getProductFromSubcatgory.result) {
+                        if (product.hide == 0 && product.id != productId) {
+                            productCount = scoreOne.length + scoreTwo.length
+                            if (productCount >= 10) break;
+                            scoreOne.push(product)
+                        } 
+                    }
+                } else {
+                    for (let product of getProductFromSubcatgory.result) {
+                        if (product.hide == 0 && product.id != productId) {
+                            productCount = scoreOne.length + scoreTwo.length
+                            if (productCount >= 10) break;
+                            scoreTwo.push(product)
+                        } 
+                    }
+                }
+            }
+        }
+
+        
+        let mergeArray = [...scoreOne, ...scoreTwo];
+
+        let formatProduct = this.formatProductDetails(mergeArray)
+
+        return this.returnMultipleDataFromSubcategory(formatProduct, 200, true, "successful")
+        
+
+    }
+
 }

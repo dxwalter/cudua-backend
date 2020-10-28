@@ -1,7 +1,8 @@
+'use-strict'
 
 const SubCatgoryModel = require('../../Models/Subcategory');
 const CatgoryModel = require('../../Models/Categories');
-let CategoryController = require('../category/CategoryController');
+const CategoryController = require('../category/CategoryController');
 
 
 module.exports = class SubcategoryController extends CategoryController {
@@ -83,10 +84,9 @@ module.exports = class SubcategoryController extends CategoryController {
             )
             .populate('category_id');
 
-            let data = result._id.toString().length > 0 ? result : null;
             return {
                 error: false,
-                result: data
+                result: result
             };
 
         } catch (error) {
@@ -94,6 +94,24 @@ module.exports = class SubcategoryController extends CategoryController {
                 error: true,
                 message: error.message
             }
+        }
+    }
+
+    async createSubcategory (data) {
+        try {
+            
+            let save = await data.save();
+
+            return {
+                error: false,
+                result: save
+            } 
+
+        } catch (error) {
+            return {
+                error: false,
+                message: error.message
+            } 
         }
     }
 }

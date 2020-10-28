@@ -1,3 +1,5 @@
+    scalar Upload
+
     # response type
     interface ResponseType {
         # Response status code
@@ -18,6 +20,17 @@
         message: String!
     }
 
+    # This is the response type that returns no data
+    type updateProfileDpResponse implements ResponseType {
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!,
+        imagePath: String
+    }
+
     # This "User" type defines the queryable fields for every user in our data source.
     type User {
         # The fullname of the user must be greater than 2 characters
@@ -29,21 +42,43 @@
         #  this is the user's password. it must be greater than 5 characters
         phone: String
         # the user display picture
-    	displaPicture: String
+    	displayPicture: String
         # Business id represents the unique id of a business that was created by a user
     	businessId: String
         # This user id represents a human account (personal account)
         userId: String!
+        # This is the review score for this user
+        review: Float!
+        # user address
+        address: AddressType
+    }
+
+    # this is the address of the user
+    type AddressType {
+        # the user street number
+        number: String
+        # user street
+        street: String
+        # user community
+        community: String
+        # user lga
+        lga: String
+        # user state
+        state: String
+        # user country
+        country: String
+        # user bus stop
+        busStop: String
     }
 
     type UserReview {
         authorId: String!
         fullname: String!
-        displaPicture: String
+        displayPicture: String
     }
 
     # This method allows a user to reset the password without logging in
-    input resetPassword {
+    input resetPasswordInput {
         # this is the new password the user will provide as input and it must be greater that 5 characters
         password: String!
 
@@ -54,16 +89,27 @@
         userId: String!
     }
 
-    type CreateAccountResponse implements ResponseType {
-        fullname: String!
-  		email: String!
+    type UserData {
+        fullname: String
+  		email: String
         phone: String
     	displaPicture: String
         # Business id represents the unique id of a business that was created by a user
     	businessId: String
         # This user id represents a human account (personal account)
-        userId: String!
+        userId: String
+        # user review
+        review: Int!
+        """ 
+        this is the jwt access token generated when a user logs in successfully.
+        This is token is used to authenticate every logged in user. Therefore, it is attached 
+        in the header object of every request sent by a logged in user.
+        """
+        accessToken: String!
+    }
 
+    type CreateAccountResponse implements ResponseType {
+        userData: UserData
         # Api http status code
         code: Int!
         # This boolean value is used to check if an operation ran successfully
@@ -71,12 +117,6 @@
 
         # This is the message sent by the server about an operation
         message: String!
-        """ 
-        this is the jwt access token generated when a user logs in successfully.
-        This is token is used to authenticate every logged in user. Therefore, it is attached 
-        in the header object of every request sent by a logged in user.
-        """
-        accessToken: String!
     }
 
     type LoginResponse implements ResponseType {
@@ -101,6 +141,14 @@
         accessToken: String,
     }
 
+    # anonymous login response
+    type AnonymousLoginResponse {
+        anonymousId: String
+        code: String!
+        success: Boolean!
+        message: String!
+    }
+
     # This is the input type for that will for an account to be created
     input CreateAccountInput {
         """
@@ -112,6 +160,8 @@
         email: String!
         # This is the password of the user. It must be of at least 6 or more character length 
         password: String!
+        # This is the anonymous ID of the user if it exists
+        anonymousId: String
     }
 
     input LoginInput {
@@ -119,8 +169,110 @@
         email: String!
         # This is the user's login password
         password: String!
+        # This is the anonymous ID of the user if it exists
+        anonymousId: String
     }
 
+    input editUserContact {
+        email: String
+        phone: String
+    }
+
+    input editUserAddress {
+        streetNumber: Int!
+        streetId: String!
+        busStop: String!
+    }
+
+    # edit user logo input
+    input editUserDp {
+        file: Upload!
+    }
+
+    # edit user's fullname
+    input editCustomerFullname {
+        fullname: String!
+    }
+
+    # edit users' password input
+    input editCustomerPassword {
+        oldPassword: String!
+        newPassword: String!
+    } 
+
+    type createUserAndBusinessResponse {
+        # userData
+        userData: UserData
+        # business details
+        businessDetails: BusinessAccount
+        # Api http status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
+    # create user and business input
+    input createUserAndBusinessInput {
+        """
+        This is the fullname of the user. The user can choose to give only first or
+        lastname or both first and lastname. The fullname must be greater than 2 characters
+        """
+        fullname: String!
+        # This is the email address of the user and it must be unique
+        email: String!
+        # This is the password of the user. It must be of at least 6 or more character length 
+        password: String!
+        # This is the anonymous ID of the user if it exists
+        anonymousId: String
+        # business name
+        name: String!
+        # business username
+        # a username must be greater than 2 characters
+        # it can have numbers, it can start with numbers
+        # it can start can not start with all special characters except underscore
+        # it can start with underscore
+        # "/^(?!.*\.\.\s)(?!.*\.$)[^\W][\w.]{0,29}$/ig" remove the quote around it
+        # visit this link to learn more "https://regexr.com/3cg7r"
+        username: String!
+        inviteId: String
+    }
+
+    input recoverPasswordInput {
+        email: String!
+    }
+
+    #This is the mutation type that will handle create account, forgot and recover pasword
+    type Mutation {
+        # create a new user
+        createUser(input: CreateAccountInput): CreateAccountResponse
+
+        # create a user and a business at the same time
+        createUserAndBusiness(input: createUserAndBusinessInput): createUserAndBusinessResponse
+
+        # recover a lost or forgotten password
+        recoverPassword(input: recoverPasswordInput): DatalessResponse
+        # change to a new password
+        resetPassword(input: resetPasswordInput): DatalessResponse
+
+        # this is to edit contact info of the user
+        editUserContact(input: editUserContact): DatalessResponse
+        
+        # this is to edit user/customer's address
+        editCustomerAddress(input: editUserAddress): DatalessResponse
+
+        # edit user Dp
+        editCustomerDP (input: editUserDp): updateProfileDpResponse
+
+        # edit customer's name
+        editCustomerName (input: editCustomerFullname): DatalessResponse
+
+        # change customers' password
+        editCustomerPassword (input: editCustomerPassword): DatalessResponse
+    }
+    
     # The "Query" type is special: it lists all of the available queries that
     # clients can execute, along with the return type for each. In this
     # case, the "books" query returns an array of zero or more Books (defined above).
@@ -132,17 +284,7 @@
         getUsers: [User]
         # log in a user
         userLogin(input: LoginInput): LoginResponse
+
+        # get anonymous id
+        GetAnonymousId: AnonymousLoginResponse
     }
-
-    #This is the mutation type that will handle create account, forgot and recover pasword
-    type Mutation {
-        # create a new user
-        createUser(input: CreateAccountInput): CreateAccountResponse
-        # recover a lost or forgotten password
-        recoverPassword(email: String): DatalessResponse
-        # change to a new password
-        resetPassword(input: resetPassword): DatalessResponse
-    }
-
-
-    

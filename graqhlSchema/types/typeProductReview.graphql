@@ -22,9 +22,11 @@ type ProductReview {
     # the author of the review is a user represented with a user id
     author: UserReview!
     # review score by this user for a product
-    rating: String!
+    rating: Int!
     # the message/feedback from the review written by the user
     description: String
+    # time
+    timeStamp: DateTime!
 }
 
 input createProductReview {

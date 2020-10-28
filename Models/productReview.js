@@ -8,10 +8,10 @@ const ProductReview = mongoose.Schema({
     },
     product_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "products",
+        ref: "product",
         required: true
     },
-    rating: {type: String, required: true},
+    rating: {type: Number, required: true},
     description: {type: String, trim: true, required: false},
     created : {
         type : Date,

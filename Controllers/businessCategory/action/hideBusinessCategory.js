@@ -13,7 +13,7 @@ module.exports = class HideBusinessCategory extends BusinessCategoryController {
     }
 
     async hideCategory (categoryId, businessId) {
-        // note that documentI is the _id from business-category collection
+        // note that documentId is the _id from business-category collection
         if (categoryId.length < 1 || businessId.length < 1) {
             return {
                 code: 200, 
@@ -49,12 +49,12 @@ module.exports = class HideBusinessCategory extends BusinessCategoryController {
             }
         }
 
-        let categoryName = getCategoryDetails.result[0].name;
+        let categoryName = getCategoryDetails.result.name;
 
         return {
             code: 200,
             success: true,
-            message: `${categoryName} category was hidden successfully`
+            message: `${categoryName} category is no longer visible to customers`
         }
 
     }

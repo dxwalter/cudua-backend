@@ -45,7 +45,7 @@ type ProductCartInfo {
     # image of product
     image: String!
     # this is the review score for the product between 1-5
-    review: Int!
+    review: Float!
 }
 
 # this is the info of the business that owns the product
@@ -56,6 +56,8 @@ type BusinessCartInfo {
     name: String!
     # business address
     address: AddressType
+
+    username: String!
 }
 
 # add item to cart
@@ -85,11 +87,13 @@ input updateItemQuantity {
 }
 
 # update item color
-input updateItemColor {
+input updateItemColorAndSize {
     # this is the unique id of the item in cart. this is not product id
     itemId: String!
     # color id not color name
-    colorId: String!
+    colorId: String
+    # size
+    sizeId: String
 }
 
 
@@ -116,7 +120,5 @@ type Mutation {
     # update the quantity of an item in cart
     UpdateItemQuantity(input: updateItemQuantity): DatalessResponse
     # update the color of an item in cart
-    UpdateItemColor(input: updateItemColor): DatalessResponse
-    # update the size of an item in cart
-    UpdateItemSize(input: updateItemSize): DatalessResponse
+    UpdateItemColorAndSize(input: updateItemColorAndSize): DatalessResponse
 }

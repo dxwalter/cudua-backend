@@ -4,6 +4,14 @@ const CategorySchema = mongoose.Schema({
     name: {
         type: String, required: true, trim: true
     },
+    ms_id: {
+        type: Number
+    },
+    industry: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "industries",
+        required: true
+    },
     icon: {
         type: String, required: false
     },

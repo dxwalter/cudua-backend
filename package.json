@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/dxwalter/cudua-backend#readme",
   "dependencies": {
-    "@sendgrid/mail": "^7.1.1",
     "apollo-upload-server": "^7.1.0",
     "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",
@@ -38,6 +37,7 @@
     "express-session": "^1.17.0",
     "express-validator": "^6.4.0",
     "graphql": "^15.0.0",
+    "graphql-iso-date": "^3.6.1",
     "graphql-tools": "^6.0.1",
     "graphql-upload": "^11.0.0",
     "heroku-self-ping": "^2.0.1",
@@ -48,6 +48,7 @@
     "mongoose": "^5.9.16",
     "multer": "^1.4.2",
     "mysql": "^2.18.1",
+    "node-mailjet": "^3.3.1",
     "reflect-metadata": "^0.1.13",
     "resize-optimize-images": "^1.1.0",
     "serverless": "^1.74.1",
@@ -62,6 +63,6 @@
     "dotenv": "^8.2.0"
   },
   "engines": {
-    "node": "12.17.0"
+    "node": "12.x"
   }
 }

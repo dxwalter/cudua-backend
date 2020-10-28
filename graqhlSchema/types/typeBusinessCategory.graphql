@@ -67,6 +67,8 @@
     }
 
     type businessSubcategory {
+        itemId: String!
+        hide: Int!
         subcategoryId: String!
         subcategoryName: String!
         # the number of products in a subcategory
@@ -75,10 +77,13 @@
 
     # list of categories and corresponding subcatgories choosen by a business
     type businessCategory {
+        itemId: String!
         # category id
         categoryId: String!
         # category name
         categoryName: String!
+        # this is visibiliy status
+        hide: Int
         # an array of corresponding subcategories chosen under a category that has been chosen by a business
         subcategory: [businessSubcategory]
     }
@@ -93,6 +98,16 @@
         success: Boolean!
         # This is the message sent by the server about an operation
         message: String!
+    }
+
+    input deleteCategory {
+        categoryId: String!
+        businessId: String!
+    }
+
+    input deleteSubcategory {
+        subcategoryId: String!
+        businessId: String!
     }
 
     type Query {
@@ -114,6 +129,12 @@
 
         # show business subcategory
         ShowSelectedBusinessSubcategory(input: showBusinessSubcategory): DatalessResponse
+
+        # delete selected subcategory
+        DeleteSelectedSubcategory(input: deleteSubcategory): DatalessResponse
+
+        # delete business category
+        DeleteSelectedCategory(input: deleteCategory): DatalessResponse
 
         
     }

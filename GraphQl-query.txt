@@ -1,12 +1,23 @@
 {
-  userLogin(input:{email: "theceoforlife@gmail.com", password: "walter99"}) {
+  userLogin(input:{email: "theceoforlife@gmail.com", password: "supermum", 
+    anonymousId: "LU04ZK2IY"}) {
     
     userDetails {
       fullname
   		email
       phone
     	userId
-    	displaPicture
+    	displayPicture
+      review
+      address {
+        number
+        street
+        community
+        lga
+        state
+        country
+        busStop
+      }
     }
      
     businessDetails {
@@ -16,6 +27,7 @@
       logo
       coverPhoto
       description
+      review
       address {
         number
         street
@@ -33,7 +45,7 @@
         }
       }
       businessCategories{
-        id
+        itemId
         categoryId
         categoryName
         hide
@@ -62,15 +74,18 @@ mutation{
 
 mutation {
   createUser(input:{
-    fullname: "Daniel Walter", email: "theceoforlife@gmail2.coma", password:"supermum"
+    fullname: "Daniel Walter", email: "anonymous@gmail2.coma", password:"supermum",
+    anonymousId: "YC3DILWB"
   }) {
-      fullname
+     userData{
+       fullname
   		email
       phone
     	userId
     	displaPicture
     	businessId
       accessToken
+    }
       code
       success
       message
@@ -115,6 +130,33 @@ mutation {
 }
 
 mutation {
+  createUserAndBusiness(input:{
+    fullname: "New Daniel Walter",
+    email: "newemail@gmail.com",
+    password: "walter99",
+    anonymousId: "",
+    name: "New business name",
+    username: "newDanielWalter"
+  }) {
+    userData {
+      fullname
+      email
+      businessId
+      userId
+      accessToken
+    }
+    businessDetails {
+      id
+      businessname
+      username
+    }
+    code
+    success
+    message
+  }
+}
+
+mutation {
   createSubCategory(input: {subcategories: ["One", "two", "three", "four"], categoryId: "5ee0d6d8d08a131d68889c66"}) {
     code
     success
@@ -122,15 +164,18 @@ mutation {
   }
 }
 
-mutation{
-  createCategory(input:{categoryName: "Electronics"}) {
-    categoryId
-    categoryName
+mutation {
+  createCategory(input:{
+    categoryName: "Daniel",
+    subcategories:"Walter, udoh",
+  }) {
     code
     success
     message
   }
+}
 
+mutation{
   ActivateCategory (input:{categoryId: "5ee520f8f5970734a4cf64dc"}) {
     code
     success
@@ -150,7 +195,7 @@ query {
   GetAllCategories {
     category{
       id
-      name
+      categoryName
       subcategories {
         subcategoryId
         subcategoryName
@@ -239,7 +284,7 @@ mutation {
 }
 
 mutation {
-  createBookmark(input: {businessId: "5ee77d93a35c6f1bf43fe43a"}){
+  FollowBusiness(input: {businessId: "5ee77d93a35c6f1bf43fe43a"}){
     code
     success
     message
@@ -265,18 +310,21 @@ query{
 }
 
 {
-  getBookmakers(input: {businessId: "5ef1e8ab4b38312320f56ada"}) {
+  GetFollowers(input: {
+    businessId: "5f0e73a9794b222e284a988a",
+ 		page: 1
+  }) {
     customerData {
       name
       profilePhoto
+      reviewScore
     }
     code
     success
     message
   }
-}    
-
-
+}       
+   
 mutation {
   EditBusinessEmailAddress(input:{
     email: "wala@gmail.com",
@@ -339,6 +387,7 @@ mutation {
   EditBusinessAddress(input:{
     streetNumber: 10,
    	streetId: "5f088765b0be4c0ba09f860b",	
+    closestBusStop: "Artillery bus stop",
     businessId: "5f0a5ad394b3161a343590e7"
   }) {
     code
@@ -851,6 +900,67 @@ query {
     
 
 
+{
+  AnonymousGetCartItems(input: {
+    anonymousId: "LU04ZK2IY"
+  }){
+    cart {
+      customer
+      itemId
+      product{
+        productId
+        name
+        price
+        image
+        review
+      }
+      business {
+        businessId
+        name
+        address {
+          number
+          street
+          community
+          lga
+          state
+          country
+        }
+      }
+      size
+      color
+      quantity
+    }
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  AnonymousAddItemToCart(input:{
+    anonymousId: "LU04ZK2IY",
+    businessId:"5f0a5ad394b3161a343590e7",
+    productId: "5f0e722b5cfb6e3494756d60",
+    colorId: "5f0edfa384604217685696ae",
+    sizeId: "5f0edfa384604217685696b4"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  AnonymousDeleteItemFromCart(input: {
+    anonymousId: "LU04ZK2IY",
+    itemId: "5f0fb2e79728141268021a07"
+  }) {
+    code
+    success
+    message
+  }
+}
+
 mutation{
   AddItemToCart(input:{
     businessId:"5f0a5ad394b3161a343590e7",
@@ -903,6 +1013,507 @@ mutation {
     itemId: "5f104ad42cb1462c1ce9950f",
     sizeId: "5f0edfa384604217685696b6",
   }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  CreateOrder {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  CustomerDeleteProductInOrder(input: {
+    orderId: "OFVDETFDC",
+    productId: "5f0e722b5cfb6e3494756d60"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+
+{
+  BusinessGetOrders(input:{
+    businessId: "5f0e73a9794b222e284a988a"
+  }){
+    orders {
+      newOrder {
+        customerName
+        profilePicture
+        orderTime
+        orderId
+      }
+      pendingOrder {
+        customerName
+        profilePicture
+        orderTime
+        orderId
+      }
+      clearedOrder {
+        customerName
+        profilePicture
+        orderTime
+        orderId
+      }
+    }
+    code
+    success
+    message
+  }
+}
+
+{
+  BusinessGetProductsInOrder(input: {
+    businessId: "5f0e73a9794b222e284a988a",
+    customerId: "5f0dbff90249e81488ee2149",
+    orderId: "O0FPBKM2U"
+  }) {
+    orderDetails {
+      name
+      productId
+      avatar
+      quantity
+      price
+      size
+      color
+    }
+    deliveryCharge
+    customerDetails {
+      fullname
+      customerId
+      phoneNumber
+      email
+      ratingScore
+      profilePicture
+      address {
+        number
+        street
+        community
+        lga
+        state
+        country
+        busStop
+      }
+      reviews {
+        rating
+        description
+        author
+        logo
+      }
+    }
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  ConfirmOrder(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    customerId: "5f0dbff90249e81488ee2149",
+    orderId: "O0FPBKM2U",
+    deliveryCharge: 2000,
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  UpdateDeliveryCharge(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    customerId: "5f0dbff90249e81488ee2149",
+    orderId: "O0FPBKM2U",
+    deliveryCharge: 2000,
+  }) {
+    code
+    success
+    message
+  }
+}
+
+
+mutation {
+  RejectOrder(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    customerId: "5f0dbff90249e81488ee2149",
+    orderId: "O0FPBKM2U",
+    reason: "I dont deliver to your area"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+
+mutation {
+  RejectOrderDelivery(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    orderId: "O0FPBKM2U",
+  }) {
+    code
+    success
+    message
+  }
+}
+
+{
+  GetNewOrderCount (input: {
+    businessId: "5f0e73a9794b222e284a988a"
+  }){
+    count
+    code
+    success
+    message
+  }
+}
+
+mutation {
+	createCustomerReview(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    customerId: "5f1670ab9041bc122c994907",
+    rating: 5,
+    description: "Thi is so cool"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  editUserContact(input :{
+    email: "theceoforlife@gmail.com",
+    phone: "08104686729",
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  editCustomerAddress(input :{
+    streetNumber: 10,
+    streetId: "5f088765b0be4c0ba09f8610",
+    busStop: "Artillery bus stope"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation ($file: Upload!) {
+  editCustomerDP(input:{
+    file: $file,
+  }) {
+    code
+    success
+    message
+  }
+}
+
+{
+  GetBusinessNotification(input:{
+    businessId: "5f0e73a9794b222e284a988a",
+    page: 1
+  }) {
+    notification {
+      notificationId
+      isRead
+      owner
+      actionId
+      type
+      message
+    }
+    code
+    success
+    message
+  }
+}
+
+{
+  GetCustomerNotification(input:{
+    page: 1
+  }) {
+    notification {
+      notificationId
+      isRead
+      owner
+      actionId
+      type
+      message
+    }
+    code
+    success
+    message
+  }
+}
+
+{
+  GetCustomerNotificationCount {
+    count
+    code
+    success
+    message
+  }
+}
+
+{
+  GetBusinessNotificationCount (input: {
+    businessId: "5f0e73a9794b222e284a988a"
+  }){
+    count
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  MarkNotificationAsRead (input: {
+    notificationId:"",
+    type: "business"
+  }) {
+    code
+    success
+    message
+  }
+} 
+
+mutation {
+  SaveProductForLater(input:{
+    productId: "5f0e759a2c5c1f2bfce2c822"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  RemoveProductFromSavedProducts(input:{
+    productId: "5f0e759a2c5c1f2bfce2c822"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  MoveToCart(input:{
+    productId: "5f0e722b5cfb6e3494756d60"
+  }) {
+    code
+    success
+    message
+  }
+}
+
+{
+  GetSavedItems(input: {
+    page: 1
+  }) {
+    products {
+      productId
+      name
+      image
+      review
+    }
+    count
+    code
+    success
+    message
+  }
+}
+
+{
+  GetAnonymousId{
+    anonymousId
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  FollowBusiness(input: {
+    businessId: "",
+  }) {
+    code
+    success
+    message
+  }
+}
+
+mutation{
+  UnfollowBusiness(input: {
+    businessId: ""
+  }) {
+    code
+    success
+    message
+  }
+}
+
+{
+  Getfollowing(input:{
+    page: 1
+  }) {
+    following{
+      businessId
+      username
+      businessName
+      logo
+      review
+      businessCategory {
+        itemId
+        categoryId
+        categoryName
+        hide
+      }
+    }
+    code
+    success
+    message
+  }
+}
+
+{
+  GetAllStates {
+    states {
+      name
+      stateId
+    }
+    country {
+      name
+      countryId
+    }
+    code
+    success
+    message
+  }
+}
+
+mutation {
+  CreateBusinessReview(input: {
+    businessId: "5f0a5ad394b3161a343590e7",
+    score: 1,
+    description: "Phasellus dolor. ."
+  }) {
+    code
+    success
+    message
+  }
+}
+
+{
+	GetBusinessReview(input:{
+    businessId: ""
+  }) {
+    score
+    reviews {
+      author {
+        fullname
+        displayPicture
+        userId
+      }
+      description
+      author {
+        phone
+        displayPicture
+        businessId
+      }
+    }
+  }
+}
+
+{
+  GetSingleBusinessDetailsByUsername(input:{
+    username: "dxwalter"
+  }) {
+    businessData {
+      id
+      businessname
+      address {
+        number
+        street
+        community
+        lga
+        state
+        country
+        busStop
+      }
+      contact {
+        email
+        phone
+        whatsapp {
+          status
+          number
+        }
+      }
+      businessCategories {
+        itemId
+        categoryId
+        categoryName
+        hide
+        subcategories {
+          itemId
+          subcategoryId
+          subcategoryName
+          hide
+        }
+      }
+      logo
+      review
+      reviews {
+        author {
+          fullname
+          displayPicture
+          userId
+        }
+        description
+        rating
+        timeStamp
+      }
+    }
+    code
+    success
+    message
+  }
+}
+
+
+query{
+  GetOrderItemsForCustomer(input:{
+    orderId: ""
+  }){
+    orderDetails {
+      orderDetails {
+        name
+        productId
+        avatar
+        quantity
+        price
+        size
+        color
+      }
+      businessName
+      username
+      logo
+      businessId
+    }
     code
     success
     message

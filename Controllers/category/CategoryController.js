@@ -1,6 +1,7 @@
+'use-strict'
 
 const CategoryModel = require('../../Models/Categories'); 
-const Subcategory = require('../../Models/Subcategory'); 
+ 
 const FunctionRepo = require('../MainFunction');
 
 module.exports = class CategoryController extends FunctionRepo {
@@ -25,7 +26,7 @@ module.exports = class CategoryController extends FunctionRepo {
 
     }
 
-    async CreateCategory (Category) {
+    async CreateNewCategory (Category) {
         try {
 
             const create = await Category.save();
@@ -86,7 +87,9 @@ module.exports = class CategoryController extends FunctionRepo {
         try {
             const result = await CategoryModel.find(
                 {status: 1},
-            ).populate({
+            )
+            .populate('industry')
+            .populate({
                 path: 'subcategoryList',
             });
             

@@ -1,3 +1,5 @@
+'use-strict'
+
 let ProductModel = require('../../../Models/Product')
 let ProductController = require('../ProductController')
 let createBusinessCategory = require('../../businessCategory/action/createBusinessCategories');
