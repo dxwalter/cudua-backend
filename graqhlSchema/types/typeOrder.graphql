@@ -204,7 +204,7 @@ type customerOrderIdResponse {
 input confirmOnlinePaymentInput {
     orderId: String!
     businessId: String!
-    refrenceId: String!
+    referenceId: String!
 }
 
 type Query {

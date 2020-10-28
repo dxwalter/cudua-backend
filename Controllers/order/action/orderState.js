@@ -231,6 +231,7 @@ module.exports = class OrderStatus extends OrderController {
 
     async ConfirmOnlinePayment (orderId, businessId, referenceId, userId) {
 
+
         if (orderId.length == 0 || businessId.length == 0 || referenceId.length == 0) return this.returnMethod(500, false, `An error occurred while confirming your payment`);
 
         let getAllProductsInOrder = await this.findProductsInOrder(businessId, userId, orderId);
@@ -275,7 +276,7 @@ module.exports = class OrderStatus extends OrderController {
         let alertCustomer = await this.createNotification.createCustomerNotification(userId, orderId, "Payment", "Confirmed payment", `You have successfully paid for your order with ID ${orderId}. Your order is awaiting delivery. Click to 
         find out more details.`);
 
-        return this.returnMethod(200, true, `Your payment was confirmed`) 
+        return this.returnMethod(200, true, `Your payment was successful and documented`);
         
 
     }
