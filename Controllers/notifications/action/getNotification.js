@@ -41,7 +41,7 @@ module.exports = class GetNotification extends NotificationController {
                 isRead: notification.is_read,
                 owner: notification.owner,
                 actionId: notification.action_id,
-                header: notification.header == undefined ? "" : notification.header,
+                header: notification.header == undefined ? "New notification" : notification.header,
                 type: notification.type,
                 message: notification.message,
                 timeStamp: notification.created
@@ -72,8 +72,8 @@ module.exports = class GetNotification extends NotificationController {
 
         if (get.error) return this.returnMethod(null, 500, false, "An error occurred getting your business notifications. Please try again");
 
-        if (get.result.length < 1 && page < 2) return this.returnMethod(null, 200, true, "You do not have any a notification");
-        if (get.result.length < 1 && page > 1) return this.returnMethod(null, 200, true, "That is all for now");
+        if (get.result.length < 1 && page < 2) return this.returnMethod([], 200, true, "You do not have any a notification");
+        if (get.result.length < 1 && page > 1) return this.returnMethod([], 200, true, "That is all for now");
 
         let formatNotification = this.formatNotification(get.result);
 

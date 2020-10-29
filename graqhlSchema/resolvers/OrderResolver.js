@@ -148,7 +148,7 @@ module.exports = {
             args = args.input
 
             let confirm = new OrderState();
-            return confirm.ConfirmOrderDelivery(args.businessId, args.orderId, userId)
+            return confirm.DecideConfirmationType(args.businessId, args.orderId, userId)
         },
         DeleteOrder(_, args, context) {
             let userId = context.authFunction(context.accessToken);
@@ -168,7 +168,7 @@ module.exports = {
             args = args.input
 
             let confirmOnlinePayment = new OrderState();
-            return confirmOnlinePayment.ConfirmOnlinePayment(args.orderId, args.businessId, args.referenceId, userId)
+            return confirmOnlinePayment.ConfirmPayment(args.orderId, args.businessId, args.referenceId, userId)
         }
     }
 }
