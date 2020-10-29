@@ -10,6 +10,11 @@ const transactionRefId = mongoose.Schema({
         type: String,
         required: true
     },
+    amount: {
+        type: Number,
+        required: false,
+        default: 0
+    },
     created : {
         type : Date,
         default: Date.now()

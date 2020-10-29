@@ -5,12 +5,22 @@ const BusinessController = require('../../business/BusinessController');
 const ProductController = require('../../product/ProductController');
 const CategoryController = require('../../product/ProductController');
 
+const SaveForLaterController = require('../../saveForLater/SaveForLaterController')
+const CartController = require('../../cart/CartController');
+const OrderController = require('../../order/orderController');
+const AnonymousCartController = require('../../anonymousCart/anonymousCartController');
+
 module.exports = class DeleteSelectedCategory extends BusinessCategoryController {
     constructor () {
         super();
         this.businessController = new BusinessController();
         this.productController = new ProductController();
-        this.categoryController = new CategoryController()
+        this.categoryController = new CategoryController();
+
+        this.SaveForLaterController = new SaveForLaterController()
+        this.CartController = new CartController()
+        this.OrderController = new OrderController()
+        this.AnonymousCartController = new AnonymousCartController()
     }
 
     returnMethod (code, success, message) {
@@ -29,8 +39,12 @@ module.exports = class DeleteSelectedCategory extends BusinessCategoryController
         // select product
         let allProducts = await this.productController.allProductsInCategory(businessId, categoryId);
 
+        console.log(categoryId)
+
         if (allProducts.error) return this.returnMethod(500, false, "An error occurred from our end, kindly try again")
         
+        console.log(allProducts)
+
         if (allProducts.result.length > 0) {
             // delete images
             allProducts.result.forEach(product => {
@@ -40,10 +54,27 @@ module.exports = class DeleteSelectedCategory extends BusinessCategoryController
                     
                 })
             }); 
+
+            for (let product of allProducts.result) {
+                // delete from cart
+                await this.CartController.deleteProductById(product.id, businessId)
+
+                // delete from saved items
+                await this.SaveForLaterController.deleteProductById(product.id, businessId)
+
+                // delete from order product
+                await this.OrderController.deleteProductById(product.id, businessId);
+
+                // delete from anonymous cart
+                await this.AnonymousCartController.deleteProductById(product.id, businessId)
+            }
+
+
         }
 
         // delete products
         let deleteProducts = await this.productController.deleteAllProductsFromCategory(businessId, categoryId);
+        console.log(deleteProducts)
         if (deleteProducts.error) return this.returnMethod(500, false, "An error occurred from our end, kindly try again")
 
         // delete category

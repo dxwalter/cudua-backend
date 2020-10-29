@@ -66,7 +66,8 @@ module.exports = class SubscriptionController extends FunctionRepo {
                 
             let data = new SubscriptionReference({
                 business_id: businessId,
-                ref_id: referenceId
+                ref_id: referenceId,
+                amount: 700
             });
 
             let save = await data.save();

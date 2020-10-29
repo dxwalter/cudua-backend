@@ -3,7 +3,12 @@
 const BusinessCategoryController = require('../../businessCategory/BusinessCategoryController');
 const BusinessController = require('../../business/BusinessController');
 const ProductController = require('../../product/ProductController');
-const SubcategoryController = require('../../subcategories/SubcategoryController')
+const SubcategoryController = require('../../subcategories/SubcategoryController');
+
+const SaveForLaterController = require('../../saveForLater/SaveForLaterController')
+const CartController = require('../../cart/CartController');
+const OrderController = require('../../order/orderController');
+const AnonymousCartController = require('../../anonymousCart/anonymousCartController');
 
 module.exports = class DeleteSelectedSubcategory extends BusinessCategoryController {
     constructor () {
@@ -11,6 +16,11 @@ module.exports = class DeleteSelectedSubcategory extends BusinessCategoryControl
         this.businessController = new BusinessController();
         this.productController = new ProductController();
         this.subcategoryController = new SubcategoryController();
+
+        this.SaveForLaterController = new SaveForLaterController()
+        this.CartController = new CartController()
+        this.OrderController = new OrderController()
+        this.AnonymousCartController = new AnonymousCartController()
     }
 
     returnMethod (code, success, message) {
@@ -24,7 +34,7 @@ module.exports = class DeleteSelectedSubcategory extends BusinessCategoryControl
     async deleteSubcategory (subcategoryId, businessId) {
         
         // validation
-        if (!subcategoryId || !businessId) return this.returnMethod(200, false, "The data required to perform this operation was not provided. Refresh page and try again")
+        if (subcategoryId.length == 0 || businessId.length == 0) return this.returnMethod(200, false, "The data required to perform this operation was not provided. Refresh page and try again")
 
         // subcategory details
         let subcat = await this.subcategoryController.GetOneSubcategory(subcategoryId);
@@ -83,16 +93,22 @@ module.exports = class DeleteSelectedSubcategory extends BusinessCategoryControl
                     
                 })
             }); 
+
+            for (let product of allProducts.result) {
+                // delete from cart
+                await this.CartController.deleteProductById(product.id, businessId)
+
+                // delete from saved items
+                await this.SaveForLaterController.deleteProductById(product.id, businessId)
+
+                // delete from order product
+                await this.OrderController.deleteProductById(product.id, businessId);
+
+                // delete from anonymous cart
+                await this.AnonymousCartController.deleteProductById(product.id, businessId)
+            }
+
         }
-
-        // delete all products in subcategory
-
-        let deleteAllProductsFromSubcategory = await this.productController.deleteAllProductsFromSubcategory(businessId, subcategoryId);
-
-        if (deleteAllProductsFromSubcategory.error) return this.returnMethod(500, false, "We could not delete the products in this subcategory. Kindly try again")
-
-        if (deleteAllProductsFromSubcategory.result == false) return this.returnMethod(200, false, "We could not delete the products in this subcategory. Kindly try again"); 
-
 
         return this.returnMethod(200, true, "Subcategory deleted successfully")
 
