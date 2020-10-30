@@ -18,7 +18,7 @@ const AccountingModel = mongoose.Schema({
         type: String, required: true
     },
     paymentMethod: {
-        type: String, required: true
+        type: String, default: "Not specified", required: true
     },
     totalPrice: {
         type: Number, required: true
