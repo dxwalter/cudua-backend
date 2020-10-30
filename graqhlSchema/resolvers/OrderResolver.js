@@ -168,7 +168,7 @@ module.exports = {
             args = args.input
 
             let confirmOnlinePayment = new OrderState();
-            return confirmOnlinePayment.ConfirmPayment(args.orderId, args.businessId, args.referenceId, userId)
+            return confirmOnlinePayment.ConfirmPayment(args.orderId, args.businessId, args.referenceId, userId, "Paid online")
         }
     }
 }

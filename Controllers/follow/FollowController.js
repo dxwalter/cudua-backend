@@ -125,4 +125,14 @@ module.exports = class FollowContoller extends MainFunctions {
         }
     }
 
+    
+    async allFollowersCount (businessId) {
+        try {
+            let countResult = await FollowModel.countDocuments({business_id: businessId});
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
 }

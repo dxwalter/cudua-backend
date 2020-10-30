@@ -110,6 +110,15 @@ module.exports = class DeleteSelectedSubcategory extends BusinessCategoryControl
 
         }
 
+        // delete all products in subcategory
+
+        let deleteAllProductsFromSubcategory = await this.productController.deleteAllProductsFromSubcategory(businessId, subcategoryId);
+
+        if (deleteAllProductsFromSubcategory.error) return this.returnMethod(500, false, "We could not delete the products in this subcategory. Kindly try again")
+
+        if (deleteAllProductsFromSubcategory.result == false) return this.returnMethod(200, false, "We could not delete the products in this subcategory. Kindly try again"); 
+
+
         return this.returnMethod(200, true, "Subcategory deleted successfully")
 
 

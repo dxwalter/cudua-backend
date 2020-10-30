@@ -210,6 +210,9 @@ module.exports = class OrderStatus extends OrderController {
 
     }
 
+    // when a customer pays on delivery, that means the product arrived and it is being confirmed by the customer.
+    // At the same time, the customer will pay for the product.
+    // this method is to confirm the payment and delivery of an order at once 
     async ConfirmOrderDeliveryPaidOffline(businessId, orderId, userId) {
 
         if (businessId.length < 1) return this.returnMethod(200, false, "The business credential was not provided. Refresh and try again")
@@ -219,7 +222,7 @@ module.exports = class OrderStatus extends OrderController {
 
         let referenceId = await this.generateId();
 
-        let confirmPayment = await this.ConfirmPayment(orderId, businessId, referenceId, userId);
+        let confirmPayment = await this.ConfirmPayment(orderId, businessId, referenceId, userId, "Paid on delivery");
 
         if (confirmPayment.success == false) return this.returnMethod(confirmPayment.code, confirmPayment.success, confirmPayment.message)
 
@@ -236,6 +239,7 @@ module.exports = class OrderStatus extends OrderController {
 
         return this.returnMethod(200, true, `Order Delivery confirmed successfully`);
     }
+
 
     async DecideConfirmationType (businessId, orderId, userId) {
         if (businessId.length < 1) return this.returnMethod(200, false, "The business credential was not provided. Refresh and try again")
@@ -255,6 +259,7 @@ module.exports = class OrderStatus extends OrderController {
 
     }
 
+    // when a customer pays for a product online, the order does not arrive immediately. This method is to confirm the delivery of the method when it
     async ConfirmOrderDeliveryPaidOnline (businessId, orderId, userId) {
         if (businessId.length < 1) return this.returnMethod(200, false, "The business credential was not provided. Refresh and try again")
 
@@ -274,7 +279,8 @@ module.exports = class OrderStatus extends OrderController {
         return this.returnMethod(200, true, `Order Delivery confirmed successfully`);
     }
 
-    async ConfirmPayment (orderId, businessId, referenceId, userId) {
+    // This is to confirm payment by the customer. This works for orders paid for online/offline
+    async ConfirmPayment (orderId, businessId, referenceId, userId, paymentMethod) {
 
 
         if (orderId.length == 0 || businessId.length == 0 || referenceId.length == 0) return this.returnMethod(500, false, `An error occurred while confirming your payment`);
@@ -309,7 +315,8 @@ module.exports = class OrderStatus extends OrderController {
             orderId: orderId,
             business: businessId,
             referenceId: referenceId,
-            totalPrice: totalOrderPrice
+            totalPrice: totalOrderPrice,
+            paymentMethod: paymentMethod
         })
 
         let saveData = await this.accountingController.createAccountingRecord(newData)
