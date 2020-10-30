@@ -25,6 +25,7 @@ module.exports = class GetAccount extends AccountingController {
             message: message
         }
     }
+    
 
     async getBusinessAccount (businessId) {
         
