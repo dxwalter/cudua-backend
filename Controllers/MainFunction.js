@@ -42,6 +42,7 @@ module.exports = class FunctionRepo extends EmailClass{
     }
 
     MakeFirstLetterUpperCase (string) {
+        string = string.trim()
         return string[0].toUpperCase() +  string.slice(1);
     }
 
@@ -126,18 +127,19 @@ module.exports = class FunctionRepo extends EmailClass{
 
 
     formatFullname (name) {
+        
         // if name contains space, break name into two variables
-        name = name.toLowerCase();
+        name = name.toLowerCase().trim();
         let whitespacePosition = name.search(" ");
         if (whitespacePosition == -1) {
             // no whitespace exists
-            return this.MakeFirstLetterUpperCase(name);
+            return this.MakeFirstLetterUpperCase(name.trim());
         }
 
         let splitName = name.split(" ");
         let formattedName = "";
         splitName.forEach(element => {
-            let newName = this.MakeFirstLetterUpperCase(element);
+            let newName = this.MakeFirstLetterUpperCase(element.trim());
             formattedName = formattedName + " " + newName
         });
         
@@ -273,6 +275,7 @@ module.exports = class FunctionRepo extends EmailClass{
             'info',
             'about',
             'contact',
+            'home',
             'terms'
         ];
 
