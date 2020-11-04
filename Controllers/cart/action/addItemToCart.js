@@ -31,14 +31,17 @@ module.exports = class AddItemToCart extends CartController {
         let getBusinessDetails = await this.businessController.getBusinessData(businessId);
         
         if (getBusinessDetails.error) return this.returnMethod(500, false, `An error occurred. Please try again`);
-
+        
+        // check if the user is the owner of the business that owns the product
         if (getBusinessDetails.result._id.toString() != businessId) return this.returnMethod(500, false,  `This business has has either been moved or deleted`);
+
+
 
         // get user details
         let findUserData = await this.userController.findUsersById(userId);
         if (findUserData.error) return this.returnMethod(500, false,  `An error occurred from our end. Please try again`);
-        
-        if (findUserData.result == null || findUserData.result.business_details == userId) return this.returnMethod(200, false, `You cannot add your poduct to cart.`)
+
+        if (findUserData.result == null || findUserData.result.business_details == businessId) return this.returnMethod(200, false, `You cannot add your poduct to cart.`)
 
         // check if this item has been added to cart before
         let checkIfExists = await this.findItemInCart(businessId, productId, userId);
