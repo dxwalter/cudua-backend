@@ -58,7 +58,7 @@ module.exports = class CreateProductReview extends ProductReviewController {
         
         // when a business owner tries to write a review for their own product
         getBusinessDetails = getBusinessDetails.result;
-        if (userId == getBusinessDetails.owner) return this.returnData(200, false, "You cannot write a review for your own product")
+        if (userId == getBusinessDetails.owner._id) return this.returnData(200, false, "You cannot write a review for your own product")
 
         // check if this customer has ordered this product before
         let checkIfCustomerHasOrderedProduct = await this.OrderController.checkIfProductExistsInOrder(userId, productId);

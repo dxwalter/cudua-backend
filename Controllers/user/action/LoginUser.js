@@ -244,6 +244,7 @@ module.exports = class LoginUser extends UserController{
                                 userId : userDbDetails._id,
                                 fullname: userDbDetails.fullname,
                                 email: userDbDetails.email,
+                                oneSignalId: userDbDetails.oneSignalId,
                                 email_notification: userDbDetails.email_notification == null || undefined ? 1 : userDbDetails.email_notification,
                                 phone: userDbDetails.phone == null || undefined ? null : userDbDetails.phone,
                                 displayPicture: userDbDetails.profilePicture == null || undefined ? null : userDbDetails.profilePicture,

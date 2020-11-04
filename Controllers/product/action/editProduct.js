@@ -120,7 +120,7 @@ module.exports = class EditProduct extends ProductController {
             return this.returnData(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -190,7 +190,7 @@ module.exports = class EditProduct extends ProductController {
             return this.returnData(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -234,7 +234,7 @@ module.exports = class EditProduct extends ProductController {
             return this.returnData(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -295,7 +295,7 @@ module.exports = class EditProduct extends ProductController {
             return this.returnData(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -346,7 +346,7 @@ module.exports = class EditProduct extends ProductController {
             return this.returnAvailableSizes(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnAvailableSizes(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -421,7 +421,7 @@ module.exports = class EditProduct extends ProductController {
             return this.returnData(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -473,7 +473,7 @@ module.exports = class EditProduct extends ProductController {
             return this.returnColorData(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnColorData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -534,7 +534,7 @@ module.exports = class EditProduct extends ProductController {
             return this.returnData(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -583,7 +583,7 @@ module.exports = class EditProduct extends ProductController {
             return this.uploadProductPhotoResponse(null, 200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.uploadProductPhotoResponse(null, 200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -657,7 +657,7 @@ module.exports = class EditProduct extends ProductController {
             }
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return {
                     image: null,
                     code: s200,
@@ -731,7 +731,7 @@ module.exports = class EditProduct extends ProductController {
             return this.returnData(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }

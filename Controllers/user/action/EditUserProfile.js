@@ -265,7 +265,16 @@ module.exports = class EditUserProfile extends UserController {
 
         return this.returnMethod(202, true, "Your profile was updated successfully");
     
+    }
 
+    async updateOneSignalId (oneSignalId, userId) {
+        if (oneSignalId.length == 0) return this.returnMethod(500, false, "An error occurred with your one signal Id")
+
+        let updateRecord = await this.findOneAndUpdate(userId, {oneSignalId: oneSignalId});
+
+        if (updateRecord.error) return this.returnMethod(500, false, "An error occurred updating your profile.")
+
+        return this.returnMethod(202, true, "Your profile was updated successfully");
     }
 
 }

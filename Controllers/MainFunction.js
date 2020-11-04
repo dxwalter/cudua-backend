@@ -8,6 +8,8 @@ const bcrypt = require('bcrypt');
 const shortId = require('shortid');
 shortId.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ- ');
 
+const https = require('https');
+
 
 
 let cloudinary = require('cloudinary').v2;
@@ -24,6 +26,51 @@ module.exports = class FunctionRepo extends EmailClass{
 
     constructor () {
         super()
+    }
+
+    async sendPushNotification (userOneSignalId, message) {
+
+        let sendNotification = function (data) {
+            let headers = {
+                "Content-Type": "application/json; charset=utf-8",
+                "Authorization": ""
+            };
+    
+            let options = {
+                host: "onesignal.com",
+                port: 443,
+                path: "/api/v1/notifications",
+                method: "POST",
+                headers: headers
+            };
+    
+            try {
+
+                let req = https.request(options, function (res) {
+                    res.on('data', function (data) {
+      
+                    });
+                });
+
+                req.write(JSON.stringify(data));
+                req.end();
+                
+            } catch (error) {
+
+            }
+ 
+        };
+
+        let dataObject = {
+            app_id: "4077e6c3-299e-4bef-8fcd-7eeec9e2b284",
+            contents: {"en": message},
+            include_player_ids: [userOneSignalId],
+            small_icon: "https://res.cloudinary.com/cudua-images/image/upload/v1604501254/cudua_asset/ic_stat_onesignal_default.png", // can not be an url
+            large_icon: "https://res.cloudinary.com/cudua-images/image/upload/v1604500508/cudua_asset/android-icon_aiv0cc.png"
+        };
+    
+        sendNotification(dataObject);
+
     }
 
     async generateId () {

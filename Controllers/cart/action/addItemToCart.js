@@ -35,7 +35,7 @@ module.exports = class AddItemToCart extends CartController {
         // check if the user is the owner of the business that owns the product
         if (getBusinessDetails.result._id.toString() != businessId) return this.returnMethod(500, false,  `This business has has either been moved or deleted`);
 
-
+        let oneSignalId = getBusinessDetails.result.owner.oneSignalId
 
         // get user details
         let findUserData = await this.userController.findUsersById(userId);
@@ -66,6 +66,11 @@ module.exports = class AddItemToCart extends CartController {
         let create = await this.createCartItem(createItem);
 
         if (create.error) return this.returnMethod(500, false, `An error occurred adding ${findProduct.result.name} to your cart. Please try again`)
+
+    
+        if (oneSignalId.length > 0 || oneSignalId != null || oneSignalId != undefined) {
+            this.sendPushNotification(oneSignalId, "A customer just added your product to their cart. Go to accounting in your shop manager to learn more.")
+        }
 
         return this.returnMethod(200, true, `${findProduct.result.name} was successfully added to your cart.`)
     }

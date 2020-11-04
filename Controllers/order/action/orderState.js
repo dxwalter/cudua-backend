@@ -4,6 +4,7 @@ const OrderController = require('../orderController');
 const BusinessController = require('../../business/BusinessController');
 const CreateNotification = require('../../notifications/action/createNotification');
 const AccountingController = require('../../accounting/AccountingController');
+const UserController = require('../../user/UserController');
 const AccountingModel = require('../../../Models/AccountingModel');
 
 module.exports = class OrderStatus extends OrderController {
@@ -13,6 +14,7 @@ module.exports = class OrderStatus extends OrderController {
         this.businessController = new BusinessController();
         this.createNotification = new CreateNotification();
         this.accountingController = new AccountingController()
+        this.UserController = new UserController()
     }
 
     
@@ -40,10 +42,16 @@ module.exports = class OrderStatus extends OrderController {
             return this.returnMethod(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnMethod(200, false, `You can not access this functionality. Sign out and sign in to continue`)
             }
         }
+
+        let getCustomerData = await this.UserController.findUsersById(customerId);
+
+        if (getCustomerData.error)  return this.returnMethod(500, false, "An error occurred while confirming order. Please try again");
+
+        let oneSignalId = getCustomerData.result.oneSignalId;
 
         // confirm order
         let updateOrder = {
@@ -58,10 +66,14 @@ module.exports = class OrderStatus extends OrderController {
 
         let findAndUpdate = await this.confirmCustomerOrder(businessId, customerId, orderId, updateOrder);
 
-        if (findAndUpdate.error || findAndUpdate.result == false) await this.returnMethod(500, false, "An error occurred while confirming order. Please try again");
+        if (findAndUpdate.error || findAndUpdate.result == false) return this.returnMethod(500, false, "An error occurred while confirming order. Please try again");
 
         //notify customer
         let alertCustomer = await this.createNotification.createCustomerNotification(customerId, orderId, "order", "Confirmed order", `Your order with ID ${orderId} has been confirmed. Click to find out more details.`);
+
+        if (oneSignalId.length > 0) {
+            this.sendPushNotification(oneSignalId, `Your order with ID ${orderId} has been confirmed`);
+        }
 
         return this.returnMethod(202, true, `Order was confirmed successfully`)
 
@@ -102,7 +114,7 @@ module.exports = class OrderStatus extends OrderController {
             return this.returnMethod(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnMethod(200, false, `You can not access this functionality. Sign out and sign in to continue`)
             }
         }
@@ -115,12 +127,24 @@ module.exports = class OrderStatus extends OrderController {
             reject_order_reason: reason
         }
 
+
+        let getCustomerData = await this.UserController.findUsersById(customerId);
+
+        if (getCustomerData.error)  return this.returnMethod(500, false, "An error occurred while confirming order. Please try again");
+
+        let oneSignalId = getCustomerData.result.oneSignalId;
+
         let findAndUpdate = await this.confirmCustomerOrder(businessId, customerId, orderId, updateOrder);
 
         if (findAndUpdate.error || findAndUpdate.result == false) await this.returnMethod(500, false, "An error occurred while rejecting order. Please try again");
 
         //notify customer
-        let alertCustomer = await this.createNotification.createCustomerNotification(customerId, orderId, "order", "Rejected order", `Your order was rejected by ${businessData.result.businessname}. Click to find out more`);
+        let alertCustomer = await this.createNotification.createCustomerNotification(customerId, orderId, "order", "Declined order", `Your order was declined by ${businessData.result.businessname}. Click to find out more`);
+
+        
+        if (oneSignalId.length > 0) {
+            this.sendPushNotification(oneSignalId, `Your order was declined by ${businessData.result.businessname}. Click to find out more`);
+        }
 
         return this.returnMethod(202, true, `Order was rejected successfully`);
     }
@@ -137,12 +161,23 @@ module.exports = class OrderStatus extends OrderController {
             customer_cancel_order_reason: reason
         }
 
+        let businessDetails = await this.businessController.getBusinessData(businessId);
+
+        if (businessDetails.error) return this.returnMethod(500, false, "An error occurred while cancelling this order. Please try again")
+
+        let businessOneSignalId = businessDetails.result.owner.oneSignalId;
+
         let findAndUpdate = await this.confirmCustomerOrder(businessId, userId, orderId, updateOrder);
 
-        if (findAndUpdate.error || findAndUpdate.result == false) await this.returnMethod(500, false, "An error occurred while cancelling this order. Please try again");
+        if (findAndUpdate.error || findAndUpdate.result == false) return this.returnMethod(500, false, "An error occurred while cancelling this order. Please try again");
 
         //notify customer
         let alertBusinessOwner = await this.createNotification.createBusinessNotification(businessId, orderId, "order", "Cancelled order", `The order with ID ${orderId} was cancelled by the customer. Click to learn more`);
+
+        // send push notification
+        if (businessOneSignalId.length > 0) {
+            this.sendPushNotification(businessOneSignalId, `The order with ID ${orderId} was cancelled by the customer. Sign into your shop manager to learn more`)
+        }
 
         return this.returnMethod(202, true, `Order was cancelled successfully`);
     }
@@ -163,10 +198,16 @@ module.exports = class OrderStatus extends OrderController {
             return this.returnMethod(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnMethod(200, false, `You can not access this functionality. Sign out and sign in to continue`)
             }
         }
+
+        let getCustomerData = await this.UserController.findUsersById(customerId);
+
+        if (getCustomerData.error)  return this.returnMethod(500, false, "An error occurred while confirming order. Please try again");
+
+        let oneSignalId = getCustomerData.result.oneSignalId;
 
         // update price
         let updateOrder = {
@@ -186,6 +227,10 @@ module.exports = class OrderStatus extends OrderController {
         //notify customer
         let alertCustomer = await this.createNotification.createCustomerNotification(customerId, orderId, "order", "Order update", `The delivery price, payment method and delivery time for your order with ID ${orderId} has been updated. Click to find out more details.`);
 
+        if (oneSignalId.length > 0) {
+            this.sendPushNotification(oneSignalId, `The delivery price, payment method and delivery time for your order with ID ${orderId} has been changed. Click to find out more details.`);
+        }
+
         return this.returnMethod(202, true, `Order was updated successfully`);
 
     }
@@ -199,12 +244,23 @@ module.exports = class OrderStatus extends OrderController {
             delivery_status: -1
         }
 
+        let businessData = await this.businessController.getBusinessData(businessId);
+        if (businessData.error) return this.returnMethod(500, false, "An error occurred while updating rejecting delivery. Please try again")
+
+        // one signal id
+        let businessOneSignalId = businessDetails.result.owner.oneSignalId;
+
+        
         let findAndUpdate = await this.confirmCustomerOrder(businessId, userId, orderId, updateOrder);
 
-        if (findAndUpdate.error || findAndUpdate.result == false) await this.returnMethod(500, false, "An error occurred while updating rejecting delivery. Please try again");
+        if (findAndUpdate.error || findAndUpdate.result == false) return this.returnMethod(500, false, "An error occurred while updating rejecting delivery. Please try again");
 
         //notify business owner
         let alertBusinessOwner = await this.createNotification.createBusinessNotification(businessId, orderId, "order", "Rejected delivery", `The delivery with order ID ${orderId} was rejected. Click to learn more`);
+
+        if (businessOneSignalId.length > 0) {
+            this.sendPushNotification(businessOneSignalId, `The delivery with order ID ${orderId} was declined. Got to shop manager to learn more`)
+        }
 
         return this.returnMethod(200, true, `Delivery rejected successfully`);
 
@@ -234,8 +290,22 @@ module.exports = class OrderStatus extends OrderController {
 
         if (findAndUpdate.error || findAndUpdate.result == false) await this.returnMethod(500, false, "An error occurred while updating confirm delivery. Please try again");
 
+
+        // business one signal id
+
+        let businessDetails = await this.businessController.getBusinessData(businessId);
+        if (businessDetails.error) return this.returnMethod(500, false, `An error occurred while confirming your payment`);
+
+        let businessOneSignalId = businessDetails.result.owner.oneSignalId;
+
         //notify business owner
         let alertBusinessOwner = await this.createNotification.createBusinessNotification(businessId, orderId, "order", "Confirmed delivery", `The delivery with order ID ${orderId} was confirmed. Click to learn more`);
+
+
+        if (businessOneSignalId) {
+            this.sendPushNotification(businessOneSignalId, `The delivery with order ID ${orderId} was confirmed. Click to learn more`)
+        }
+
 
         return this.returnMethod(200, true, `Order Delivery confirmed successfully`);
     }
@@ -289,6 +359,20 @@ module.exports = class OrderStatus extends OrderController {
 
         if (getAllProductsInOrder.error) return this.returnMethod(500, false, `An error occurred while confirming your payment`);
 
+        // business one signal id
+
+        let businessDetails = await this.businessController.getBusinessData(businessId);
+        if (businessDetails.error) return this.returnMethod(500, false, `An error occurred while confirming your payment`);
+
+        let businessOneSignalId = businessDetails.result.owner.oneSignalId;
+
+
+        // customer one signal id
+        let customerDetails = await this.UserController.findUsersById(userId);
+        if (customerDetails.error) return this.returnMethod(500, false, `An error occurred while confirming your payment`);
+
+        let customerOneSignalId = customerDetails.result.oneSignalId;
+
         let totalProductPrice = 0
 
         for (let x of getAllProductsInOrder.result) {
@@ -326,6 +410,14 @@ module.exports = class OrderStatus extends OrderController {
         let alertBusinessOwner = await this.createNotification.createBusinessNotification(businessId, orderId, "order", "New payment", `A customer just paid for an order. Click to learn more`);
 
         let alertCustomer = await this.createNotification.createCustomerNotification(userId, orderId, "order", "Confirmed payment", `You have successfully paid for your order with ID ${orderId}. Your order is awaiting delivery. Click to learn more.`);
+
+        if (businessOneSignalId) {
+            this.sendPushNotification(businessOneSignalId, "A customer just paid for an order. Click to learn more")
+        }
+
+        if (customerOneSignalId) {
+            this.sendPushNotification(customerOneSignalId, `You have successfully paid for your order with ID ${orderId}. Your order is awaiting delivery. Click to learn more.`)
+        }
 
         return this.returnMethod(200, true, `Your payment was successful and documented`);
         

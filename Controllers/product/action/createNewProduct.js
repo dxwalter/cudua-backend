@@ -39,7 +39,7 @@ module.exports = class CreateNewProduct extends ProductController {
             return this.returnData(null, 200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(null, 200, false, `You can not access this functionality. You do not own a business`)
             }
         }

@@ -37,6 +37,11 @@ const UserSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    oneSignalId: {
+        type: String,
+        default: "",
+        required: false
+    },
     address: {
         number: { type: Number},
         bus_stop: {type: String, trim: true},

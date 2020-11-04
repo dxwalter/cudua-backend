@@ -95,6 +95,15 @@ module.exports = {
 
             let edit = new EditUserProfile();
             return edit.editCustomerPassword(args.oldPassword, args.newPassword, userId)
+        },
+        editUsersOneSignalId (_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+            args = args.input;
+
+            let edit = new EditUserProfile();
+            return edit.updateOneSignalId(args.oneSignalId, userId)
         }
     }
 }

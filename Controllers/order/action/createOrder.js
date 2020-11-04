@@ -73,6 +73,16 @@ module.exports = class createOrder extends OrderController {
     async saveBusinessNotification(businessIdArray, orderId, message) {
 
         for (let id of businessIdArray) {
+            
+            // get business owners onesignal ID
+
+            let businessOwnersBioData = await this.userController.findUsersByField({business_details: id});
+
+            if (businessOwnersBioData.error == false) {
+                let businessOwnerOnesignalId = businessOwnersBioData.result.oneSignalId;
+                this.sendPushNotification(businessOwnerOnesignalId, `You have a new order awaiting confirmation. The new order ID is ${orderId}. Go to your shop manager to see order.`)
+            } 
+
             await this.notification.createBusinessNotification(id, orderId, "order", "New Order", message);
         }
 
@@ -140,6 +150,9 @@ module.exports = class createOrder extends OrderController {
 
         let customerDetails = await this.userController.findUsersById(userId);
 
+        let customersOnesignal = customerDetails.result.oneSignalId;
+
+
         if (customerDetails.error) return this.returnMethod(200, false, "An error occurred. Please try again");
 
         let businessOwnerId = customerDetails.result.business_details == undefined ? "" : customerDetails.result.business_details;
@@ -174,7 +187,12 @@ module.exports = class createOrder extends OrderController {
 
         // create customer notification
         let notificationMessage = `Your order has been created successfully. Your order ID is ${orderId}`
+
         let createCustomerNotification = await this.notification.createCustomerNotification(userId, orderId, "order", "Order created", notificationMessage);
+
+        if (customersOnesignal.length > 0) {
+            this.sendPushNotification(customersOnesignal, `Your order was created successfully and your order ID is ${orderId}`);
+        }
 
         // create business notification
         let businessNotificationMessage = `You have a new order and it is awaiting confirmation. The order ID is ${orderId}`;
