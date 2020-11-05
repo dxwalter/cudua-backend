@@ -346,6 +346,19 @@ module.exports = class OrderStatus extends OrderController {
         //notify business owner
         let alertBusinessOwner = await this.createNotification.createBusinessNotification(businessId, orderId, "order", "Confirmed delivery", `The delivery with order ID ${orderId} was confirmed. Click to learn more`);
 
+        // business one signal id
+
+        let businessDetails = await this.businessController.getBusinessData(businessId);
+        if (businessDetails.error) return this.returnMethod(500, false, `An error occurred while confirming your payment`);
+
+        let businessOneSignalId = businessDetails.result.owner.oneSignalId;
+
+
+        if (businessOneSignalId) {
+            this.sendPushNotification(businessOneSignalId, `The deliver of the order with order ID ${orderId} was confirmed by the customer`)
+        }
+
+
         return this.returnMethod(200, true, `Order Delivery confirmed successfully`);
     }
 

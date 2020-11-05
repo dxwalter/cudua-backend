@@ -4,6 +4,7 @@ const ProductReviewController = require('../ProductReviewController');
 const ProductController = require('../../product/ProductController');
 const BusinessController = require('../../business/BusinessController');
 const ProductReviewModel = require('../../../Models/productReview');
+const CreateNotification = require('../../notifications/action/createNotification')
 
 const OrderController = require('../../order/orderController')
 
@@ -13,7 +14,8 @@ module.exports = class CreateProductReview extends ProductReviewController {
         super();
         this.ProductController = new ProductController();
         this.BusinessController = new BusinessController();
-        this.OrderController = new OrderController()
+        this.OrderController = new OrderController();
+        this.CreateNotification = new CreateNotification()
     }
 
     returnData (code, success, message) {
@@ -52,8 +54,9 @@ module.exports = class CreateProductReview extends ProductReviewController {
         if (getProductDetails.error == true) return this.returnData(500, false, `An error occurred. This product has been moved or deleted`)
 
         getProductDetails = getProductDetails.result
+        let businessId = getProductDetails.business_id
 
-        let getBusinessDetails = await this.BusinessController.getBusinessData(getProductDetails.business_id);
+        let getBusinessDetails = await this.BusinessController.getBusinessData(businessId);
         if (getBusinessDetails.error == true) return this.returnData(500, false, `An error occurred. This business has been moved or deleted`)
         
         // when a business owner tries to write a review for their own product
@@ -97,14 +100,24 @@ module.exports = class CreateProductReview extends ProductReviewController {
             description: message
         });
 
+        let oneSignalId = getBusinessDetails.owner.oneSignalId
+
         let create = await this.InsertNewReview(createReview);
 
         if (create.error) return this.returnData(500, false, `An error occurred while saving your review`);
 
         this.updateReviewScore (productId)
 
+        let notificationMessage = `A customer just wrote a review about your product. Click to learn more`;
 
-        return this.returnData(200, true, `Your review was submitted successfully`)
+        this.CreateNotification.createBusinessNotification(businessId, productId, "product_review", "New product review", notificationMessage)
+
+        if (oneSignalId) {
+            this.sendPushNotification(oneSignalId, notificationMessage)
+        }
+
+        return this.returnData(200, true, `Your review was submitted successfully`);
+
 
     }
 
