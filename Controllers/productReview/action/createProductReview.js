@@ -113,7 +113,7 @@ module.exports = class CreateProductReview extends ProductReviewController {
         this.CreateNotification.createBusinessNotification(businessId, productId, "product_review", "New product review", notificationMessage)
 
         if (oneSignalId) {
-            this.sendPushNotification(oneSignalId, notificationMessage)
+            this.sendPushNotification(oneSignalId, `A customer just wrote a review about your product. Go to your shop manager to learn more`)
         }
 
         return this.returnData(200, true, `Your review was submitted successfully`);
