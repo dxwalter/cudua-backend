@@ -73,6 +73,16 @@ module.exports = class createOrder extends OrderController {
     async saveBusinessNotification(businessIdArray, orderId, message) {
 
         for (let id of businessIdArray) {
+            
+            // get business owners onesignal ID
+
+            let businessOwnersBioData = await this.userController.findUsersByField({business_details: id});
+
+            if (businessOwnersBioData.error == false) {
+                let businessOwnerOnesignalId = businessOwnersBioData.result.oneSignalId;
+                this.sendPushNotification(businessOwnerOnesignalId, `You have a new order awaiting confirmation. The new order ID is ${orderId}. Go to your shop manager to see order.`)
+            } 
+
             await this.notification.createBusinessNotification(id, orderId, "order", "New Order", message);
         }
 
@@ -120,6 +130,14 @@ module.exports = class createOrder extends OrderController {
 
         if (getItemsInCart.result.length == 0) return this.returnMethod(200, false, "You do not have any item in your cart");
 
+        let cartProducts = [];
+        
+        for (let x of getItemsInCart.result) {
+            if(x.product != null) {
+                cartProducts.push(x)
+            }
+        }
+
         // get orderID
         let orderId = await this.generateId();
 
@@ -132,15 +150,18 @@ module.exports = class createOrder extends OrderController {
 
         let customerDetails = await this.userController.findUsersById(userId);
 
+        let customersOnesignal = customerDetails.result.oneSignalId;
+
+
         if (customerDetails.error) return this.returnMethod(200, false, "An error occurred. Please try again");
 
         let businessOwnerId = customerDetails.result.business_details == undefined ? "" : customerDetails.result.business_details;
 
 
         // format cart items and add orderId
-        let newData = this.formatCartItems(getItemsInCart.result, orderId, businessOwnerId);
+        let newData = this.formatCartItems(cartProducts, orderId, businessOwnerId);
         
-        if (newData.length == 0 && getItemsInCart.result.length > 0) return this.returnMethod(200, false, "An error occurred. You cannot order your own product.")
+        if (newData.length == 0 && cartProducts > 0) return this.returnMethod(200, false, "An error occurred. You cannot order your own product.")
 
         let newBusinessId =  Array.from(new Set(this.businessIdArray));
 
@@ -157,6 +178,7 @@ module.exports = class createOrder extends OrderController {
 
         let saveOrderForBusiness = await this.saveBusinessOrder(businessOrder);
 
+
         if (saveOrderForBusiness.error) return this.returnMethod(500, false, "An error occurred creating your order. Please try again");
 
         let saveData = await this.saveOrder(newData);
@@ -165,7 +187,12 @@ module.exports = class createOrder extends OrderController {
 
         // create customer notification
         let notificationMessage = `Your order has been created successfully. Your order ID is ${orderId}`
+
         let createCustomerNotification = await this.notification.createCustomerNotification(userId, orderId, "order", "Order created", notificationMessage);
+
+        if (customersOnesignal.length > 0) {
+            this.sendPushNotification(customersOnesignal, `Your order was created successfully and your order ID is ${orderId}`);
+        }
 
         // create business notification
         let businessNotificationMessage = `You have a new order and it is awaiting confirmation. The order ID is ${orderId}`;
@@ -173,15 +200,15 @@ module.exports = class createOrder extends OrderController {
         let saveBusinessNotification = await this.saveBusinessNotification(newBusinessId, orderId, businessNotificationMessage);
 
         // send emails to customer and business owners
-        let getBusinessEmails = await this.getBusinessEmails(newBusinessId, getItemsInCart.result)
+        let getBusinessEmails = await this.getBusinessEmails(newBusinessId, cartProducts)
         
         // send business email
 
 
         // get customer email and email_notification
 
-        let customerEmail = getItemsInCart.result[0].owner.email;
-        let customerEmailSetting = getItemsInCart.result[0].owner.email_notification;
+        let customerEmail = cartProducts[0].owner.email;
+        let customerEmailSetting = cartProducts[0].owner.email_notification;
 
         if (customerEmailSetting) {
             // send this customer an email

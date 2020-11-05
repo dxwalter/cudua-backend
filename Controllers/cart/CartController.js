@@ -105,6 +105,15 @@ module.exports = class CartController extends FunctionRepo {
 
     }
 
+    async allProductsInSignedCart (businessId) {
+        try {
+            let countResult = await CartModel.countDocuments({business: businessId});
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
     async deleteAllCartItemsByUserId(userId) {
         try {
             

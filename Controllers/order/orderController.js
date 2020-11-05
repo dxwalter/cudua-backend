@@ -343,6 +343,15 @@ module.exports = class OrderController extends FunctionRepo {
         }
     }
 
+    async allOrderCount (businessId) {
+        try {
+            let countResult = await OrderModel.countDocuments({business: businessId});
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
     async getOrderMetaData(customerId, businessId, orderId) {
         try {
             

@@ -51,6 +51,8 @@
         review: Float!
         # user address
         address: AddressType
+        # user one signal id
+        oneSignalId: String
     }
 
     # this is the address of the user
@@ -244,6 +246,10 @@
         email: String!
     }
 
+    input updateOneSignalIdInput {
+        oneSignalId: String!
+    }
+
     #This is the mutation type that will handle create account, forgot and recover pasword
     type Mutation {
         # create a new user
@@ -271,6 +277,9 @@
 
         # change customers' password
         editCustomerPassword (input: editCustomerPassword): DatalessResponse
+
+        # edit user's onesignal Id
+        editUsersOneSignalId (input: updateOneSignalIdInput): DatalessResponse
     }
     
     # The "Query" type is special: it lists all of the available queries that

@@ -53,6 +53,12 @@ const OrderSchema = mongoose.Schema({
     customer_cancel_order_reason: {
         type: String, trim: true, default: ""
     },
+    payment_method: {
+        type: String, trim: true, default: ''
+    },
+    payment_status: {
+        type: Number, trim: true, default: 0
+    },
     customer_cancel_order: {
         type: Number, default: 0
     },

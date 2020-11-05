@@ -3,6 +3,7 @@
 const SaveForLaterController = require('../SaveForLaterController');
 const CreateCart = require('../../cart/action/addItemToCart');
 const ProductController = require('../../product/ProductController');
+const BusinessController = require('../../business/BusinessController')
 
 
 module.exports = class SaveProductForLater extends SaveForLaterController {
@@ -46,6 +47,16 @@ module.exports = class SaveProductForLater extends SaveForLaterController {
         let save  = await this.InsertProduct(productId, userId, businessId);
 
         if (save.error) return this.returnMethod(500, false, "An error occurred saving this product for later");
+
+        let getBusinessDetails = await this.BusinessController.getBusinessData(businessId);
+        if (getBusinessDetails.error) return this.returnMethod(500, false, `An error occurred. Please try again`);
+
+        let oneSignalId = getBusinessDetails.result.owner.oneSignalId
+
+        if (oneSignalId) {
+            this.sendPushNotification(oneSignalId, `A new review has been written about your business. Go to your business profile to read it.`)
+        }
+
         return this.returnMethod(200, true, "Product successfully saved");
 
     }

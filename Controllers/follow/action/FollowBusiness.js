@@ -62,6 +62,11 @@ module.exports = class FollowBusiness extends FollowController {
 
         this.BusinessNotification.createBusinessNotification(businessId, saveId, "Follow", "New follower", "A customer followed your business");
 
+        let oneSignalId = checkUserIsBusinessOwner.result.oneSignalId;
+        if (oneSignalId.length > 0 || oneSignalId != null || oneSignalId != undefined) {
+            this.sendPushNotification(oneSignalId, "A new customer just followed your business.")
+        }
+
         return this.returnMethod(200, true, "You successfully followed this business")
         
     }

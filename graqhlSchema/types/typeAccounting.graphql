@@ -1,0 +1,35 @@
+type BusinessAccounting {
+    allProducts: Int!
+    allOrders: Int!
+    allProductsInCart: Int!
+    allFollowers: Int!
+    totalAmountSold: Int!
+    allTransactions: [TransactionType]
+}
+
+type TransactionType {
+    referenceId: String!
+    orderId: String!
+    paymentMethod: String!
+    customerName: String!
+    amount: Int!
+    date: DateTime!
+}
+
+input getBusinessAccountInput {
+    businessId: String!
+}
+
+type BusinessAccountingResponse {
+    businessData: BusinessAccounting
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+type Query {
+    GetBusinessAccounting(input: getBusinessAccountInput): BusinessAccountingResponse
+}

@@ -165,7 +165,7 @@ module.exports = class CartController extends FunctionRepo {
     async deleteProductById(productId, businessId) {
         // when a business owner deletes a product from their store that has been added to cart
         try {
-            let deleteItem = await CartModel.deleteOne({
+            let deleteItem = await AnonymousCartModel.deleteOne({
                 $and: [{product: productId, business: businessId}]    
             });
 
@@ -191,4 +191,15 @@ module.exports = class CartController extends FunctionRepo {
         }
 
     }
+
+    async allProductsInAnonymousCart (businessId) {
+        try {
+            let countResult = await AnonymousCartModel.countDocuments({business: businessId});
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
+
 }

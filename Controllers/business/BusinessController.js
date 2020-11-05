@@ -77,6 +77,7 @@ module.exports = class BusinessController extends FunctionRepo {
             .populate('address.lga')
             .populate('address.state')
             .populate('address.country')   
+            .populate('owner')
             .exec()
 
             return {

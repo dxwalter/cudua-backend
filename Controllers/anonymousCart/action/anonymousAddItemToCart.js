@@ -37,6 +37,8 @@ module.exports = class AddItemToCart extends AnonymousCartController {
 
         if (getBusinessDetails.result._id.toString() != businessId) return this.returnMethod(500, false,  `This business has has either been moved or deleted`);
 
+        let oneSignalId = getBusinessDetails.result.owner.oneSignalId
+
         
         // check if this item has been added to cart before
         let checkIfExists = await this.findItemInCart(businessId, productId, userId);
@@ -61,6 +63,10 @@ module.exports = class AddItemToCart extends AnonymousCartController {
         let create = await this.createCartItem(createItem);
 
         if (create.error) return this.returnMethod(500, false, `An error occurred adding ${findProduct.result.name} to your cart. Please try again`)
+        
+        if (oneSignalId.length > 0 || oneSignalId != null || oneSignalId != undefined) {
+            this.sendPushNotification(oneSignalId, "A customer just added your product to their cart. Go to accounting in your shop manager to learn more.")
+        }
 
         return this.returnMethod(200, true, `${findProduct.result.name} was successfully added to your cart.`)
     }

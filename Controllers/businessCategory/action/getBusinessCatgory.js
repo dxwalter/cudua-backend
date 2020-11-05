@@ -19,7 +19,7 @@ module.exports = class GetBusinessCategories extends BusinessCategoryController 
             return this.returnData(500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }

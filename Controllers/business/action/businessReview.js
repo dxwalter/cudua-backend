@@ -120,6 +120,16 @@ module.exports = class CreatebusinessReview extends BusinessController {
 
             let createBusinessNotification = this.CreateNotification.createBusinessNotification(businessId, create.result._id, "businessReview", "Business review", "A new review has been written about your business.")
             this.updateReviewScore(businessId)
+
+            let getBusinessDetails = await this.getBusinessData(businessId);
+            if (getBusinessDetails.error) return this.returnMethod(500, false, `An error occurred. Please try again`);
+
+            let oneSignalId = getBusinessDetails.result.owner.oneSignalId
+
+            if (oneSignalId) {
+                this.sendPushNotification(oneSignalId, `A new review has been written about your business. Go to your business profile to read it.`)
+            }
+
             return this.returnMethod(200, true, "Your review has been submitted")
 
         }

@@ -90,6 +90,8 @@ type orderInfo {
     cancelOrderReason: String
     BusinessRejectOrderReason: String
     customerCancelOrder: Int
+    paymentMethod: String!
+    paymentStatus: Int!
 }
 
 type productsInOrderResponse implements ResponseType {
@@ -114,6 +116,7 @@ input confirmOrderInput {
     deliveryCharge: Int
     startTime: String!
     endTime: String!
+    paymentMethod: String!
 }
 
 input rejectOrder {
@@ -134,6 +137,7 @@ type businessData {
     username: String!
     businessId: String!
     logo: String
+    paystackPublicKey: String!
 }
 
 type productsInOrderResponseWithBusinessData {
@@ -197,6 +201,12 @@ type customerOrderIdResponse {
     message: String!
 }
 
+input confirmOnlinePaymentInput {
+    orderId: String!
+    businessId: String!
+    referenceId: String!
+}
+
 type Query {
     BusinessGetOrders(input: businessGetOrder): OrdersResponse
     BusinessGetProductsInOrder(input: orderInput): productsInOrderResponse
@@ -220,4 +230,5 @@ type Mutation {
     ConfirmDelivery(input: rejectDeliveryInput): DatalessResponse
     DeleteOrder(input: deleteOrderInput): DatalessResponse
     CustomerCancelOrder(input: customrRejectOrder): DatalessResponse
+    ConfirmOnlinePayment(input: confirmOnlinePaymentInput): DatalessResponse
 }

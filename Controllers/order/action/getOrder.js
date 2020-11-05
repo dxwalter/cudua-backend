@@ -152,7 +152,7 @@ module.exports = class GetOrders extends OrderController {
             return this.returnMethod(null, 200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnMethod(null, 200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -203,7 +203,7 @@ module.exports = class GetOrders extends OrderController {
             return this.returnProductMethod(null, null, null, 200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnProductMethod(null, null, null, 200, false, `You can not access this functionality. Sign out and sign in to continue`)
             }
         }
@@ -285,7 +285,9 @@ module.exports = class GetOrders extends OrderController {
             orderTime: orderDetails.result.created,
             cancelOrderReason: orderDetails.result.customer_cancel_order_reason,
             customerCancelOrder: orderDetails.result.customer_cancel_order,
-            BusinessRejectOrderReason: orderDetails.result.reject_order_reason
+            BusinessRejectOrderReason: orderDetails.result.reject_order_reason,
+            paymentMethod: orderDetails.result.payment_method,
+            paymentStatus: orderDetails.result.payment_status
         }
 
         // product details
@@ -348,7 +350,8 @@ module.exports = class GetOrders extends OrderController {
                     businessName: y.business.businessname,
                     username: y.business.username,
                     businessId: y.business.id,
-                    logo: y.business.logo
+                    logo: y.business.logo,
+                    paystackPublicKey: y.business.paystackPublicKey
                 },
                 orderInfo: {
                     deliveryCharge: y.delivery_charge,
@@ -361,7 +364,9 @@ module.exports = class GetOrders extends OrderController {
                     cancelOrderReason: y.customer_cancel_order_reason,
                     customerCancelOrder: y.customer_cancel_order,
                     orderStatus: y.order_status,
-                    BusinessRejectOrderReason: y.reject_order_reason
+                    BusinessRejectOrderReason: y.reject_order_reason,
+                    paymentMethod: y.payment_method,
+                    paymentStatus: y.payment_status
                 },
                 orderProduct: []
             })

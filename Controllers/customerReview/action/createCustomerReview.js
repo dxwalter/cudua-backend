@@ -65,10 +65,17 @@ module.exports = class CreateCustomerReview extends CustomerReviewController {
             return this.returnMethod(200, false, "Your business is not recognised.")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnMethod(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
+
+        let getCustomerDetails = await this.CustomerController.findUsersById(customerId)
+        
+        if (getCustomerDetails.error) return this.returnMethod(500, false, "An error occurred. Kindly try again");
+
+        let customerOnesignalId = getCustomerDetails.result.oneSignalId
+        
 
         // check if this customer has beem reviewed by this business. If yes, update review else create new one
 
@@ -106,6 +113,10 @@ module.exports = class CreateCustomerReview extends CustomerReviewController {
 
         // create customer notification
         let createNotification = await this.customerNotification.createCustomerNotification(customerId, notificationId, "customerReview", "New review",`${businessData.result.businessname} wrote a review about you.`)
+
+        if (customerOnesignalId) {
+            this.sendPushNotification(customerOnesignalId, `${businessData.result.businessname} wrote a review about you. Go to your customer profile to read it.`)
+        }
         
         this.updateReviewScore(customerId)
         

@@ -8,6 +8,8 @@ const bcrypt = require('bcrypt');
 const shortId = require('shortid');
 shortId.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ- ');
 
+const https = require('https');
+
 
 
 let cloudinary = require('cloudinary').v2;
@@ -26,6 +28,51 @@ module.exports = class FunctionRepo extends EmailClass{
         super()
     }
 
+    async sendPushNotification (userOneSignalId, message) {
+
+        let sendNotification = function (data) {
+            let headers = {
+                "Content-Type": "application/json; charset=utf-8",
+                "Authorization": ""
+            };
+    
+            let options = {
+                host: "onesignal.com",
+                port: 443,
+                path: "/api/v1/notifications",
+                method: "POST",
+                headers: headers
+            };
+    
+            try {
+
+                let req = https.request(options, function (res) {
+                    res.on('data', function (data) {
+      
+                    });
+                });
+
+                req.write(JSON.stringify(data));
+                req.end();
+                
+            } catch (error) {
+
+            }
+ 
+        };
+
+        let dataObject = {
+            app_id: "4077e6c3-299e-4bef-8fcd-7eeec9e2b284",
+            contents: {"en": message},
+            include_player_ids: [userOneSignalId],
+            small_icon: "https://res.cloudinary.com/cudua-images/image/upload/v1604501254/cudua_asset/ic_stat_onesignal_default.png", // can not be an url
+            large_icon: "https://res.cloudinary.com/cudua-images/image/upload/v1604500508/cudua_asset/android-icon_aiv0cc.png"
+        };
+    
+        sendNotification(dataObject);
+
+    }
+
     async generateId () {
         let orderId = shortId.generate();
 
@@ -42,6 +89,7 @@ module.exports = class FunctionRepo extends EmailClass{
     }
 
     MakeFirstLetterUpperCase (string) {
+        string = string.trim()
         return string[0].toUpperCase() +  string.slice(1);
     }
 
@@ -126,18 +174,19 @@ module.exports = class FunctionRepo extends EmailClass{
 
 
     formatFullname (name) {
+        
         // if name contains space, break name into two variables
-        name = name.toLowerCase();
+        name = name.toLowerCase().trim();
         let whitespacePosition = name.search(" ");
         if (whitespacePosition == -1) {
             // no whitespace exists
-            return this.MakeFirstLetterUpperCase(name);
+            return this.MakeFirstLetterUpperCase(name.trim());
         }
 
         let splitName = name.split(" ");
         let formattedName = "";
         splitName.forEach(element => {
-            let newName = this.MakeFirstLetterUpperCase(element);
+            let newName = this.MakeFirstLetterUpperCase(element.trim());
             formattedName = formattedName + " " + newName
         });
         
@@ -273,6 +322,7 @@ module.exports = class FunctionRepo extends EmailClass{
             'info',
             'about',
             'contact',
+            'home',
             'terms'
         ];
 
