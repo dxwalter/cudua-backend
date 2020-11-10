@@ -1,11 +1,12 @@
 "use-striv"
 
 const CreateAdmin = require('../../../AdminControllers/user/action/createAdmin')
+const LoginAdmin = require('../../../AdminControllers/user/action/login')
 
 module.exports = {
 
     Query: {
-        GetBusinessAccounting(_, args, context) {
+        AdminGetBusinessAccounting(_, args, context) {
             let userId = context.authFunction(context.accessToken);
             if (userId.error === true) return userId
             userId = userId.message
@@ -14,6 +15,12 @@ module.exports = {
             
             let getData = new GetBusinessAccounting();
             return getData.getBusinessAccount(args.businessId)
+        },
+        LoginAdmin(_, args, context) {
+            args = args.input
+            
+            let login = new LoginAdmin();
+            return login.LoginUser(args.email, args.password)
         }
     },
     Mutation: {

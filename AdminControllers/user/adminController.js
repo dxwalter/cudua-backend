@@ -12,7 +12,7 @@ module.exports = class AdminController extends FunctionRepo {
         try {
             const findResult = await AdminModel.findOne({
                 email: email
-            });   
+            })
 
             return {
                 error: false,

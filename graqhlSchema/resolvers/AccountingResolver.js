@@ -1,6 +1,6 @@
-"use-striv"
+"use-strict"
 
-const GetBusinessAccounting = require('../../Controllers/accounting/action/getAccount')
+const GetBusinessAccountingObject = require('../../Controllers/accounting/action/getAccount')
 
 module.exports = {
 
@@ -12,7 +12,7 @@ module.exports = {
 
             args = args.input
             
-            let getData = new GetBusinessAccounting();
+            let getData = new GetBusinessAccountingObject();
             return getData.getBusinessAccount(args.businessId)
         }
     },

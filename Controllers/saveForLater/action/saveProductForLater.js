@@ -11,6 +11,7 @@ module.exports = class SaveProductForLater extends SaveForLaterController {
         super()
         this.ProductController = new ProductController();
         this.CreateCart = new CreateCart();
+        this.BusinessController = new BusinessController()
     }
 
     returnMethod(code, success, message) {
@@ -44,18 +45,17 @@ module.exports = class SaveProductForLater extends SaveForLaterController {
 
         if (check.result != null) return this.returnMethod(200, false, "This product already exists in your saved products")
 
-        let save  = await this.InsertProduct(productId, userId, businessId);
-
-        if (save.error) return this.returnMethod(500, false, "An error occurred saving this product for later");
 
         let getBusinessDetails = await this.BusinessController.getBusinessData(businessId);
         if (getBusinessDetails.error) return this.returnMethod(500, false, `An error occurred. Please try again`);
 
-        let oneSignalId = getBusinessDetails.result.owner.oneSignalId
+        let ownerId = getBusinessDetails.result.owner._id;
 
-        if (oneSignalId) {
-            this.sendPushNotification(oneSignalId, `A new review has been written about your business. Go to your business profile to read it.`)
-        }
+        if (userId == ownerId) return this.returnMethod(200, false, "You cannot save your own product.")
+        
+        let save  = await this.InsertProduct(productId, userId, businessId);
+
+        if (save.error) return this.returnMethod(500, false, "An error occurred saving this product for later");
 
         return this.returnMethod(200, true, "Product successfully saved");
 

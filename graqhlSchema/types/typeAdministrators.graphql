@@ -61,6 +61,17 @@
         
     }
 
+    input createLoginAdminInput {
+        email: String!
+        password: String!
+        
+    }
+
+    type Query {
+        LoginAdmin(input: createLoginAdminInput): createAdminResponse
+        AdminGetBusinessAccounting: createAdminResponse
+    }
+
     type Mutation {
         CreateAdmin(input: createAdminInput): createAdminResponse
     }
