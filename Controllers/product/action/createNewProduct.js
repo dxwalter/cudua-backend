@@ -91,6 +91,12 @@ module.exports = class CreateNewProduct extends ProductController {
             return this.returnData(null, 500, false, "An error occurred uploading your new product");
         }
 
+        // check product count
+        let countProducts = await this.countBusinessProducts({business_id: businessId});
+        if (countProducts == 5 || countProducts == 12 || countProducts == 20) {
+            // create admin notification
+        }
+
         return this.returnData(create.result._id, 202, true, `${name} has been uploaded successfully`)
 
     }

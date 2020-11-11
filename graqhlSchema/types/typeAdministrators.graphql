@@ -1,0 +1,77 @@
+    scalar Upload
+
+    # response type
+    interface ResponseType {
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
+    # This is the response type that returns no data
+    type DatalessResponse implements ResponseType {
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
+    # This is the response type that returns no data
+    type updateProfileDpResponse implements ResponseType {
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!,
+        imagePath: String
+    }
+
+    # This "User" type defines the queryable fields for every user in our data source.
+    type Administrator {
+        # The fullname of the user must be greater than 2 characters
+        fullname: String!
+        # The email of the user must be greater than 5 characters and must contain the @ symbol
+  		email: String!
+        # the user display picture
+    	displayPicture: String
+        # 
+        accessToken: String!
+    }
+
+    type createAdminResponse implements ResponseType{
+        userData: Administrator
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+
+    }
+
+    input createAdminInput {
+        fullname: String!
+        email: String!
+        password: String!
+        
+    }
+
+    input createLoginAdminInput {
+        email: String!
+        password: String!
+        
+    }
+
+    type Query {
+        LoginAdmin(input: createLoginAdminInput): createAdminResponse
+        AdminGetBusinessAccounting: createAdminResponse
+    }
+
+    type Mutation {
+        CreateAdmin(input: createAdminInput): createAdminResponse
+    }

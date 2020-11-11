@@ -11,7 +11,7 @@ module.exports = function authentiCateUser (accessToken) {
                 code: 401,
                 error: true,
                 success : false,
-                message : 'Invalid access token. Sign out and sign into your account again'
+                message : 'Your access was denied. Sign out and sign into your account again'
             }
 
         } else {

@@ -210,8 +210,11 @@ module.exports = class GetOrders extends OrderController {
 
         // get customer id
         let findCustomer = await this.findOneOrderForBusiness(businessId, orderId);
+
+        
         
         if (findCustomer.error) return this.returnProductMethod(null, null, null, 200, false, "An error occurred from our end. Kindly try again.")
+        if (findCustomer.result == null) return this.returnProductMethod(null, null, null, 200, false, "The customer associated with this order has either been moved or deleted.")
         
         let customerId = findCustomer.result.customer;
 

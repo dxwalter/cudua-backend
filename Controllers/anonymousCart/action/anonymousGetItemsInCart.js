@@ -42,13 +42,12 @@ module.exports = class GetItemsInCart extends AnonymousCartController {
 
         let cartArray = [];
         let streetObject = {};
-
         
         for (const [index, item] of getCartItems.entries()) {
 
             cartArray[index] = {
                 itemId: item._id,
-                customer: item.owner._id,
+                customer: item.owner,
                 product: {
                     productId: item.product._id,
                     name: item.product.name,

@@ -1,0 +1,34 @@
+mutation {
+  CreateAdmin(input:{
+    fullname: "sdfsd",
+    email: "dfsdfsd@gmail.com",
+    password: "dsfdsdfsd",
+  }){
+    userData {
+      fullname
+      email
+      displayPicture
+      accessToken
+    }
+    code
+    success
+    message
+  }
+}
+
+{
+  LoginAdmin(input:{
+    email: "email",
+    password: "fsdf"
+  }){
+    userData {
+      fullname
+      email
+      displayPicture
+      accessToken
+    }
+    code
+    success
+    message
+  }
+}
