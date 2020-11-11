@@ -49,7 +49,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnData(500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -152,7 +152,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnData(500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -189,7 +189,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnData(500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -253,7 +253,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnData(500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -299,7 +299,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnDataImageFileName(null, 500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnDataImageFileName(null, 200, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -372,7 +372,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnDataImageFileName(null,500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnDataImageFileName(null, 500, false, `You can not access this functionality. You do not own a business`)
             }
         }
@@ -446,7 +446,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnData(500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+            if (businessData.result.owner._id != userId) return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
         }
 
         let findStreet = await this.LocationController.SearchStreetById(streetId);
@@ -493,7 +493,7 @@ module.exports = class EditBusinessDetails extends BusinessController {
             return this.returnData(500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
+            if (businessData.result.owner._id != userId) return this.returnData(200, false, `You can not access this functionality. You do not own a business`)
         }
 
         let updateData = await this.findOneAndUpdate(businessId, {paystackPublicKey: key});
