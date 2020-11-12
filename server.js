@@ -65,7 +65,7 @@ class startServer {
         mongoose.set('useCreateIndex', true);
         mongoose.set('useUnifiedTopology', true);
 
-        const PORT = process.env.PORT || 4000;
+        const PORT = 4000;
 
         mongoose.connect(MONGODB_URI).then(
             app.listen(PORT, () => console.log(`server starts @ port ${PORT}`)),  (err, result) => {
