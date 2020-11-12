@@ -49,7 +49,7 @@ class startServer {
                     graphqlHTTP((req, res) => 
                         ({
                             schema,
-                            graphiql: process.env.GRAPHIQL == undefined ? false : true,
+                            graphiql: process.env.GRAPHIQL,
                             context: {
                                 accessToken: req.header("accessToken"),
                                 authFunction: jwtAuthentication
