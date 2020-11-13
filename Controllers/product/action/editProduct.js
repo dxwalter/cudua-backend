@@ -88,7 +88,7 @@ module.exports = class EditProduct extends ProductController {
 
         // delete image
         images.forEach(async image => {
-            let publicID = `cudua_commerce/business/${businessId}/product/${image.split('.')[0]}`;
+            let publicID = `${process.env.CLOUDINARY_FOLDER}/business/${businessId}/product/${image.split('.')[0]}`;
             await this.removeFromCloudinary(publicID, 'image');
         });
 
@@ -601,7 +601,7 @@ module.exports = class EditProduct extends ProductController {
 
         //upload to cloudinary
 
-        let folder = "cudua_commerce/business/"+businessId+"/product/";
+        let folder = process.env.CLOUDINARY_FOLDER+"/business/"+businessId+"/product/";
         let publicId = encryptedName;
         let tag = 'product';
 
@@ -770,7 +770,7 @@ module.exports = class EditProduct extends ProductController {
         
         // remove from db
         let imageUpdate = await this.findOneAndUpdate(productId, dataObject);
-        let publicID = `cudua_commerce/business/${businessId}/product/${fileName.split('.')[0]}`;
+        let publicID = `${process.env.CLOUDINARY_FOLDER}/business/${businessId}/product/${fileName.split('.')[0]}`;
         
         // remove from cloudinary
         let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 

@@ -183,14 +183,14 @@ module.exports = class EditUserProfile extends UserController {
 
         // This is used to remove data from cloudinary
         if (userData.profilePicture != null || userData.profilePicture != undefined) {
-            let publicID = `cudua_commerce/customer/${userId}/profilePicture/${userData.profilePicture.split('.')[0]}`;
+            let publicID = `${process.env.CLOUDINARY_FOLDER}/customer/${userId}/profilePicture/${userData.profilePicture.split('.')[0]}`;
             // remove from cloudinary
             let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
         }
 
         //upload to cloudinary
 
-        let folder = "cudua_commerce/customer/"+userId+"/profilePicture/";
+        let folder = process.env.CLOUDINARY_FOLDER+"/customer/"+userId+"/profilePicture/";
         let publicId = encryptedName;
         let tag = 'profile picture';
         let imagePath = pathObj.path;

@@ -331,14 +331,14 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
         // public id used to remove data from cloudinary
         if (businessData.logo != null || businessData.logo != undefined) {
-            let publicID = `cudua_commerce/business/${businessId}/logo/${businessData.logo.split('.')[0]}`;
+            let publicID = `${process.env.CLOUDINARY_FOLDER}/business/${businessId}/logo/${businessData.logo.split('.')[0]}`;
             // remove from cloudinary
             let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
         }
 
         //upload to cloudinary
 
-        let folder = "cudua_commerce/business/"+businessId+"/logo/";
+        let folder = process.env.CLOUDINARY_FOLDER+"/business/"+businessId+"/logo/";
         let publicId = encryptedName;
         let tag = 'logo';
         let imagePath = pathObj.path;
@@ -401,13 +401,13 @@ module.exports = class EditBusinessDetails extends BusinessController {
 
         // delete old cover from cloudinary
         if (businessData.coverPhoto != null || businessData.coverPhoto != undefined) {
-            let publicID = `cudua_commerce/business/${businessId}/cover/${businessData.coverPhoto.split('.')[0]}`;
+            let publicID = `${process.env.CLOUDINARY_FOLDER}/business/${businessId}/cover/${businessData.coverPhoto.split('.')[0]}`;
             // remove from cloudinary
             let removeFromCloudinary = await this.removeFromCloudinary(publicID, 'image') 
         }
 
         //upload to cloudinary
-        let folder = "cudua_commerce/business/"+businessId+"/cover/";
+        let folder = process.env.CLOUDINARY_FOLDER+"/business/"+businessId+"/cover/";
         let publicId = encryptedName;
         let tag = 'cover';
         let imagePath = pathObj.path;
