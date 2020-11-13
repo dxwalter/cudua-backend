@@ -22,6 +22,7 @@ const CuduaCustomersResolver = require('./CuduaCustomersResolver');
 const SearchResolver = require('./SearchResolver');
 const HomePageResolver = require('./HomePageResolver');
 const AccountingResolver = require('./AccountingResolver');
+const EmailSubscribersResolver = require('./EmailSubscribersResolver');
 const AdminResolver = require('./administrators/AdminResolver');
 
 const resolvers = [
@@ -47,7 +48,8 @@ const resolvers = [
   SearchResolver,
   HomePageResolver,
   AccountingResolver,
-  AdminResolver
+  AdminResolver,
+  EmailSubscribersResolver
 ];
 
 module.exports = mergeResolvers(resolvers);

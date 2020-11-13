@@ -1,0 +1,22 @@
+type subscriber {
+    email: String!
+}
+
+# # This is the response type that returns no data
+type DatalessResponse implements ResponseType {
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+input newEmailInput {
+    email: String!
+}
+
+
+type Mutation {
+    CreateNewEmailSubcriber(input: newEmailInput): DatalessResponse
+}
