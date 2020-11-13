@@ -90,6 +90,7 @@ module.exports = class createSubScription extends subscriptionController {
             });
 
             let createNew = await this.saveSubscription(create);
+            
 
             if (createNew == false) {
                 return {
@@ -104,6 +105,13 @@ module.exports = class createSubScription extends subscriptionController {
             }
 
         }
+
+            
+        let getBusinessDetails = await this.businessController.getBusinessData(businessId);
+
+        if (getBusinessDetails.error) return this.returnMethodForNewSubscription(null, 200, false, "An error occurred. Refresh the page and try again")
+
+        let oneSignalId = getBusinessDetails.result.owner.oneSignalId
 
 
         if (businessId && referenceId) {
@@ -151,6 +159,12 @@ module.exports = class createSubScription extends subscriptionController {
             }
     
             await this.businessNotification.createBusinessNotification(businessId,referenceId, "Subscription", "Subscription Activated", `Your subscription has been activated. Your shop and products will now appear in search results.`);
+
+
+            if (oneSignalId.length > 0 || oneSignalId != null || oneSignalId != undefined) {
+                this.sendPushNotification(oneSignalId, "Your subscription has been activated. Your shop and products will now appear in search results.")
+            }
+    
     
             return this.returnMethodForNewSubscription({start, end}, 200, true, "Subscription activated")
 
@@ -198,6 +212,12 @@ module.exports = class createSubScription extends subscriptionController {
         }
 
         await this.businessNotification.createBusinessNotification(businessId, businessId, "Subscription", "Expired subscription", `Your subscription has expired. Your shop and products will no longer appear in search results. Visit plans & billing in your account settings to subscribe.`);
+
+        let oneSignalId = getBusinessDetails.result.owner.oneSignalId
+
+        if (oneSignalId.length > 0 || oneSignalId != null || oneSignalId != undefined) {
+            this.sendPushNotification(oneSignalId, "Your subscription has expired. Your shop and products will no longer appear in search results. Visit plans & billing in your account settings to subscribe. Go to your shop manager to learn more.")
+        }
 
         return this.returnMethod(200, true, "Subscription deactivated")
 
