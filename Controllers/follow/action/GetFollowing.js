@@ -117,7 +117,7 @@ module.exports = class GetFollowing extends FollowController {
             return this.returnBusinessMethod(null, 500, false, "An error occurred. Please try again")
         } else {
             // check if user is a valid business owner
-            if (businessData.result.owner != userId) {
+            if (businessData.result.owner._id != userId) {
                 return this.returnBusinessMethod(null, 500, false, `You can not access this functionality. You do not own a business`)
             }
         }
