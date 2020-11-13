@@ -60,9 +60,10 @@ module.exports = class CreateNewProduct extends ProductController {
         let encryptedName = this.encryptFileName(await this.generateId())
         let newFileName = encryptedName + "." + "jpg";
 
+        
 
         //upload to cloudinary
-        let folder = "cudua_commerce/business/"+businessId+"/product/";
+        let folder = process.env.CLOUDINARY_FOLDER+"/business/"+businessId+"/product/";
         let publicId = encryptedName;
         let tag = 'product';
         // let imagePath = pathObj.path;
