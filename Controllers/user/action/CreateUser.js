@@ -105,7 +105,7 @@ module.exports = class CreateUser extends UserController{
 
         let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
 
-        this.sendMail('no-reply@cudua.com', subject, data.email, messageBody, textPart, "Cudua");
+        this.sendMail('Cudua@cudua.com', subject, data.email, messageBody, textPart, "Cudua");
 
 
         let newData =  {

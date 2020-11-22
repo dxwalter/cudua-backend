@@ -89,7 +89,7 @@ module.exports = class RecoverPassword extends UserController{
 
                 let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
 
-                let sendEmail = await this.sendMail('no-reply@cudua.com', subject, this.email, messageBody, textPart)
+                let sendEmail = await this.sendMail('Cudua@cudua.com', subject, this.email, messageBody, textPart)
 
 
                 return this.returnType(200 , true, `A recovery email was sent to your account`)

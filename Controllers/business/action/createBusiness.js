@@ -53,7 +53,7 @@ module.exports = class CreateBusiness extends BusinessController {
 
         let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
 
-        this.sendMail('no-reply@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
+        this.sendMail('Cudua@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
     }
 
     sendEmailForPassedSubscription (emailAddress, name, username) {
@@ -79,7 +79,7 @@ module.exports = class CreateBusiness extends BusinessController {
 
         let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
 
-        this.sendMail('no-reply@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
+        this.sendMail('Cudua@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
     }
 
     sendEmailForCreatingSuccessfulBusiness(emailAddress, name, username) {
@@ -105,7 +105,7 @@ module.exports = class CreateBusiness extends BusinessController {
 
         let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
 
-        this.sendMail('no-reply@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
+        this.sendMail('Cudua@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
     }
 
     async saveViralRegistration(inviteId, businessId) {
