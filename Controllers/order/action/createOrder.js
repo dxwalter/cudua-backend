@@ -39,6 +39,62 @@ module.exports = class createOrder extends OrderController {
 
     }
 
+    sendCustomerNewOrderEmail(customerEmail, orderId) {
+        
+        let actionUrl = `https://cudua.com/c/orders/${orderId}`;
+
+        let emailAction = `<a class="mcnButton" href="${actionUrl}" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">View Order Now</a>`;
+
+        let emailMessage =`
+        <div style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
+        
+            <p style="font-size: 28px; font-weight:bold; margin-bottom: 32px; line-height:27px;">
+                Congratulations! your order has been placed.
+            </p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom:32px;">
+                Expect a call or message from the business you are buying from,
+            </p>
+        
+        </div>
+        `
+        let subject = `You order was placed successfully`;
+        let textPart = "but yet to be confirmed.";
+
+
+        let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
+
+        this.sendMail('no-reply@cudua.com', subject, customerEmail, messageBody, textPart, "Cudua");
+    }
+
+    sendBusinessNewOrderEmail (businessEmail, orderId) {
+
+        let actionUrl = `https://cudua.com/b/orders/${orderId}`;
+        let emailAction = `<a class="mcnButton" href="${actionUrl}" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">View Order Now</a>`;
+
+        let emailMessage =`
+        <div style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
+        
+            <p style="font-size: 28px; font-weight:bold; margin-bottom: 32px; line-height:27px;">
+                Congratulations! you have a new order that is awaiting confirmation.
+            </p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom:32px;">
+                To see this order, you have to go to your <a href="https://cudua.com/b">SHOP MANAGER</a> to see the order. It is a good practice to first call the customer to know where they are buying from and discuss delivery charge before confirming the order. The phone number of the customer is on the order page.
+            </p>
+        
+        </div>
+        `
+        let subject = `You have a new order`;
+        let textPart = "that is awaiting confirmation.";
+
+
+        let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
+
+        this.sendMail('no-reply@cudua.com', subject, businessEmail, messageBody, textPart, "Cudua");
+
+    }
+
     formatCartItems (cartItems, orderId, businessOwnerId) {
 
         let newCartArray = [];
@@ -203,7 +259,10 @@ module.exports = class createOrder extends OrderController {
         let getBusinessEmails = await this.getBusinessEmails(newBusinessId, cartProducts)
         
         // send business email
-
+        
+        for (let businessEmail of getBusinessEmails) {
+            this.sendBusinessNewOrderEmail(businessEmail, orderId)
+        }
 
         // get customer email and email_notification
 
@@ -212,6 +271,7 @@ module.exports = class createOrder extends OrderController {
 
         if (customerEmailSetting) {
             // send this customer an email
+            this.sendCustomerNewOrderEmail(customerEmail, orderId);
         }
 
         // delete items from cart

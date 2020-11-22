@@ -2,6 +2,9 @@
 
 const mailjet = require ('node-mailjet').connect('c29ec359cbc615c9f5d9189e805106ed', '41a3b771b4abc27a2e0a1e5837ac006c')
 
+const sgMail = require('@sendgrid/mail')
+
+
 module.exports = class EmailRepo {
 
     constructor () {
@@ -10,7 +13,7 @@ module.exports = class EmailRepo {
 
     }
 
-    emailMessageUi (subject, action, messageBody) {
+    emailMessageUi (subject, action = "", messageBody) {
 
         let emailUI = `
         <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
@@ -393,9 +396,6 @@ module.exports = class EmailRepo {
 
 }</style></head>
 <body style="height: 100%;margin: 0;padding: 0;width: 100%;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
-    <!--*|IF:MC_PREVIEW_TEXT|*-->
-    <!--[if !gte mso 9]><!----><span class="mcnPreviewText" style="display:none; font-size:0px; line-height:0px; max-height:0px; max-width:0px; opacity:0; overflow:hidden; visibility:hidden; mso-hide:all;">*|MC_PREVIEW_TEXT|*</span><!--<![endif]-->
-    <!--*|END:IF|*-->
     <center>
         <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable" style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 0;width: 100%;">
             <tbody><tr>
@@ -446,7 +446,7 @@ module.exports = class EmailRepo {
                     
                     <td valign="top" class="mcnTextContent" style="padding-top: 0;padding-right: 18px;padding-bottom: 9px;padding-left: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;word-break: break-word;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left;">
                     
-                        <h1 style="display: block;margin: 0;padding: 0;color: #222222;font-family: Helvetica;font-size: 40px;font-style: normal;font-weight: bold;line-height: 150%;letter-spacing: normal;text-align: center;">${subject}{</h1>
+                        <h1 style="display: block;margin: 0;padding: 0;color: #222222;font-family: Helvetica;font-size: 40px;font-style: normal;font-weight: bold;line-height: 150%;letter-spacing: normal;text-align: center;">${subject}</h1>
                     </td>
                 </tr>
             </tbody></table>
@@ -817,47 +817,34 @@ module.exports = class EmailRepo {
 </body></html>
         `
 
+        return emailUI;
     }
 
-    async sendMail (sender, senderName, subject, recipient, recipientName, body, textPart = '') {
+    async sendMail (sender, subject, recipient, body, textPart = '', fromName = "") {
 
         try {
             
-            const request = await mailjet.post("send", {'version': 'v3.1'})
-            .request({
-              "Messages":[
-                {
-                  "From": {
-                    "Email": sender,
-                    "Name": senderName
-                  },
-                  "To": [
-                    {
-                      "Email": recipient,
-                      "Name": recipientName
-                    }
-                  ],
-                  "Subject": subject,
-                  "TextPart": textPart,
-                  "HTMLPart": body,
-                  "CustomID": "TransactionalEmail"
-                }
-              ]
+            sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+            const msg = {
+                to: recipient, // Change to your recipient
+                from: sender, // Change to your verified sender
+                subject: subject,
+                text: textPart,
+                html: body,
+                fromname: fromName
+            }
+
+            sgMail.send(msg).then(() => {
+                console.log('Email sent')
+            })
+            .catch((error) => {
+                console.error(error)
             })
 
-            return {
-                error: false,
-                result: request
-            }
-
         } catch (error) {
-            
-            return {
-                error: true,
-                message: error.message
-            }
+            console.log(error)
         }
-
+        
     }
-
 }

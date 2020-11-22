@@ -53,6 +53,28 @@ module.exports = class CreateCustomerReview extends CustomerReviewController {
         await this.CustomerController.findOneAndUpdate(customerId, {'review_score': productReviewScore.toFixed(1)})
     }
 
+    sendReviewEmail(businessName, customerEmail) {
+        let actionUrl = `https://cudua.com/c/profile`;
+        let emailAction = `<a class="mcnButton" href="${actionUrl}" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Go To Your Profile</a>`;
+
+        let emailMessage =`
+        <div style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
+        
+            <p style="font-size: 28px; font-weight:bold; margin-bottom: 32px; line-height:27px"><span style="color: #ee6425">${businessName}</span> wrote a review on your profile.</p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom:32px;">Visit your profile to read the review.</p>
+        
+        </div>
+        `
+        let subject = `${businessName} just wrote a review about you.`;
+        let textPart = "You can check it out.";
+
+
+        let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
+
+        this.sendMail('Cudua@cudua.com', subject, customerEmail, messageBody, textPart, "Cudua");
+    }
+
     async createReview (businessId, customerId, rating, description, userId) {
 
         rating = rating < 1 ? 1 : rating;
@@ -75,6 +97,8 @@ module.exports = class CreateCustomerReview extends CustomerReviewController {
         if (getCustomerDetails.error) return this.returnMethod(500, false, "An error occurred. Kindly try again");
 
         let customerOnesignalId = getCustomerDetails.result.oneSignalId
+        let customerEmail = getCustomerDetails.result.email
+        let businessName = businessData.result.businessname
         
 
         // check if this customer has beem reviewed by this business. If yes, update review else create new one
@@ -95,6 +119,7 @@ module.exports = class CreateCustomerReview extends CustomerReviewController {
             if (update.error) return this.returnMethod(500, false, `An error occurred while updating your review`);
 
             this.updateReviewScore(customerId)
+
             return this.returnMethod(200, true, "Your review was submitted successfully.")
         }
 
@@ -119,6 +144,10 @@ module.exports = class CreateCustomerReview extends CustomerReviewController {
         }
         
         this.updateReviewScore(customerId)
+
+        // send email
+        // send email
+        this.sendReviewEmail(businessName, customerEmail);
         
         return this.returnMethod(200, true, "Your review was submitted successfully.")
     }
