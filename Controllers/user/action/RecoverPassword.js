@@ -73,21 +73,23 @@ module.exports = class RecoverPassword extends UserController{
 
             if(createForgotPassword._id) {
 
-                // let emailObject = {
-                //     to: this.email,
-                //     from: 'test@example.com',
-                //     subject: 'Sending with Twilio SendGrid is Fun',
-                //     text: 'and easy to do anywhere, even with Node.js',
-                //     html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-                // }
+                let subject = "Password Reset";
+                let textPart = "Change your password to a more secured password.";
 
-                // send mail
-                // console.log(this.sendEmail(emailObject));
+                let actionUrl = `https://cudua.com/auth/create-new-password?sub=${userId}&init=${secret}`;
+                let emailAction = `<a class="mcnButton" href="${actionUrl}" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Reset your password</a>`;
 
-                // action string
-                let url = `https://cudua.com/auth/create-new-password?sub=${userId}&init=${secret}`
+                let emailMessage =`
+                <div style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
 
-                console.log(url)
+                    <div style="margin-bottom: 16px; text-align:center;">Your request to reset your password was successful. Click "Reset your password" link below to change to a new passwprd</div>
+                
+                </div>
+                `;
+
+                let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
+
+                let sendEmail = await this.sendMail('no-reply@cudua.com', subject, this.email, messageBody, textPart)
 
 
                 return this.returnType(200 , true, `A recovery email was sent to your account`)

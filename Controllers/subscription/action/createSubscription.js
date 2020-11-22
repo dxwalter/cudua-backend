@@ -148,14 +148,13 @@ module.exports = class createSubScription extends subscriptionController {
                 let subject = "Renewed subscription";
                 let textPart = "Your subscription has been renewed";
     
-                let emailAction = `<a class="mcnButton " title="Start Shopping" href="https://www.cudua.com/b/profile/edit?billing=true" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Visit business profile</a>`;
+                let emailAction = `<a class="mcnButton" href="https://www.cudua.com/b/profile/edit?billing=true" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Visit business profile</a>`;
     
                 let messageBody = this.emailMessageUi(subject, emailAction, message)
     
-                let recipientName = getUserData.result.fullname;
                 let recipientEmail = getUserData.result.email
     
-                let sendEmail = await this.sendMail("no-reply@cudua.com", "Daniel Walter", subject, recipientEmail, recipientName, messageBody, textPart);
+                await this.sendMail("Cudua@cudua.com", subject, recipientEmail, messageBody, textPart, "Cudua");
             }
     
             await this.businessNotification.createBusinessNotification(businessId,referenceId, "Subscription", "Subscription Activated", `Your subscription has been activated. Your shop and products will now appear in search results.`);
@@ -201,14 +200,14 @@ module.exports = class createSubScription extends subscriptionController {
             let subject = "Expired subscription";
             let textPart = "Your subscription has expired";
 
-            let emailAction = `<a class="mcnButton " title="Start Shopping" href="https://www.cudua.com/b/profile/edit?billing=true" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Subscribe now</a>`;
+            let emailAction = `<a class="mcnButton" href="https://www.cudua.com/b/profile/edit?billing=true" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Subscribe now</a>`;
 
             let messageBody = this.emailMessageUi(subject, emailAction, message)
 
             let recipientName = getUserData.result.fullname;
             let recipientEmail = getUserData.result.email
 
-            let sendEmail = await this.sendMail("no-reply@cudua.com", "Daniel Walter", subject, recipientEmail, recipientName, messageBody, textPart);
+            await this.sendMail("Cudua@cudua.com", subject, recipientEmail, messageBody, textPart, "Cudua");
         }
 
         await this.businessNotification.createBusinessNotification(businessId, businessId, "Subscription", "Expired subscription", `Your subscription has expired. Your shop and products will no longer appear in search results. Visit plans & billing in your account settings to subscribe.`);

@@ -101,6 +101,7 @@ module.exports = class CreateProductReview extends ProductReviewController {
         });
 
         let oneSignalId = getBusinessDetails.owner.oneSignalId
+        let businessEmailAddress = getBusinessDetails.owner.email
 
         let create = await this.InsertNewReview(createReview);
 
@@ -116,8 +117,40 @@ module.exports = class CreateProductReview extends ProductReviewController {
             this.sendPushNotification(oneSignalId, `A customer just wrote a review about your product. Go to your shop manager to learn more`)
         }
 
+
+        this.sendReviewEmail(businessEmailAddress, productId)
+
         return this.returnData(200, true, `Your review was submitted successfully`);
 
+
+    }
+
+    sendReviewEmail (emailAddress, productId) {
+
+        let actionUrl = `https://cudua.com/b/product/${productId}`;
+
+        let emailAction = `<a class="mcnButton" href="${actionUrl}" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">View product</a>`;
+
+        let emailMessage =`
+        <div style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
+        
+            <p style="font-size: 28px; font-weight:bold; margin-bottom: 32px; line-height:27px;">
+                A new product review
+            </p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom:32px;">
+                A customer just wrote a review about your product. Click the link below to learn more 
+            </p>
+        
+        </div>
+        `
+        let subject = `A new product review`;
+        let textPart = "You can check it out";
+
+
+        let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
+
+        this.sendMail('Cudua@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
 
     }
 

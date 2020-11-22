@@ -29,6 +29,85 @@ module.exports = class CreateBusiness extends BusinessController {
         }
     }
 
+    sendEmailForFailedSubscription (emailAddress) {
+        let actionUrl = `https://cudua.com/info/contact`;
+        let emailAction = `<a class="mcnButton" href="${actionUrl}" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Contact Us Now</a>`;
+
+        let emailMessage =`
+        <div style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
+        
+            <p style="font-size: 28px; font-weight:bold; margin-bottom: 32px; line-height:27px;">Oops! Failed subscription.</p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom: 16px;">An error occurred while creating your free one month subscription. We are very sorry for the inconveniences this will cause.</p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom:32px;">If you contact us, we can fix this and restore your subscription</p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom:32px;">Best Wishes.</p>
+        
+        </div>
+        `
+
+        let subject = `Oops! Subscription failed`;
+        let textPart = "and your shop and products will not appear on Cudua.";
+
+
+        let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
+
+        this.sendMail('no-reply@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
+    }
+
+    sendEmailForPassedSubscription (emailAddress, name, username) {
+
+        let actionUrl = `https://cudua.com/b/profile/edit?billing=true`;
+        let emailAction = `<a class="mcnButton" href="${actionUrl}" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">View Your Subscription</a>`;
+
+        let emailMessage =`
+        <div style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
+        
+            <p style="font-size: 28px; font-weight:bold; margin-bottom: 28px; line-height:27px;">Congratulations <span style="color: #ee6425">${name}!</span> Your free one month subscription has been activated.</p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom: 16px;">When you have an active subscription, your shop <span style="color: #ee6425"><a href="https://cudua.com/${username}">https://cudua.com/${username}</a></span> and products will appear in search results and product suggestions.</p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom:32px;">To see your subscription, you need to go to your <a href="https://cudua.com/b">SHOP MANAGER</a>.</p>
+        
+        </div>
+        `
+
+        let subject = `Congratulations! Your subscription was activated`;
+        let textPart = "Your shop and products will appear on Cudua.";
+
+
+        let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
+
+        this.sendMail('no-reply@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
+    }
+
+    sendEmailForCreatingSuccessfulBusiness(emailAddress, name, username) {
+
+        let actionUrl = `https://cudua.com/b/profile/edit?billing=true`;
+        let emailAction = `<a class="mcnButton" href="${actionUrl}" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Upload a Product Now</a>`;
+
+        let emailMessage =`
+        <div style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
+        
+            <p style="font-size: 28px; font-weight:bold; margin-bottom: 32px; line-height:27px;">Congratulations <span style="color: #ee6425">${name}!</span> Your online shop is up and running.</p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom: 16px;">Your online store can be accessed when anybody visits <span style="color: #ee6425"><a href="https://cudua.com/${username}"></a>https://cudua.com/${username}</span>. But you need to upload your first product.</p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom:32px;">To upload your first product, you have to go to your <span style="color: #ee6425"><a href="https://cudua.com/b">SHOP MANAGER</a></span>, and <span style="color: #ee6425"><a href="https://cudua.com/b/product/add-product">ADD A PRODUCT</a></span>.</p>
+        
+        </div>
+        `
+        
+        let subject = `Congratulations! Your online store was created successfully`;
+        let textPart = "Your shop and products will appear on Cudua.";
+
+
+        let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
+
+        this.sendMail('no-reply@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
+    }
+
     async saveViralRegistration(inviteId, businessId) {
 
         // get viral id details
@@ -131,6 +210,8 @@ module.exports = class CreateBusiness extends BusinessController {
             return this.returnRequestStatus(200, false, `An error occurred updating your personal account as a business owner. More details: ${UserController.message}`);
         }
 
+        let emailAddress = UserController.result.email;
+
         // create notification
         await this.CreateNotification.createBusinessNotification(data._id, data._id, "business_profile", "Online store created", "Congratulations! Your online store is up and running.");
         await this.CreateNotification.createBusinessNotification(data._id, data._id, "business_profile", "Update business profile", "Update your business profile to help customers find you.");
@@ -151,10 +232,24 @@ module.exports = class CreateBusiness extends BusinessController {
                 subscription: subscriptionData._id
             });
 
+            let actionUrl;
+            let emailAction;
+            let emailMessage;
+
             if (updateData.error) {
                 await this.CreateNotification.createBusinessNotification(data._id, subscriptionData._id, "Subscription", "Failed subscription", "An error occurred while activating your one month free basic subscription plan. Please our contact support team to get this issue fixed.");
+
+                // send email
+
+                this.sendEmailForFailedSubscription(emailAddress)
+
+
             } else {
                 await this.CreateNotification.createBusinessNotification(data._id, subscriptionData._id, "Subscription", "Successful subscription", "Your one month free basic subscription has been activated. Visit plans & billings tab in your account setting to learn more.");
+
+                // send email
+
+                this.sendEmailForPassedSubscription(emailAddress, name, username)
             }
 
             subData = {
@@ -170,7 +265,10 @@ module.exports = class CreateBusiness extends BusinessController {
             this.saveViralRegistration(this.inviteId, data._id)
         }
     
+        // send email
         
+        this.sendEmailForCreatingSuccessfulBusiness(emailAddress, name, username)
+
         return {
             businessDetails : {
                 businessname: data.businessname,

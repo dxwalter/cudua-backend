@@ -11,6 +11,7 @@ module.exports = class CreatebusinessReview extends BusinessController {
         super()
         this.CreateNotification = new CreateNotification();
         this.OrderController = new OrderController();
+        this.UserController = new UserController()
     }
 
     returnGetReviewMethod (reviews, score, code, success, message) {
@@ -58,6 +59,31 @@ module.exports = class CreatebusinessReview extends BusinessController {
 
     }
 
+    sendReviewEmail(customerName, businessEmail) {
+
+        let actionUrl = `https://cudua.com/b/profile`;
+        let emailAction = `<a class="mcnButton" href="${actionUrl}" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Go To Your Business Profile</a>`;
+
+        let emailMessage =`
+        <div style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
+        
+            <p style="font-size: 28px; font-weight:bold; margin-bottom: 32px; line-height:27px"><span style="color: #ee6425">${customerName}</span> wrote a review on your business profile.</p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom:32px;">Visit your business profile to read the review.</p>
+        
+        </div>
+        `
+        let subject = `${customerName} just wrote a review for your business.`;
+        let textPart = "You can check it out";
+
+
+        let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
+
+        this.sendMail('Cudua@cudua.com', subject, businessEmail, messageBody, textPart, "Cudua");
+        
+    }
+
+
     async updateReviewScore (businessId) {
         let getAllReviews = await this.GetReviewScore(businessId);
         
@@ -85,6 +111,19 @@ module.exports = class CreatebusinessReview extends BusinessController {
         if (checkIfUserHasMadeOrder.error) return this.returnMethod(500, false, `An error occurred from our end. Kindly try again`);
         // if custome has made an ordered from this, the orderID would be returned. If not returned, stop execution
         if (checkIfUserHasMadeOrder.result == null) return this.returnMethod(200, false, `For you to write a review of this business, you have to place an order`); 
+
+        // get business data
+        let businessData = await this.getBusinessData(businessId);
+        if (businessData.error == true) return this.returnMethod(500, false, "An error occurred from our end. Kindly try again");
+        let businessEmail = businessData.result.owner.email;
+
+        
+        // get customer data
+        let getCustomerDetails = await this.UserController.findUsersById(userId)
+        if (getCustomerDetails.error) return this.returnMethod(500, false, "An error occurred. Kindly try again");
+        let customerName = getCustomerDetails.result.fullname;
+
+
 
         // check if this customer has written a review before
         let checkIfNewReview = await this.GetOneReviewByCustomer(userId, businessId);
@@ -129,6 +168,8 @@ module.exports = class CreatebusinessReview extends BusinessController {
             if (oneSignalId) {
                 this.sendPushNotification(oneSignalId, `A new review has been written about your business. Go to your business profile to read it.`)
             }
+
+            this.sendReviewEmail(customerName, businessEmail)
 
             return this.returnMethod(200, true, "Your review has been submitted")
 

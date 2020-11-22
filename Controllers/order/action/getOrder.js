@@ -87,13 +87,14 @@ module.exports = class GetOrders extends OrderController {
     }
 
     formartOrderData(orderData) {
+
         let newOrder = [];
         let pendingOrder = [];
         let clearedOrder = [];
         let orderObject = {};
 
         for (let orderItem of orderData) {
-            if (orderObject[orderItem.order_id] == undefined) {
+            if (orderObject[orderItem.order_id] == undefined && orderItem.customer != null) {
 
                 // new order that is yet to be confirmed
                 if (orderItem.order_status == 0) {
