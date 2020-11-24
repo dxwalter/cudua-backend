@@ -3,6 +3,7 @@
 let ProductModel = require('../../../Models/Product')
 let ProductController = require('../ProductController')
 let createBusinessCategory = require('../../businessCategory/action/createBusinessCategories');
+let CreateNotification = require('../../notifications/action/createNotification')
 
 module.exports = class CreateNewProduct extends ProductController {
     
@@ -10,6 +11,7 @@ module.exports = class CreateNewProduct extends ProductController {
         super();
         this.BusinessCategory = new createBusinessCategory();
         this.businessProductPath = 'uploads/product/';
+        this.createNotification = new CreateNotification()
     }
 
     returnData (productId, code, success, message) {
@@ -22,7 +24,7 @@ module.exports = class CreateNewProduct extends ProductController {
     }
 
     async createProduct (name, price, category, subcategory, businessId, file, userId) {
-        
+
         if (name.length < 3) {
             return this.returnData(null, 200, false, `Enter a valid name for the product you want to upload`)
         }
@@ -43,6 +45,8 @@ module.exports = class CreateNewProduct extends ProductController {
                 return this.returnData(null, 200, false, `You can not access this functionality. You do not own a business`)
             }
         }
+
+        let businessUsername = businessData.result.username
 
         if (category.length == false || subcategory.length == false) {
             return this.returnData(null, 200, false, `Choose a catgory and subcategory for the product you want to upload`)
@@ -96,6 +100,7 @@ module.exports = class CreateNewProduct extends ProductController {
         let countProducts = await this.countBusinessProducts({business_id: businessId});
         if (countProducts == 5 || countProducts == 12 || countProducts == 20) {
             // create admin notification
+            this.createNotification.CreateAdminNotification(businessUsername, "Business", "Free flier", `A business has uploaded their ${countProducts}th product. A digital flier has to be sent to them.`)
         }
 
         return this.returnData(create.result._id, 202, true, `${name} has been uploaded successfully`)

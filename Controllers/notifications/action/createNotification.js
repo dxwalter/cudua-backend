@@ -4,6 +4,7 @@ const NotificationController = require('../notificationController');
 
 const BusinessNotificationModel = require('../../../Models/BusinessNotificationModel')
 const CustomerNotificationModel = require('../../../Models/CustomerNotificationModel');
+const AdminNotificationModel = require('../../../Models/cudua-admins/AdminNotificationModel');
 
 module.exports = class createNotification extends NotificationController {
     constructor () {
@@ -16,6 +17,27 @@ module.exports = class createNotification extends NotificationController {
             success: success,
             message: message
         }
+    }
+
+    async CreateAdminNotification (actionId, notificationType, header, message) {
+
+        if (message.length < 10) return this.returnMethod(200, false, "Please provide a descriptive message of your notification");
+
+        // create
+        let create = new AdminNotificationModel({
+            action_id: actionId,
+            type: notificationType,
+            header: header,
+            message: message
+        });
+
+        let save = await this.createNotificationAlert(create);
+
+        if (save.error == true) return this.returnMethod(500, false, "An error occurred from our end while saving customer's notification")
+
+        console.log("good")
+
+        return this.returnMethod(200, true, "Notification created successfully")
     }
 
     async createCustomerNotification (userId, actionId, notificationType, header, message) {

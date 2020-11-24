@@ -39,11 +39,8 @@ module.exports = class DeleteSelectedCategory extends BusinessCategoryController
         // select product
         let allProducts = await this.productController.allProductsInCategory(businessId, categoryId);
 
-        console.log(categoryId)
-
         if (allProducts.error) return this.returnMethod(500, false, "An error occurred from our end, kindly try again")
-        
-        console.log(allProducts)
+    
 
         if (allProducts.result.length > 0) {
             // delete images
@@ -74,7 +71,7 @@ module.exports = class DeleteSelectedCategory extends BusinessCategoryController
 
         // delete products
         let deleteProducts = await this.productController.deleteAllProductsFromCategory(businessId, categoryId);
-        console.log(deleteProducts)
+    
         if (deleteProducts.error) return this.returnMethod(500, false, "An error occurred from our end, kindly try again")
 
         // delete category

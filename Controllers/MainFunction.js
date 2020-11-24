@@ -70,7 +70,7 @@ module.exports = class FunctionRepo extends EmailClass{
         try {
             sendNotification(dataObject);   
         } catch (error) {
-            console.log(error)
+            
         }
 
     }

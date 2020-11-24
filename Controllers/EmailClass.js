@@ -836,14 +836,14 @@ module.exports = class EmailRepo {
             }
 
             sgMail.send(msg).then(() => {
-                console.log('Email sent')
+                
             })
             .catch((error) => {
-                console.error(error)
+                
             })
 
         } catch (error) {
-            console.log(error)
+            
         }
         
     }
