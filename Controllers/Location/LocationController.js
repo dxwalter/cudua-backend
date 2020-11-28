@@ -88,6 +88,40 @@ module.exports = class LocationController extends MainFunction{
         }
     }
 
+    async GetAllLgasInState (stateId) {
+
+        try {
+            let getAll = await LGAModel.find({state_id: stateId})
+            return {
+                result: getAll,
+                error: false
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
+    async GetAllCommunitiesInAnLga (lgaId) {
+
+        try {
+            let getAll = await CommunityModel.find({lga_id: lgaId})
+            return {
+                result: getAll,
+                error: false
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
     async SearchCommunity (keyword) {
         try {
 
@@ -193,5 +227,171 @@ module.exports = class LocationController extends MainFunction{
                 message: error.message
             }
         }
+    }
+
+
+    async checkIfStreetExists(street, communityId, lgaId) {
+
+        try {
+            let getStreet = await StreetModel
+            .findOne({
+                $and: [
+                    {
+                        lga_id: lgaId, 
+                        community_id: communityId,
+                        name: street
+                    }
+                ]
+            });
+
+            return {
+                result: getStreet,
+                error: false
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
+    async checkIfCommunityExists(community, stateId, lgaId) {
+
+        try {
+            let getCommunity = await CommunityModel
+            .findOne({
+                $and: [
+                    {
+                        lga_id: lgaId, 
+                        state_id: stateId,
+                        name: community
+                    }
+                ]
+            });
+
+            return {
+                result: getCommunity,
+                error: false
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+    async checkIfLgaExists(lga, stateId) {
+
+        try {
+            let getLga = await LGAModel
+            .findOne({
+                $and: [
+                    {
+                        state_id: stateId,
+                        name: lga
+                    }
+                ]
+            });
+
+            return {
+                result: getLga,
+                error: false
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
+    async saveManyStreets (streets) {
+        try {
+            let saveMany = await StreetModel.insertMany(streets);
+
+            return {
+                error: false,
+                result: saveMany
+            }
+
+        } catch (error) {
+
+            console.log(error)
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+
+    async saveManyCommunities (communities) {
+        try {
+            let saveMany = await CommunityModel.insertMany(communities);
+
+            return {
+                error: false,
+                result: saveMany
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+    async saveManyLgas (lgas) {
+        try {
+            let saveMany = await LGAModel.insertMany(lgas);
+
+            return {
+                error: false,
+                result: saveMany
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+
+    async findAllStreetsInCommunity (communityId) {
+        
+        try {
+            let findStreets = await StreetModel.find({community_id: communityId})
+            .populate('country_id')
+            .populate('state_id')
+            .populate('lga_id')
+            .populate('community_id')
+            .populate('proximity.street')
+            .sort({_id: -1})
+
+            return {
+                error: false,
+                result: findStreets
+            }
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
     }
 }

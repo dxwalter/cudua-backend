@@ -13,7 +13,7 @@ const CategorySchema = mongoose.Schema({
         required: true
     },
     icon: {
-        type: String, required: false
+        type: String, required: false, default: ""
     },
     status: {
         type: Number, default: 0

@@ -9,7 +9,7 @@ const ProductResolver = require('./ProductResolver');
 const FollowResolver = require('./FollowResolver');
 const ProductReviewResolver = require('./ProductReviewResolver');
 const MoveLocationResolver = require('./MoveLocationResolver');
-const LocationResover = require('./LocationResover');
+const LocationResolver = require('./LocationResolver');
 const CartResolver = require('./CartResolver');
 const OrderResolver = require('./OrderResolver');
 const CustomerReviewResolver = require('./CustomerReviewResolver');
@@ -35,7 +35,7 @@ const resolvers = [
   FollowResolver,
   ProductReviewResolver,
   MoveLocationResolver,
-  LocationResover,
+  LocationResolver,
   CartResolver,
   OrderResolver,
   CustomerReviewResolver,

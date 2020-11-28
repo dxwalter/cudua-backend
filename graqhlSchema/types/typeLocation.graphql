@@ -27,7 +27,7 @@ type streetData {
 }
 
 # community data
-type communityData {
+type communitySearchData {
     # community name
     communityName: String!
     # community id
@@ -94,7 +94,7 @@ type newLocationResponse implements responseType {
 # this is what is returned when you search for a lga
 type returnCommunitySearch implements responseType{
     # the data of the community which includes country, state, lga
-    communityData: [communityData!],
+    communityData: [communitySearchData!],
     code: Int!
     success: Boolean!,
     message: String!
@@ -139,20 +139,71 @@ input addNewLocation {
     proximity: String
 }
 
+type returnLgaInState implements responseType {
+    lgas: [LgaData]
+    code: Int!
+    success: Boolean!,
+    message: String!
+}
 
+type returnCommunitiesInLga implements responseType {
+    communities: [CommunityData]
+    code: Int!
+    success: Boolean!,
+    message: String!
+}
+
+input inputStateId {
+    stateId: String!
+}
+
+input inputLgaId {
+    lgaId: String!
+}
+
+input createCommunityInput {
+    stateId: String!
+    lgaId: String!
+    newCommunities: String!
+}
+
+input createLgaInput {
+    stateId: String!
+    newLgas: String!
+}
+
+input createNewStreetInput {
+    stateId: String!
+    lgaId: String!
+    communityId: String!
+    newStreets: String!
+}
+
+input communityNameInput {
+    communityId: String
+}
 
 type Query {
-    # get street
+    # get street search
     GetStreet (input: searchStreetInput): returnStreetSearch
-    # get community
-    GetCommunity (input: searchStreetInput): returnCommunitySearch,
+    # get community search
+    GetCommunity (input: searchStreetInput): returnCommunitySearch
 
-    # get
-    GetLga (input: searchStreetInput): returnLgaSearch,
+    GetAllCommunitiesInLga (input: inputLgaId): returnCommunitiesInLga
+
+    # get lga search
+    GetLga (input: searchStreetInput): returnLgaSearch
 
     GetAllStates: returnAllStates
+
+    GetLgaForState (input: inputStateId): returnLgaInState
+
+    GetStreetsInCommunity (input: communityNameInput): returnStreetSearch
 }
 
 type Mutation {
     AddNewUserLocation (input: addNewLocation): newLocationResponse
+    CreateNewStreet (input: createNewStreetInput): newLocationResponse
+    CreateNewCommunities (input: createCommunityInput): newLocationResponse
+    CreateNewLgas (input: createLgaInput): newLocationResponse
 }

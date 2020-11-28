@@ -35,8 +35,6 @@ module.exports = class createNotification extends NotificationController {
 
         if (save.error == true) return this.returnMethod(500, false, "An error occurred from our end while saving customer's notification")
 
-        console.log("good")
-
         return this.returnMethod(200, true, "Notification created successfully")
     }
 

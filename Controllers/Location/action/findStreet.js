@@ -44,6 +44,24 @@ module.exports = class FindLocation extends LocationController {
         }
     }
 
+    returnLGAListMethod (lgaData, code, success, message) {
+        return {
+            lgas: lgaData,
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
+    returnCommunitiesListMethod (communityList, code, success, message) {
+        return {
+            communities: communityList,
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
     returnCommunityMethod (communityData, code, success, message) {
         return {
             communityData: communityData,
@@ -142,6 +160,20 @@ module.exports = class FindLocation extends LocationController {
 
     }
 
+    async GetAllStreetsInACommunity (communityId) {
+        
+        if (communityId.length == 0) return this.returnStreetMethod(null, 200, false, 'Choose a community');
+
+        let findStreetsIncommunity = await this.findAllStreetsInCommunity(communityId);
+
+        if (findStreetsIncommunity.error || findStreetsIncommunity.result == null) return this.returnStreetMethod(null, 200, false, 'No result was found');
+
+        let formatStreetData = this.FormatStreetData(findStreetsIncommunity.result);
+        return this.returnStreetMethod(formatStreetData, 200, true, `Street search was successful`)
+
+
+    }
+
     async FindCommunity (keyword) {
         if (keyword.length < 1) {
             return this.returnCommunityMethod(null, 200, false, 'Type the name of your community')
@@ -232,6 +264,68 @@ module.exports = class FindLocation extends LocationController {
 
     }
 
+    async GetLgaForState (stateId) {
+        
+        if (stateId.length == 0) return this.returnLGAListMethod(null, 500, false, "The  state data was not provided");
+
+        let getAllLgasInState = await this.GetAllLgasInState(stateId);
+        if (getAllLgasInState.error || getAllLgasInState.result == null) return this.returnLGAListMethod(null, 500, false, "An error occurred.");
+
+
+        let sortLga = this.SortLocationAlphabetically(getAllLgasInState.result)
+
+        // format data
+        let newLgaArray = [];
+
+        Array.from(sortLga, x => {
+            newLgaArray.push({
+                name: x.name,
+                lgaId: x._id,
+            });
+        });
+
+        return this.returnLGAListMethod(newLgaArray, 200, true, "Lgas retrieved")
+
+    }
+
+    trimmArrayData (arrayData) {
+
+        let trimmedData = []
+
+        arrayData.forEach(element => {
+            let trimmedElement = element.toLowerCase().trim()
+            trimmedData.push(trimmedElement[0].toUpperCase() +  trimmedElement.slice(1))
+        });
+        
+        let removeDuplicate = Array.from(new Set(trimmedData))
+        return removeDuplicate;
+
+    }
+
+    async GetAllCommunitiesInLga (lgaId) {
+        
+        if (lgaId.length == 0) return this.returnCommunitiesListMethod(null, 200, false, "Lga data was not provided");
+
+        let getAllCommunitiesInLga = await this.GetAllCommunitiesInAnLga(lgaId);
+        if (getAllCommunitiesInLga.error || getAllCommunitiesInLga.result == null) return this.returnCommunitiesListMethod(null, 500, false, "An error occurred.");
+
+
+        let sortCommunities = this.SortLocationAlphabetically(getAllCommunitiesInLga.result)
+
+        // format data
+        let newCommunityArray = [];
+
+        Array.from(sortCommunities, x => {
+            newCommunityArray.push({
+                name: x.name,
+                communityId: x._id,
+            });
+        });
+
+        return this.returnCommunitiesListMethod(newCommunityArray, 200, true, "communities retrieved")
+
+    }  
+    
     async addNewLocation(args) {
         let state = args.state;
         let userId = args.userId;
@@ -259,5 +353,153 @@ module.exports = class FindLocation extends LocationController {
 
         return this.returnMethod(200, true, "Your location is undergoing review. It will take at most 30 minutes to get to be up for use")
 
+    }
+
+
+    async saveStreetNewLocation (stateId, lgaId, communityId, streets) {
+        let countryId = '5f92f2a66f4c8907a4ac4142';
+
+        if (stateId.length == 0 || lgaId.length == 0 || communityId.length == 0 || streets.length == 0) {
+            return this.returnMethod(200, false, "Provide all the details required");
+        }
+
+        let streetArray = streets.split(',');
+
+        let trimmedStreet = this.trimmArrayData(streetArray);
+
+        let nonExistingStreets = [];
+        let passedStreet = 0;
+        let failedStreet = 0;
+
+        for (let street of trimmedStreet) {
+            let checkStreet = await this.checkIfStreetExists(street, communityId, lgaId);
+            if (checkStreet.error == false) {
+                if (checkStreet.result == null) {
+                    nonExistingStreets.push({
+                        country_id: countryId,
+                        state_id: stateId,
+                        community_id: communityId,
+                        lga_id: lgaId,
+                        name: street
+                    });
+                    passedStreet = passedStreet + 1
+                } else {
+                    failedStreet = failedStreet + 1
+                }
+            } else {
+                failedStreet = failedStreet + 1
+            }
+        }
+
+        
+        if (passedStreet > 0) {
+
+            let saveManyStreets = await this.saveManyStreets(nonExistingStreets);
+
+            if (saveManyStreets.error == true) return this.returnMethod(200, false, "An error occurred saving your streets.");
+
+            return this.returnMethod(200, true, `${passedStreet} street(s) saved. ${failedStreet} street(s) failed.`);
+
+        } else {
+            return this.returnMethod(200, false, "All these street(s) already exist");
+        }
+    }
+
+    async saveCommunitiesNewLocation (stateId, lgaId, newCommunities) {
+
+        let countryId = '5f92f2a66f4c8907a4ac4142';
+
+        if (stateId.length == 0 || lgaId.length == 0 || newCommunities.length == 0) {
+            return this.returnMethod(200, false, "Provide all the details required");
+        }
+
+
+        let communityArray = newCommunities.split(',');
+        let trimmedCommunities = this.trimmArrayData(communityArray);
+
+        let nonExistingCommunities = [];
+        let passedCommunity = 0;
+        let failedCommunity = 0
+
+        for (let community of trimmedCommunities) {
+            let checkCommunity = await this.checkIfCommunityExists(community, stateId, lgaId);
+            if (checkCommunity.error == false) {
+                if (checkCommunity.result == null) {
+                    nonExistingCommunities.push({
+                        country_id: countryId,
+                        state_id: stateId,
+                        lga_id: lgaId,
+                        name: community
+                    });
+                    passedCommunity = passedCommunity + 1
+                } else {
+                    failedCommunity = failedCommunity + 1
+                }
+            } else {
+                failedCommunity = failedCommunity + 1
+            }
+        }
+
+        if (passedCommunity > 0) {
+
+            let saveManyCommunities = await this.saveManyCommunities(nonExistingCommunities);
+
+            if (saveManyCommunities.error == true) return this.returnMethod(200, false, "An error occurred saving your communities.");
+
+            return this.returnMethod(200, true, `${passedCommunity} community(s) saved. ${failedCommunity} community(s) failed.`);
+
+        } else {
+            return this.returnMethod(200, false, "All these community(ies) already exist");
+        }
+
+    }
+
+
+    async saveLgasNewLocation(stateId, newLgas) {
+
+        let countryId = '5f92f2a66f4c8907a4ac4142';
+
+        if (stateId.length == 0 || newLgas.length == 0) {
+            return this.returnMethod(200, false, "Provide all the details required");
+        }
+
+        let lgaArray = newLgas.split(',');
+        let trimmedLgas = this.trimmArrayData(lgaArray);
+
+        let nonExistingLga = [];
+        let passedLga = 0;
+        let failedLga = 0;
+
+        for (let lga of trimmedLgas) {
+            let checkLga = await this.checkIfLgaExists(lga, stateId);
+            if (checkLga.error == false) {
+                if (checkLga.result == null) {
+                    nonExistingLga.push({
+                        country_id: countryId,
+                        state_id: stateId,
+                        name: lga
+                    });
+                    passedLga = passedLga + 1
+                } else {
+                    failedLga = failedLga + 1
+                }
+            } else {
+                failedLga = failedLga + 1
+            }
+        }
+
+
+        if (passedLga > 0) {
+
+            let saveManyLgas = await this.saveManyLgas(nonExistingLga);
+
+            if (saveManyLgas.error == true) return this.returnMethod(200, false, "An error occurred saving your Lgas.");
+
+            return this.returnMethod(200, true, `${passedLga} Lga(s) saved. ${failedLga} lga(s) failed.`);
+
+        } else {
+            return this.returnMethod(200, false, "All these lgas already exist");
+        }
+        
     }
 }

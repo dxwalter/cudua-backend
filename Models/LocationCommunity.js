@@ -18,7 +18,7 @@ const CommunitySchema = mongoose.Schema({
     },
     community_ms_id: {
         type: Number,
-        required: true
+        required: false
     },
     name: {
         type: String, required: true, trim: true

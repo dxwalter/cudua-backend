@@ -65,6 +65,8 @@
         subcategories: [Subcategory!]
         # industry
         industry: String
+        
+        icon: String
     }
     
     # get all category response
