@@ -23,13 +23,13 @@ module.exports = {
             args = args.input;
 
             let getProductByCategory = new GetProduct();
-            return getProductByCategory.GetProductByCategory(args.businessId, args.categoryId, args.page)
+            return getProductByCategory.BusinessGetProductByCategory(args.businessId, args.categoryId, args.page)
         },
         GetProductBysubCategory(_, args, context) {
             args = args.input;
 
-            let getProductByCategory = new GetProduct();
-            return getProductByCategory.GetProductBySubcategory(args.businessId, args.subcategoryId, args.page)            
+            let getProductBySubcategory = new GetProduct();
+            return getProductBySubcategory.BusinessGetProductBySubcategory(args.businessId, args.subcategoryId, args.page)            
         },
         BusinessSearchProduct(_, args, context) {
             let accessToken = context.accessToken;
@@ -59,6 +59,16 @@ module.exports = {
             args = args.input
             let getProducts = new GetProduct();
             return getProducts.getProductSuggestions(args.businessId, args.productId)
+        },
+        GetAllProductsInCategory(_, args) {
+            args = args.input
+            let getProducts = new GetProduct();
+            return getProducts.GetAllProductsByCategory(args.categoryId, args.page)
+        },
+        GetAllProductsInSubcategory(_, args) {
+            args = args.input
+            let getProducts = new GetProduct();
+            return getProducts.GetAllProductsBySubcategory(args.subcategoryId, args.page)
         }
     },
     Mutation: {

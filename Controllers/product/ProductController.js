@@ -542,4 +542,86 @@ module.exports = class ProductController extends BusinessController {
             }
         }
     }
+
+    async countBusinessProducts (dataObject) {
+        try {
+            let countResult = await ProductModel.countDocuments({$and : [dataObject]});
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
+    async CustomerGetAllProductsByCategory (categoryId, page) {
+
+        try {
+
+            // total number of returned products per request
+            let limit = 12;
+
+            let getProducts = await ProductModel.find({
+                $and: [
+                    {
+                        category: categoryId,
+                        hide: 0
+                    }
+                ]
+            })
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .populate('category')
+            .populate('subcategory')
+            .populate('business_id')
+        
+            return {
+                error: false,
+                result: getProducts
+            } 
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }   
+        }
+
+    }
+
+
+    async CustomerGetAllProductsBySubcategory (subcategoryId, page) {
+
+        try {
+
+            // total number of returned products per request
+            let limit = 12;
+
+            let getProducts = await ProductModel.find({
+                $and: [
+                    {
+                        subcategory: subcategoryId,
+                        hide: 0
+                    }
+                ]
+            })
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .populate('category')
+            .populate('subcategory')
+            .populate('business_id')
+        
+            return {
+                error: false,
+                result: getProducts
+            } 
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }   
+        }
+
+    }
 }

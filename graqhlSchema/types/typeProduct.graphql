@@ -392,6 +392,18 @@ input getProductSuggestionInput {
     businessId: String!
 }
 
+input getProductsInCategoryInput {
+    categoryId: String!
+    # page
+    page: Int!
+}
+
+input getProductsInSubcategoryInput {
+    subcategoryId: String!
+        # page
+    page: Int!
+}
+
 type Query {
     # a user can get the details of a product with its reviews
     GetProductById(input: productId): SingleProductResponse
@@ -415,6 +427,12 @@ type Query {
 
     # Get product suggestion
     GetProductSuggestion(input: getProductSuggestionInput): GetMultipleProductResponse
+
+    # Get all products in a category
+    GetAllProductsInCategory(input: getProductsInCategoryInput): GetMultipleProductResponse
+
+    # Get all products in a subcategory
+    GetAllProductsInSubcategory(input: getProductsInSubcategoryInput): GetMultipleProductResponse
 }
 
 

@@ -200,7 +200,7 @@ module.exports = class EditProduct extends ProductController {
         
     }
 
-    async GetProductBySubcategory (businessId, subcategoryId, page) {
+    async BusinessGetProductBySubcategory (businessId, subcategoryId, page) {
 
         if (page < 1) {
             return this.returnMultipleDataFromSubcategory(null, 200, false, `Set the page field for this request. The default value is 1`)
@@ -242,7 +242,7 @@ module.exports = class EditProduct extends ProductController {
 
     }
 
-    async GetProductByCategory (businessId, categoryId, page) {
+    async BusinessGetProductByCategory (businessId, categoryId, page) {
         
         if (page < 1) {
             return this.returnMultipleData(null, 200, false, `Set the page field for this request. The default value is 1`)
@@ -458,6 +458,61 @@ module.exports = class EditProduct extends ProductController {
         return this.returnMultipleDataFromSubcategory(formatProduct, 200, true, "successful")
         
 
+    }
+
+    async GetAllProductsByCategory (categoryId, page = 1) {
+
+        page = page > 0 ? page : 1
+        
+        if (categoryId.length < 1) {
+            return this.returnMultipleDataFromSubcategory([], 500, false, "Your category of choice was not provided")
+        }
+
+        let getAllProductsInCategory = await this.CustomerGetAllProductsByCategory(categoryId, page)
+
+        if (getAllProductsInCategory.error == true) {
+            return this.returnMultipleDataFromSubcategory([], 500, false, `An error occurred from our end. Kindly try again.`)
+        }
+
+        if (getAllProductsInCategory.result == null || getAllProductsInCategory.result.length == 0) {
+
+            let message = page > 1 ? "That was all the products in this category" : `No product was found for this category.`;
+            
+            return this.returnMultipleDataFromSubcategory([], 200, true, message)
+        }
+
+
+        let formatProduct = this.formatProductDetails(getAllProductsInCategory.result);
+
+        return this.returnMultipleDataFromSubcategory(formatProduct, 200, true, `Products retrieved.`)
+
+    }
+
+    async GetAllProductsBySubcategory (subcategoryId, page = 1) {
+
+        page = page > 0 ? page : 1
+
+        if (subcategoryId.length < 1) {
+            return this.returnMultipleDataFromSubcategory([], 500, false, "Your subcategory of choice was not provided")
+        }
+
+        let getAllProductsInSubcategory = await this.CustomerGetAllProductsBySubcategory(subcategoryId, page)
+
+        if (getAllProductsInSubcategory.error == true) {
+            return this.returnMultipleDataFromSubcategory([], 500, false, `An error occurred from our end. Kindly try again.`)
+        }
+
+        if (getAllProductsInSubcategory.result == null || getAllProductsInSubcategory.result.length == 0) {
+            
+            let message = page > 1 ? "That was all the products in this subcategory" : `No product was found for this subcategory.`;
+
+            return this.returnMultipleDataFromSubcategory([], 200, true, message)
+        }
+
+
+        let formatProduct = this.formatProductDetails(getAllProductsInSubcategory.result);
+
+        return this.returnMultipleDataFromSubcategory(formatProduct, 200, true, `Products retrieved.`)
     }
 
 }
