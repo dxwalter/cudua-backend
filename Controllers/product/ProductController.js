@@ -543,6 +543,84 @@ module.exports = class ProductController extends BusinessController {
         }
     }
 
+    async performCategoryAdvancedSearch (communityId, typeId, type, page) {
+        try {
+            let limit = 50
+
+            let searchBusiness = await BusinessModel.find({
+                $and: [
+                    {
+                        'address.community': communityId, 
+                        subscription_status: 0
+                    }
+                ]
+            })
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .map(async function(business) {  
+                // return business.id;
+                if (business.length > 0) {
+                    
+                    let productArray = []
+
+                    for (let businessData of business) {
+
+                        let searchProduct;
+
+                        if (type.toLowerCase() == 'category') {
+                            searchProduct = await ProductModel.find({
+                                $and: [
+                                    {
+                                        category: typeId, 
+                                        hide: 0,
+                                        business_id: businessData.id
+                                    }
+                                ]
+                            }).limit(12)
+                            .populate('business_id');
+                        } else {
+                            searchProduct = await ProductModel.find({
+                                $and: [
+                                    {
+                                        subcategory: typeId, 
+                                        hide: 0,
+                                        business_id: businessData.id
+                                    }
+                                ]
+                            }).limit(10)
+                            .populate('business_id');
+                        }
+
+
+                        
+                        if (searchProduct.length > 0) {
+                            searchProduct.forEach(element => {
+                                productArray.push(element)
+                            });
+                        }
+                    }
+
+                    return productArray
+
+                } else {
+                    return []
+                }
+            })
+
+            return {
+                error: false,
+                result: searchBusiness
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async countBusinessProducts (dataObject) {
         try {
             let countResult = await ProductModel.countDocuments({$and : [dataObject]});

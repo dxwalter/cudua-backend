@@ -5,6 +5,7 @@ const ProductReviewController = require('../../productReview/ProductReviewContro
 const CategoryController = require('../../category/CategoryController');
 const SubategoryController = require('../../subcategories/SubcategoryController');
 const FormatBusinessData = require('../../business/action/getBusinessData');
+const LocationController = require('../../Location/LocationController')
 const BusinessCatgories = require('../../businessCategory/BusinessCategoryController')
 
 
@@ -14,9 +15,19 @@ module.exports = class EditProduct extends ProductController {
         super();
         this.ProductReviewController = new ProductReviewController();
         this.CategoryController = new CategoryController();
+        this.LocationController = new LocationController();
         this.SubcategoryController = new SubategoryController();
         this.formatBusinessData = new FormatBusinessData()
         this.BusinessCatgories = new BusinessCatgories()
+    }
+
+    returnFilterProductsForCategory (products, code, success, message) {
+        return {
+            products: products,
+            code: code,
+            success: success,
+            message: message
+        }
     }
 
     returnData (product, code, success, message, business = null) {
@@ -513,6 +524,31 @@ module.exports = class EditProduct extends ProductController {
         let formatProduct = this.formatProductDetails(getAllProductsInSubcategory.result);
 
         return this.returnMultipleDataFromSubcategory(formatProduct, 200, true, `Products retrieved.`)
+    }
+
+    async initiateFiltersearch (communityId, typeId, type, page = 1) {
+
+        // note that type ID can be either category/subcategory id
+        // where type will tell if it is a category/subcategory search that should be done
+        if (communityId.length == 0 || typeId.length == 0 || type.length == 0) return this.returnFilterProductsForCategory([], 500, false, "An error occurred from our end. Kindly refresh the page and try again 2")
+
+        let checkCommunity = await this.LocationController.CheckCommunity(communityId);
+
+        if (checkCommunity.error) return this.returnFilterProductsForCategory([], 500, false, checkCommunity.message)
+
+        communityId = checkCommunity.result
+
+        type = type.toLowerCase() == 'category' ? 'category' : 'subcategory';
+
+        let getProducts = await this.performCategoryAdvancedSearch(communityId, typeId, type, page);
+
+        if (getProducts.error) return this.returnFilterProductsForCategory([], 500, false, "An error occurred from our end. Kindly refresh the page and try again 1")
+        
+        if (getProducts.result.length == 0) return this.returnFilterProductsForCategory([], 200, true, "No result was found");
+
+        let formatProduct = this.formatProductDetails(getProducts.result)
+
+        return this.returnFilterProductsForCategory(formatProduct, 200, true, "Retrieval was successful")
     }
 
 }

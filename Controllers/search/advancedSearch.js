@@ -252,42 +252,6 @@ module.exports = class AdvancedSearch extends ProductController {
 
     }
 
-    async CheckCommunity(communityId) {
-        
-        let findCommunityById = await this.LocationController.SearchCommunityById(communityId);
-        if (findCommunityById.error) {
-            
-            let findCommunityByName = await this.LocationController.SearchCommunityByName(this.MakeFirstLetterUpperCase(communityId));
-            if (findCommunityByName.error) {
-                return {
-                    error: true,
-                    message: `No community was found for '${communityId}'`
-                }
-            } 
-            
-            if (findCommunityByName.result == null) {
-                return {
-                    message: `No community was found for '${communityId}'`,
-                    error: true
-                }
-            }
-
-            if (findCommunityByName.result != null) {
-                return {
-                    result: findCommunityByName.result._id,
-                    error: false
-                }
-            }
-
-        } else {
-            return {
-                result: findCommunityById.result._id,
-                error: false
-            }
-        }
-
-    }
-
     ArrangeProductByTime (productResult) {
         
         let productTime = [];
@@ -323,7 +287,7 @@ module.exports = class AdvancedSearch extends ProductController {
 
         if (queryString.length < 1 || communityId.length == 0) return this.returnMethod(null, null, 500, false, "You did not provide a search string")
 
-        let checkCommunity = await this.CheckCommunity(communityId);
+        let checkCommunity = await this.LocationController.CheckCommunity(communityId);
         if (checkCommunity.error) return this.returnMethod(null, null, 500, false, checkCommunity.message)
         
         communityId = checkCommunity.result
@@ -357,4 +321,5 @@ module.exports = class AdvancedSearch extends ProductController {
         return this.returnMethod(productResult, businessList, 200, true, "Search successful")
 
     }
+
 }

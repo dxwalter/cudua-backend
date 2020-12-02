@@ -6,6 +6,8 @@ type searchResult {
     message: String!
 }
 
+
+
 input searchInput {
     queryString: String!
     page: Int!

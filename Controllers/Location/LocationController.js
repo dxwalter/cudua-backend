@@ -9,10 +9,49 @@ const LGAModel = require('../../Models/LocationLga');
 
 const NewLocationModel = require('../../Models/NewLocations');
 
-module.exports = class LocationController extends MainFunction{
+module.exports = class LocationController extends MainFunction {
     
     constructor () {
         super()
+    }
+
+    async CheckCommunity(communityId) {
+    
+
+        let findCommunityById = await this.SearchCommunityById(communityId);
+        
+        if ((findCommunityById.error == false && findCommunityById.result == null) || findCommunityById.error) {
+            
+            let findCommunityByName = await this.SearchCommunityByName(this.MakeFirstLetterUpperCase(communityId));
+
+            if (findCommunityByName.error == false && findCommunityByName.result == null) {
+                return {
+                    error: true,
+                    message: `No community was found with the name '${communityId}'`
+                }
+            } 
+            
+            if (findCommunityByName.error) {
+                return {
+                    message: `No community was found with the name '${communityId}'`,
+                    error: true
+                }
+            }
+
+            if (findCommunityByName.result != null && findCommunityByName.error == false) {
+                return {
+                    result: findCommunityByName.result._id,
+                    error: false
+                }
+            }
+
+        } else {
+            return {
+                result: findCommunityById.result._id,
+                error: false
+            }
+        }
+
     }
 
     async SearchStreet(keyword) {

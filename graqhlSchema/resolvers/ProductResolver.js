@@ -69,6 +69,11 @@ module.exports = {
             args = args.input
             let getProducts = new GetProduct();
             return getProducts.GetAllProductsBySubcategory(args.subcategoryId, args.page)
+        },
+        FilterCategorySearch (_, args) {
+            args = args.input
+            let categorySearch = new GetProduct();
+            return categorySearch.initiateFiltersearch(args.communityId, args.typeId, args.type, args.page)
         }
     },
     Mutation: {

@@ -404,6 +404,21 @@ input getProductsInSubcategoryInput {
     page: Int!
 }
 
+input filterCategorySearchInput {
+    page: Int!
+    communityId: String!
+    type: String!
+    typeId: String!
+}
+
+type filterTopCategorySearchResponse {
+    products: [Product]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
+
 type Query {
     # a user can get the details of a product with its reviews
     GetProductById(input: productId): SingleProductResponse
@@ -433,6 +448,9 @@ type Query {
 
     # Get all products in a subcategory
     GetAllProductsInSubcategory(input: getProductsInSubcategoryInput): GetMultipleProductResponse
+
+
+    FilterCategorySearch(input: filterCategorySearchInput): filterTopCategorySearchResponse
 }
 
 
