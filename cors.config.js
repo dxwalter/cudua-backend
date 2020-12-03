@@ -1,4 +1,8 @@
-let whitelist = ['http://localhost:3333','http://localhost:5555', 'https://cudua-ui.herokuapp.com', 'http://cudua-ui.herokuapp.com', 'https://cudua.com', 'https://cudua.com'];
+const dotenv = require('dotenv');
+dotenv.config();
+
+let whitelist = [process.env.FRONT_END, process.env.FRONT_END_ADMIN];
+
 let corsOptionsDelegate = function (req, callback) {
     let corsOptions;
     if (whitelist.indexOf(req.header('Origin')) !== -1) {
