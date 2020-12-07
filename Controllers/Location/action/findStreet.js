@@ -1,14 +1,25 @@
 'use-strict'
 
 const LocationController = require('../LocationController');
+const CreateNotification = require('../../notifications/action/createNotification')
 
 module.exports = class FindLocation extends LocationController {
     constructor () {
         super()
+        this.createNotification = new CreateNotification()
     }
 
     returnMethod (code, success, message) {
         return {
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
+    returnCustomerRequestedLocation (location, code, success, message) {
+        return {
+            location: location,
             code: code,
             success: success,
             message: message
@@ -288,7 +299,7 @@ module.exports = class FindLocation extends LocationController {
 
     }
 
-    trimmArrayData (arrayData) {
+    trimArrayData (arrayData) {
 
         let trimmedData = []
 
@@ -339,6 +350,7 @@ module.exports = class FindLocation extends LocationController {
         }
 
         let saveLocation = await this.AddNewLocation({
+            country_id: '5f92f2a66f4c8907a4ac4142',
             user_id: userId,
             state: state,
             lga: lga,
@@ -351,10 +363,45 @@ module.exports = class FindLocation extends LocationController {
             return this.returnMethod(500, false, `An error occurred. ${saveLocation.message}`)
         }
 
+        this.createNotification.CreateAdminNotification(userId, "Location", "New Location", `A customer is requesting that his/her location be added. Click here to learn more`);
+
         return this.returnMethod(200, true, "Your location is undergoing review. It will take at most 30 minutes to get to be up for use")
 
     }
 
+    async getCustomerLocation () {
+
+        let getNewLocation = await this.getAllCustomerAddedLocation()
+        
+        if (getNewLocation.error) return this.returnCustomerRequestedLocation(null, 500, false, getNewLocation.message);
+
+        let dataArray = [];
+
+        for (let x of getNewLocation.result) {
+            dataArray.push({
+                itemId: x._id,
+                userId: x.user_id,
+                state: x.state.name,
+                lga: x.lga,
+                community: x.community,
+                street: x.street,
+                proximity: x.proximity
+            })
+        }
+
+        return this.returnCustomerRequestedLocation(dataArray, 200, true, "Data retrieved")
+
+    }
+
+    async deleteCustomerAddedLocation (itemId) {
+
+            if (itemId.length == 0) return this.returnMethod(200, false, "An error occurred. Kindly refresh page and try again");
+
+            let deleteLocation = await this.deleteCustomerAddedLocationFromDb(itemId);
+
+            return this.returnMethod(200, true, "Deleted successfully")
+
+    }
 
     async saveStreetNewLocation (stateId, lgaId, communityId, streets) {
         let countryId = '5f92f2a66f4c8907a4ac4142';
@@ -365,7 +412,7 @@ module.exports = class FindLocation extends LocationController {
 
         let streetArray = streets.split(',');
 
-        let trimmedStreet = this.trimmArrayData(streetArray);
+        let trimmedStreet = this.trimArrayData(streetArray);
 
         let nonExistingStreets = [];
         let passedStreet = 0;
@@ -415,7 +462,7 @@ module.exports = class FindLocation extends LocationController {
 
 
         let communityArray = newCommunities.split(',');
-        let trimmedCommunities = this.trimmArrayData(communityArray);
+        let trimmedCommunities = this.trimArrayData(communityArray);
 
         let nonExistingCommunities = [];
         let passedCommunity = 0;
@@ -464,7 +511,7 @@ module.exports = class FindLocation extends LocationController {
         }
 
         let lgaArray = newLgas.split(',');
-        let trimmedLgas = this.trimmArrayData(lgaArray);
+        let trimmedLgas = this.trimArrayData(lgaArray);
 
         let nonExistingLga = [];
         let passedLga = 0;

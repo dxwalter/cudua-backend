@@ -9,12 +9,12 @@ const NewLocationSchema = mongoose.Schema({
     country_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "location-countries",
-        required: true,
-        default: "5f41789d3affd42e5892fac2"
+        required: true
     },
     state: {
-        type: String,
-        required: true, trim: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "location-states",
+        required: true
     },
     lga: {
         type: String,

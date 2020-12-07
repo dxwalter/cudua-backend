@@ -32,6 +32,20 @@ module.exports = {
             let createCategoryObject = new CreateCategory();
             return createCategoryObject.createNewCategory(args.categoryName, args.subcategories, userId)
         },
+        AdminCreateNewCategory (parent, args, context) {
+            
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+            
+            args = args.input
+            let createCat = new CreateCategory();
+            return createCat.adminCreateCategory(args.industryId, args.categoryName, args.avatar);
+        },
         ActivateCategory (parent, args, context, info) {
             // Remember to pass accessToken validation from Admin
             let activateCategory = new ActivateCategory();

@@ -139,10 +139,31 @@ input addNewLocation {
     proximity: String
 }
 
+type customerAddedLocation {
+    itemId: String!
+    userId: String!
+    state: String!
+    lga: String!
+    community: String!
+    street: String!
+    proximity: String
+}
+
+input deleteCustomerLocation {
+    itemId: String!
+}
+
+type CustomerAddedLocationResponse {
+    location: [customerAddedLocation]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
 type returnLgaInState implements responseType {
     lgas: [LgaData]
     code: Int!
-    success: Boolean!,
+    success: Boolean!
     message: String!
 }
 
@@ -199,6 +220,10 @@ type Query {
     GetLgaForState (input: inputStateId): returnLgaInState
 
     GetStreetsInCommunity (input: communityNameInput): returnStreetSearch
+    
+    # customers who uploaded their location to be added
+    GetCustomerAddedLocation: CustomerAddedLocationResponse
+
 }
 
 type Mutation {
@@ -206,4 +231,7 @@ type Mutation {
     CreateNewStreet (input: createNewStreetInput): newLocationResponse
     CreateNewCommunities (input: createCommunityInput): newLocationResponse
     CreateNewLgas (input: createLgaInput): newLocationResponse
+
+    # delete customer location
+    DeleteCustomerAddedLocation (input: deleteCustomerLocation): newLocationResponse
 }

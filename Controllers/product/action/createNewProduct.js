@@ -1,9 +1,9 @@
 'use-strict'
 
-let ProductModel = require('../../../Models/Product')
-let ProductController = require('../ProductController')
-let createBusinessCategory = require('../../businessCategory/action/createBusinessCategories');
-let CreateNotification = require('../../notifications/action/createNotification')
+const ProductModel = require('../../../Models/Product')
+const ProductController = require('../ProductController')
+const createBusinessCategory = require('../../businessCategory/action/createBusinessCategories');
+const CreateNotification = require('../../notifications/action/createNotification')
 
 module.exports = class CreateNewProduct extends ProductController {
     

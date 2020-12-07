@@ -1,12 +1,9 @@
 "use-strict";
 
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
-let CategoryController = require('../CategoryController');
+const CategoryController = require('../CategoryController');
 const NewCategories = require('../../../Models/NewCategories');
-
+const CategoryModel = require('../../../Models/Categories')
 
 module.exports = class CreateCategory extends CategoryController {
 
@@ -14,13 +11,41 @@ module.exports = class CreateCategory extends CategoryController {
         super(); 
     }
 
-    
     returnMethod (code, success, message) {
         return {
             code: code,
             success: success,
             message: message
         }
+    }
+
+    async adminCreateCategory(industryId, categoryName, avatar) {
+
+        if (industryId.length == 0 || categoryName.length == 0 || avatar.length == 0) {
+            return this.returnMethod(200, false, "An Error occurred with your input");
+        }
+
+        // check if category exists
+        let checkExistence = await this.checkCategoryExistence(industryId, categoryName);
+
+        if (checkExistence.error) return this.returnMethod(200, false, "An Error occurred from our end");
+        if (checkExistence.result != null) return this.returnMethod(200, false, "This category already exist");
+
+        console.log(checkExistence)
+
+        let data = new CategoryModel ({
+            name: this.MakeFirstLetterUpperCase(categoryName),
+            industry: industryId,
+            icon: avatar,
+            status: 1
+        });
+
+        let createCategory = await this.createNewCategoryForDb(data);
+
+        if (createCategory.error) return this.returnMethod(500, false, "An error occurred from our end. Kindly try again");
+
+        return this.returnMethod(200, true, `Category saved successfully`);
+
     }
 
     async createNewCategory (categoryName, subcategories, userId) {

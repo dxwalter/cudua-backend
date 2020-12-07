@@ -114,4 +114,32 @@ module.exports = class SubcategoryController extends CategoryController {
             } 
         }
     }
+
+    async checkSubcategoryExists(categoryId, subcategoryName) {
+        try {
+
+            let find = await SubCatgoryModel.findOne({
+                $and: [
+                    {
+                        category_id: categoryId,
+                        name: subcategoryName
+                    }
+                ]
+            });
+
+            return {
+                error: false,
+                result: find
+            }
+
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+    
+
 }

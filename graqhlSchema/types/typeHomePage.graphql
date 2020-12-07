@@ -44,6 +44,8 @@ type homePageBusinessListingResponse {
     message: String!
 }
 
+# type adminDashboard {}
+
 type Query {
     getHomePageFollowing: homePageBookmarkResponse
     getHomePageProducts: homePageProductsResponse

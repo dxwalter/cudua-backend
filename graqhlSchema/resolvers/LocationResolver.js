@@ -42,6 +42,14 @@ module.exports = {
         GetStreetsInCommunity (_, args) {
             let getStreets = new GetLocation();
             return getStreets.GetAllStreetsInACommunity(args.input.communityId)   
+        },
+        GetCustomerAddedLocation (_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            let getCustomerAddedLocation = new GetLocation();
+            return getCustomerAddedLocation.getCustomerLocation()
         }
     },
     Mutation: {
@@ -75,6 +83,11 @@ module.exports = {
 
             let saveLgas = new GetLocation();
             return saveLgas.saveLgasNewLocation(args.input.stateId, args.input.newLgas)
+        },
+        DeleteCustomerAddedLocation (_, args) {
+            let itemId = args.input.itemId
+            let deleteLocation = new GetLocation();
+            return deleteLocation.deleteCustomerAddedLocation(itemId)
         }
     }
 }

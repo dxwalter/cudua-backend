@@ -82,6 +82,32 @@ module.exports = class CreateBusiness extends BusinessController {
         this.sendMail('Cudua@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
     }
 
+    sendEmailToJoinCuduaAcademy (emailAddress, name, username) {
+
+        let actionUrl = `https://cudua.com/b/academy`;
+        let emailAction = `<a class="mcnButton" href="${actionUrl}" target="_blank" style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Grow your business online</a>`;
+
+        let emailMessage =`
+        <div style="margin: 10px 0 16px 0px;padding: 0;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;color: #757575;font-family: Helvetica;font-size: 16px;line-height: 150%;text-align: left; ">
+        
+            <p style="font-size: 28px; font-weight:bold; margin-bottom: 32px; line-height:27px;">Join our learning community.</p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom: 16px;">We understand that selling online is not a ride in the park. This is why we have setup an online learning community where we will teach all you need to know sell online and it is free.</p>
+
+            <p style="font-size: 14px; line-height: 27px; margin-bottom:32px;">To join this community, click the link below.</p>
+        
+        </div>
+        `
+        
+        let subject = `Learn how to grow your online business`;
+        let textPart = "online.";
+
+
+        let messageBody = this.emailMessageUi(subject, emailAction, emailMessage);
+
+        this.sendMail('Cudua@cudua.com', subject, emailAddress, messageBody, textPart, "Cudua");
+    }
+
     sendEmailForCreatingSuccessfulBusiness(emailAddress, name, username) {
 
         let actionUrl = `https://cudua.com/b/profile/edit?billing=true`;
@@ -268,6 +294,7 @@ module.exports = class CreateBusiness extends BusinessController {
         // send email
         
         this.sendEmailForCreatingSuccessfulBusiness(emailAddress, name, username)
+        this.sendEmailToJoinCuduaAcademy(emailAddress, name, username)
 
         return {
             businessDetails : {

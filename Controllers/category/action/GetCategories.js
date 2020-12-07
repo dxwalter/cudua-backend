@@ -34,11 +34,11 @@ module.exports = class AllCategories extends CategoryController {
         let resultArray = data.result;
 
         for (let [index, data] of resultArray.entries()) {
-
             newDataArray[index] = {
                 id: data._id,
                 categoryName: data.name,
                 industry: data.industry == null ? "" : data.industry.name,
+                industryId: data.industry == null ? "" : data.industry._id,
                 icon: data.icon,
                 subcategories: []
             }

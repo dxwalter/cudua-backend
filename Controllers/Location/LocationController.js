@@ -6,7 +6,6 @@ const StreetModel = require('../../Models/LocationStreet');
 const CommunityModel = require('../../Models/LocationCommunity');
 const StateModel = require('../../Models/LocationState');
 const LGAModel = require('../../Models/LocationLga');
-
 const NewLocationModel = require('../../Models/NewLocations');
 
 module.exports = class LocationController extends MainFunction {
@@ -268,6 +267,25 @@ module.exports = class LocationController extends MainFunction {
         }
     }
 
+    async getAllCustomerAddedLocation () {
+        
+        try {
+            let getLocation = await NewLocationModel.find()
+            .populate('country_id')
+            .populate('state')
+            
+            return {
+                error: false,
+                result: getLocation
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
 
     async checkIfStreetExists(street, communityId, lgaId) {
 
@@ -361,8 +379,6 @@ module.exports = class LocationController extends MainFunction {
             }
 
         } catch (error) {
-
-            console.log(error)
             
             return {
                 error: true,
@@ -432,5 +448,23 @@ module.exports = class LocationController extends MainFunction {
             }
         }
 
+    }
+
+    async deleteCustomerAddedLocationFromDb (itemId) {
+        try {
+
+            let deleteItem = await NewLocationModel.deleteOne({_id: itemId});
+
+            return {
+                result: true,
+                error: false
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
     }
 }

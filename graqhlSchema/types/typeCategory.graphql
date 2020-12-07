@@ -65,7 +65,7 @@
         subcategories: [Subcategory!]
         # industry
         industry: String
-        
+        industryId: String
         icon: String
     }
     
@@ -93,6 +93,12 @@
         message: String!
     }
 
+    input AdminCreateNewCategoryInput {
+        industryId: String!
+        categoryName: String!
+        avatar: String!
+    }
+
     #This is the mutation type that will handle create category and activate category
     type Mutation {
         # create category
@@ -103,6 +109,9 @@
 
         # activate category
         ActivateCategory(input: ConfirmCategoryInput): DatalessResponse
+
+        # admin create new category
+        AdminCreateNewCategory(input: AdminCreateNewCategoryInput): DatalessResponse
     }
 
     # This is the query type that will handle get category 

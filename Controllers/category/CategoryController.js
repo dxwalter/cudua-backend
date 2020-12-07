@@ -43,6 +43,48 @@ module.exports = class CategoryController extends FunctionRepo {
         }
     }
 
+    async createNewCategoryForDb(Category) {
+        try {
+
+            const create = await Category.save();
+            return {
+                error: false,
+                result: create
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+    async checkCategoryExistence(industryId, categoryName) {
+        try {
+
+            let find = await CategoryModel.findOne({
+                $and: [
+                    {
+                        industry: industryId,
+                        name: categoryName
+                    }
+                ]
+            });
+
+            return {
+                error: false,
+                result: find
+            }
+
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
     
     async createNewSubcategory(categoryId, subcategories) {
         try {
