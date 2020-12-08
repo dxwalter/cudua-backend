@@ -8,6 +8,15 @@ module.exports = class AllCategories extends CategoryController {
 
     constructor () { super(); }
 
+    returnAllUserSuggestedCategories (categories, code, success, message) {
+        return {
+            categories: categories,
+            code: code,
+            success: success,
+            message: message
+        }
+    }
+
     async GetAll () {
         let data = await this.GetAllCategories();
 
@@ -121,6 +130,26 @@ module.exports = class AllCategories extends CategoryController {
             message: `Category successfully retrieved` 
         }
 
+
+    }
+
+    async getUserRequestedCategory () {
+        let getAll = await this.getAllNewCategoriesByUser();
+
+        if (getAll.error) return this.returnAllUserSuggestedCategories(null, 500, false, "An error occurred. Please try again")
+
+        let allRequest = []
+
+        for (let x of getAll.result) {
+            allRequest.push({
+                category: x.name,
+                author: x.author,
+                subcategories: x.subcategories,
+                itemId: x._id
+            })
+        }
+
+        return this.returnAllUserSuggestedCategories(allRequest, 200, true, "successfull")
 
     }
 }

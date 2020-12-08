@@ -88,6 +88,36 @@ module.exports = class CreateCategory extends CategoryController {
         console.log(userId)
     }
 
+    async adminEditCategory(categoryId, categoryName, avatar) {
+
+        if (categoryId.length == 0) return this.returnMethod(500, false, "An error occurred. Please try again");
+
+        let newData = {}
+        let score = 0;
+
+        if (categoryName.length > 0) {
+            newData.name = categoryName
+            score = score + 1;
+        }
+
+        if (avatar.length > 0) {
+            newData.icon = avatar
+            score = score + 2;
+        }
+
+        if (score == 0) return this.returnMethod(500, false, "An error from your end occurred. No update was made.");
+
+        let updateCategory = await this.findOneAndUpdate(categoryId, newData);
+
+        if (updateCategory.error == true) {
+            return this.returnMethod(200, false, `An error occurred: ${updateCategory.message}.`);
+        } 
+
+    
+        return this.returnMethod(200, true, "Category edited successfully")
+
+    }
+
     async getCategory (categoryId) {
         
     }
@@ -95,5 +125,7 @@ module.exports = class CreateCategory extends CategoryController {
     async getCategories () {
 
     }
+
+    async 
 
 }

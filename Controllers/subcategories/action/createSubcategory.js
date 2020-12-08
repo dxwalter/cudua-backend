@@ -71,8 +71,18 @@ module.exports = class CreateSubategory extends SubcategoryController {
         return this.returnMethod(200, true, "The subcategories have been saved.")
     }
 
-    async confirmCategory (categoryId) {
+    async AdminEditSubcategoryDetails (subcategoryId, name) {
         
+        if (subcategoryId.length == 0 && name.length == 0) return this.returnMethod(500, false, "There is a problem with your input");
+
+        let updateSubcategory = await this.findOneAndUpdate(subcategoryId, {name: name});
+
+        if (updateSubcategory.error == true) {
+            return this.returnMethod(200, false, `An error occurred: ${updateSubcategory.message}.`);
+        } 
+
+    
+        return this.returnMethod(200, true, "Subcategory edited successfully")
 
     }
 

@@ -1,7 +1,8 @@
 'use-strict'
 
 const CategoryModel = require('../../Models/Categories'); 
- 
+const NewCategoryModel = require('../../Models/NewCategories')
+
 const FunctionRepo = require('../MainFunction');
 
 module.exports = class CategoryController extends FunctionRepo {
@@ -11,6 +12,25 @@ module.exports = class CategoryController extends FunctionRepo {
         
         try {
             const findResult = await CategoryModel.findOne(data).populate('subcategoryList').exec();
+
+            return {
+                error: false,
+                result: findResult   
+            } 
+    
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
+    async getAllNewCategoriesByUser () {
+        
+        try {
+            const findResult = await NewCategoryModel.find();
 
             return {
                 error: false,

@@ -99,6 +99,28 @@
         avatar: String!
     }
 
+    input AdminCreateEditCategoryInput {
+        categoryId: String!
+        categoryName: String
+        avatar: String
+    }
+
+    type userSuggestedCategories {
+        category: String
+        author: String
+        subcategories: String
+        itemId: String
+    }
+
+    type GetAllCategoriesByCustomerReponse {
+        categories: [userSuggestedCategories]
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
     #This is the mutation type that will handle create category and activate category
     type Mutation {
         # create category
@@ -112,12 +134,18 @@
 
         # admin create new category
         AdminCreateNewCategory(input: AdminCreateNewCategoryInput): DatalessResponse
+
+        AdminEditCategory(input: AdminCreateEditCategoryInput): DatalessResponse
     }
 
     # This is the query type that will handle get category 
     type Query {
         # Get all categories
         GetAllCategories: GetAllCategoriesResponse
+
         # get one category
         GetOneCategory(input: ConfirmCategoryInput): GetOneCategoryResponse
+
+        # get all categories by customer
+        GetAllCategoriesByCustomer: GetAllCategoriesByCustomerReponse
     }

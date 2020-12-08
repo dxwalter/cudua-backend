@@ -12,6 +12,10 @@ module.exports = {
         GetOneCategory(parent, args, context, info) {
             let getOneCategory = new GetCategories();
             return getOneCategory.GetOne(args.input);
+        },
+        GetAllCategoriesByCustomer (_) {
+            let getUserCategories = new GetCategories();
+            return getUserCategories.getUserRequestedCategory()
         }
     },
     Mutation: {
@@ -45,6 +49,20 @@ module.exports = {
             args = args.input
             let createCat = new CreateCategory();
             return createCat.adminCreateCategory(args.industryId, args.categoryName, args.avatar);
+        },
+        AdminEditCategory (parent, args, context) {
+            
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) {
+                return userId
+            } else {
+                userId = userId.message;
+            }
+            
+            args = args.input
+            let createCat = new CreateCategory();
+            return createCat.adminEditCategory(args.categoryId, args.categoryName, args.avatar);
         },
         ActivateCategory (parent, args, context, info) {
             // Remember to pass accessToken validation from Admin
