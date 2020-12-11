@@ -121,6 +121,10 @@
         message: String!
     }
 
+    input userDeletedCategory {
+        itemId: String!
+    }
+
     #This is the mutation type that will handle create category and activate category
     type Mutation {
         # create category
@@ -136,6 +140,8 @@
         AdminCreateNewCategory(input: AdminCreateNewCategoryInput): DatalessResponse
 
         AdminEditCategory(input: AdminCreateEditCategoryInput): DatalessResponse
+
+        DeleteUserAddedCategory(input: userDeletedCategory): DatalessResponse
     }
 
     # This is the query type that will handle get category 

@@ -82,10 +82,14 @@ module.exports = class CreateCategory extends CategoryController {
 
     }
 
-    async createNewSubcategory (categoryId, subcategories, userId) {
-        console.log(categoryId)
-        console.log(subcategories)
-        console.log(userId)
+    async DeleteUserAddedCategory (itemId) {
+        
+        if (itemId.length == 0) return this.returnMethod(500, false, "An error occurred. Please refresh and try again");
+
+        let deleteItem = await this.deleteCustomerAddedCategoryFromDb(itemId);
+
+        return this.returnMethod(200, true, "Item deleted successfully")
+
     }
 
     async adminEditCategory(categoryId, categoryName, avatar) {

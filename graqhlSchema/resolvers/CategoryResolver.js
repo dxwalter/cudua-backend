@@ -69,6 +69,12 @@ module.exports = {
             let activateCategory = new ActivateCategory();
             return activateCategory.ActivateMethod(args.input);
 
+        },
+        DeleteUserAddedCategory (parent, args, context, info) {
+            // Remember to pass accessToken validation from Admin
+            let DeleteUserAddedCategory = new CreateCategory();
+            return DeleteUserAddedCategory.DeleteUserAddedCategory(args.input.itemId);
+
         }
 
     }

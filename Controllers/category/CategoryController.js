@@ -80,6 +80,16 @@ module.exports = class CategoryController extends FunctionRepo {
         }
     }
 
+    async deleteCustomerAddedCategoryFromDb (itemId) {
+        try {
+            
+            let deleteItem = await NewCategoryModel.deleteOne({_id: itemId})
+
+        } catch (error) {
+            
+        }
+    }
+
     async checkCategoryExistence(industryId, categoryName) {
         try {
 
