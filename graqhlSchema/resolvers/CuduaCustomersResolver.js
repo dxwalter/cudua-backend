@@ -4,8 +4,10 @@ const CustomerContact = require('../../Controllers/customerContact/customerConta
 
 module.exports = {
     Query: {
-        getCustomers (_, args) {
-            
+        getIdealCustomers (_, args, context) {
+            args = args.input
+            let contact = new CustomerContact();
+            return contact.getIdealCustomersByIndustry(args.industry, args.page)
         }
     },
     Mutation: {

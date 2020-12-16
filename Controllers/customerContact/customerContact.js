@@ -10,10 +10,13 @@ module.exports = class customerContact extends CustomerContactController {
 
     returnData(code, success, message, countData = 0) {
         return {
-            code: code,
-            success: success,
-            message: message,
-            countData: countData
+            code, success, message, countData
+        }
+    }
+
+    returnCustomers (customers, code, success, message) {
+        return {
+            customers, code, success, message
         }
     }
 
@@ -28,5 +31,30 @@ module.exports = class customerContact extends CustomerContactController {
         if (create.error == true) return this.returnData(500, false, create.message);
 
         return this.returnData(200, true, "Contact added", create.countData)
+    }
+
+    async getIdealCustomersByIndustry(industry, page = 1) {
+        
+        if (industry.length == 0) {
+            return this.returnCustomers(null, 500, false, "Choose an industry")
+        }
+
+        let getContacts = await this.getContactsByIndustry(industry, page);
+
+        if (getContacts.error) return this.returnCustomers(null, 500, false, "An error occurred retrieving the requested data");
+
+        let formattedData = [];
+
+        for (let x of getContacts.result) {
+            formattedData.push({
+                name: x.businessname,
+                location: x.location,
+                type: x.type,
+                phone_one: x.phone_one,
+                phone_two: x.phone_two
+            })
+        }
+
+        return this.returnCustomers(formattedData, 200, true, "Retrieved successfully")
     }
 }

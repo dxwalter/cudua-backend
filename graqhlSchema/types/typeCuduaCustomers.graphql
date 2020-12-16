@@ -1,4 +1,4 @@
-type customers {
+type Customers {
     name: String!
     location: String!
     type: String!
@@ -21,8 +21,20 @@ type DataCountResponse {
     countData: Int!
 }
 
+input businessTypeInput {
+    industry: String!
+    page: Int!
+}
+
+type idealCustomersResponse {
+    customers: [Customers]
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
 type Query {
-    getCustomers: DatalessResponse
+    getIdealCustomers(input: businessTypeInput): idealCustomersResponse
 }
 
 type Mutation {

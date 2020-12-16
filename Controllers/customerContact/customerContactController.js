@@ -39,4 +39,30 @@ module.exports = class CuduaCustomerController extends FunctionRepository {
         }
 
     }
+
+    async getContactsByIndustry (industry, page) {
+        
+        try {
+            
+            let limit = 30;
+
+            let getContact = await CuduaCustomersContactModel.find({type: industry})
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+
+            return {
+                error: false,
+                result: getContact
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
 } 

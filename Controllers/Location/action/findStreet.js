@@ -404,7 +404,7 @@ module.exports = class FindLocation extends LocationController {
     }
 
     async saveStreetNewLocation (stateId, lgaId, communityId, streets) {
-        let countryId = '5f92f2a66f4c8907a4ac4142';
+        let countryId = '5f41789d3affd42e5892fac2';
 
         if (stateId.length == 0 || lgaId.length == 0 || communityId.length == 0 || streets.length == 0) {
             return this.returnMethod(200, false, "Provide all the details required");

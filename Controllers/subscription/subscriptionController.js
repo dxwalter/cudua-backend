@@ -83,6 +83,20 @@ module.exports = class SubscriptionController extends FunctionRepo {
                 message: error.message
             }
         }
+    }
 
+    async getLastSubscription (businessId) {
+        try {
+            let latestRecord = await SubscriptionModel.findOne({business_id: businessId});
+            return {
+                error: false,
+                result: latestRecord
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
     }
 }

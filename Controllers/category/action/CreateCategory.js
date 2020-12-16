@@ -2,6 +2,7 @@
 
 
 const CategoryController = require('../CategoryController');
+const CreateNotification = require('../../notifications/action/createNotification')
 const NewCategories = require('../../../Models/NewCategories');
 const CategoryModel = require('../../../Models/Categories')
 
@@ -9,6 +10,7 @@ module.exports = class CreateCategory extends CategoryController {
 
     constructor () { 
         super(); 
+        this.createNotification = new CreateNotification()
     }
 
     returnMethod (code, success, message) {
@@ -76,6 +78,9 @@ module.exports = class CreateCategory extends CategoryController {
         let data = await this.CreateNewCategory(CreateCategory);
 
         if (data.error) return this.returnMethod(500, false, "An error occurred from our end. Kindly try again");
+
+        // add notification to admin
+        this.createNotification.CreateAdminNotification(categoryName, "Category", "New category", `A customer just added their category/subcategory`)
 
         return this.returnMethod(200, true, `"${categoryName}" has been saved and currently undergoing review and be up in 60 minutes`);
 

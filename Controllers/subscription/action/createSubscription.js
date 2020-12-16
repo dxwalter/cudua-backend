@@ -222,4 +222,10 @@ module.exports = class createSubScription extends subscriptionController {
 
     } 
 
+    async checkSubscriptionForbusiness (businessId) {
+        let getLastSubscription = await this.getLastSubscription(businessId);
+
+        console.log(getLastSubscription)
+    }
+
 }
