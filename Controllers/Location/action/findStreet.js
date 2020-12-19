@@ -1,7 +1,10 @@
 'use-strict'
 
 const LocationController = require('../LocationController');
-const CreateNotification = require('../../notifications/action/createNotification')
+const CreateNotification = require('../../notifications/action/createNotification');
+const dotenv = require('dotenv');
+dotenv.config();
+
 
 module.exports = class FindLocation extends LocationController {
     constructor () {
@@ -167,6 +170,7 @@ module.exports = class FindLocation extends LocationController {
         }
 
         let formatStreetData = this.FormatStreetData(getStreet.result);
+
         return this.returnStreetMethod(formatStreetData, 200, true, `Street search was successful`)
 
     }
@@ -245,7 +249,7 @@ module.exports = class FindLocation extends LocationController {
     }
 
     async GetAllStates (countryId) {
-        countryId = '5f41789d3affd42e5892fac2';
+        countryId = process.env.NIGERIA_ID;
 
         if (countryId.length < 1) return this.returnStateMethod(null, null, 200, false, "Select a country to continue");
 
@@ -350,7 +354,7 @@ module.exports = class FindLocation extends LocationController {
         }
 
         let saveLocation = await this.AddNewLocation({
-            country_id: '5f41789d3affd42e5892fac2',
+            country_id: process.env.NIGERIA_ID,
             user_id: userId,
             state: state,
             lga: lga,
@@ -404,7 +408,7 @@ module.exports = class FindLocation extends LocationController {
     }
 
     async saveStreetNewLocation (stateId, lgaId, communityId, streets) {
-        let countryId = '5f41789d3affd42e5892fac2';
+        let countryId = process.env.NIGERIA_ID;
 
         if (stateId.length == 0 || lgaId.length == 0 || communityId.length == 0 || streets.length == 0) {
             return this.returnMethod(200, false, "Provide all the details required");
@@ -454,7 +458,7 @@ module.exports = class FindLocation extends LocationController {
 
     async saveCommunitiesNewLocation (stateId, lgaId, newCommunities) {
 
-        let countryId = '5f41789d3affd42e5892fac2';
+        let countryId = process.env.NIGERIA_ID;
 
         if (stateId.length == 0 || lgaId.length == 0 || newCommunities.length == 0) {
             return this.returnMethod(200, false, "Provide all the details required");
@@ -504,7 +508,7 @@ module.exports = class FindLocation extends LocationController {
 
     async saveLgasNewLocation(stateId, newLgas) {
 
-        let countryId = '5f41789d3affd42e5892fac2';
+        let countryId = process.env.NIGERIA_ID;
 
         if (stateId.length == 0 || newLgas.length == 0) {
             return this.returnMethod(200, false, "Provide all the details required");

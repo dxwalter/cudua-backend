@@ -8,6 +8,10 @@ module.exports = {
             args = args.input
             let contact = new CustomerContact();
             return contact.getIdealCustomersByIndustry(args.industry, args.page)
+        },
+        countIdealCustomers (_) {
+            let countCustomers = new CustomerContact();
+            return countCustomers.countIdealCustomers()
         }
     },
     Mutation: {

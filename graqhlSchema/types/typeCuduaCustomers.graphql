@@ -33,8 +33,17 @@ type idealCustomersResponse {
     message: String!
 }
 
+type countIdealCustomersResponse {
+    fashion: Int!
+    beauty: Int!
+    code: Int!
+    success: Boolean!
+    message: String!
+}
+
 type Query {
     getIdealCustomers(input: businessTypeInput): idealCustomersResponse
+    countIdealCustomers: countIdealCustomersResponse
 }
 
 type Mutation {

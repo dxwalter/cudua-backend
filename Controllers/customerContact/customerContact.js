@@ -36,12 +36,20 @@ module.exports = class customerContact extends CustomerContactController {
     async getIdealCustomersByIndustry(industry, page = 1) {
         
         if (industry.length == 0) {
-            return this.returnCustomers(null, 500, false, "Choose an industry")
+            return this.returnCustomers([], 500, false, "Choose an industry")
         }
 
-        let getContacts = await this.getContactsByIndustry(industry, page);
+        let getContacts;
 
-        if (getContacts.error) return this.returnCustomers(null, 500, false, "An error occurred retrieving the requested data");
+        if (industry == "All") {
+
+            getContacts = await this.getAllIdealContacts(page)
+
+        } else {
+            getContacts = await this.getContactsByIndustry(industry, page);
+
+            if (getContacts.error) return this.returnCustomers([], 500, false, "An error occurred retrieving the requested data");
+        }
 
         let formattedData = [];
 
@@ -56,5 +64,29 @@ module.exports = class customerContact extends CustomerContactController {
         }
 
         return this.returnCustomers(formattedData, 200, true, "Retrieved successfully")
+    }
+
+    async countIdealCustomers () {
+        
+        let fashion = await this.countIdealCustomerMethod("Fashion");
+        
+        if (fashion.error) fashion = 0
+
+        fashion = fashion.count
+
+        let beauty = await this.countIdealCustomerMethod("Beauty");
+        
+        if (beauty.error) beauty = 0
+
+        beauty = beauty.count
+
+        return {
+            fashion: fashion,
+            beauty: beauty,
+            code: 200,
+            success: true,
+            message: "successful"
+        }
+        
     }
 }
