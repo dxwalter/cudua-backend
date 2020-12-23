@@ -4,6 +4,7 @@ const FunctionRepo = require('../MainFunction');
 
 const BusinessNotificationModel = require('../../Models/BusinessNotificationModel')
 const CustomerNotificationModel = require('../../Models/CustomerNotificationModel')
+const AdminNotificationModel = require('../../Models/cudua-admins/AdminNotificationModel')
 
 module.exports = class NotificationController extends FunctionRepo {
     constructor () {
@@ -78,6 +79,31 @@ module.exports = class NotificationController extends FunctionRepo {
         }
     }
 
+    async getNotificationsForAdmin (page){
+        try {
+
+            let limit = 12;
+
+            let getNotification = await AdminNotificationModel.find()
+            .sort({_id: -1})
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+
+            return {
+                result: getNotification,
+                error: false
+            }
+
+        } catch (error) {
+
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+
     async MarkAsRead (notificationId, dataObject, type) {
 
         try {
@@ -96,6 +122,47 @@ module.exports = class NotificationController extends FunctionRepo {
             }
 
 
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
+    async MarkAdminAsAsRead (notificationId, dataObject, type) {
+
+        try {
+
+            let updateNotification = await AdminNotificationModel.findOneAndUpdate({_id: notificationId}, {$set: dataObject});
+
+            console.log(updateNotification)
+
+            return {
+                result: true,
+                error: false,
+            }
+
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
+    async getUnreadAdminNotification () {
+
+        try {
+            let getNotification = await AdminNotificationModel.countDocuments({is_read: 0});
+
+            return {
+                result: getNotification,
+                error: false
+            }
         } catch (error) {
             return {
                 error: true,

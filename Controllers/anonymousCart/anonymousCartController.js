@@ -6,6 +6,15 @@ const AnonymousCartModel = require('../../Models/AnonymousCartModel');
 module.exports = class CartController extends FunctionRepo {
     constructor () { super() }
 
+    async countAllUnsignedCartItemsInCudua () {
+        try {
+            let countResult = await AnonymousCartModel.countDocuments();
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
     async createCartItem(item) {
         try {
             let save = await item.save();

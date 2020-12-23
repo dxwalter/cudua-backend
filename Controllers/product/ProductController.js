@@ -6,6 +6,15 @@ const BusinessController = require('../business/BusinessController')
 
 module.exports = class ProductController extends BusinessController {
 
+    async countAllProductsInCudua () {
+        try {
+            let countResult = await ProductModel.countDocuments();
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
     async InsertNewProduct (newProduct) {
         
         try {
@@ -665,7 +674,6 @@ module.exports = class ProductController extends BusinessController {
         }
 
     }
-
 
     async CustomerGetAllProductsBySubcategory (subcategoryId, page) {
 

@@ -6,6 +6,15 @@ const CartModel = require('../../Models/CartModel');
 module.exports = class CartController extends FunctionRepo {
     constructor () { super() }
 
+    async countAllCartItemsInCudua () {
+        try {
+            let countResult = await CartModel.countDocuments();
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
     async createCartItem(item) {
         try {
             let save = await item.save();

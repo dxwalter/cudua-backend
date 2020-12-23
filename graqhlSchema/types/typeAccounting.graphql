@@ -30,6 +30,25 @@ type BusinessAccountingResponse {
     message: String!
 }
 
+type adminAccountingData {
+    allProducts: Int!
+    allBusinesses: Int!
+    allCustomers: Int!
+    allProductsInCart: Int!
+    allOrders: Int!
+}
+
+type AdminAccountingResponse {
+    accountingData: adminAccountingData
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
 type Query {
     GetBusinessAccounting(input: getBusinessAccountInput): BusinessAccountingResponse
+    GetAdminAccounting: AdminAccountingResponse
 }

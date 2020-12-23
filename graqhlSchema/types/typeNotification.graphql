@@ -51,11 +51,15 @@ type Query {
     GetBusinessNotification(input: getBusinessNotification): getNotificationResponse
     GetCustomerNotification(input: getCustomerNotification): getNotificationResponse
 
-    GetCustomerNotificationCount:notificationCountResponse
+    GetCustomerNotificationCount: notificationCountResponse
+    GetAdminNotificationCount: notificationCountResponse
 
     GetBusinessNotificationCount(input: businessNotificationCountInput): notificationCountResponse
+
+    GetAdminNotification(input: getCustomerNotification): getNotificationResponse
 }
 
 type Mutation {
     MarkNotificationAsRead (input: MarkAsReadInput): DatalessResponse
+    MarkAdminNotificationAsRead (input: MarkAsReadInput): DatalessResponse
 }

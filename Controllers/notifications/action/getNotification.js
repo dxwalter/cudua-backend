@@ -94,6 +94,25 @@ module.exports = class GetNotification extends NotificationController {
         return this.returnMethod(formatNotification, 200, true, "Notification retrieved successfully");
     }
 
+    async getAdminNotification(page) {
+
+        let get = await this.getNotificationsForAdmin(page);
+
+        if (get.error) return this.returnMethod(null, 500, false, "An error occurred getting your notifications. Please try again");
+
+        if (get.result.length < 1 && page < 2) return this.returnMethod(null, 200, true, "You do not have any a notification");
+        if (get.result.length < 1 && page > 1) return this.returnMethod(null, 200, true, "That is all for now");
+        let formatNotification = this.formatNotification(get.result);
+
+        return this.returnMethod(formatNotification, 200, true, "Notification retrieved successfully");
+    }
+
+    async getAdminNotificationCount() {
+        let getCount = await this.getUnreadAdminNotification();
+        if (getCount.error) return this.returnCount(0, 500, false, "An error occurred");
+        return this.returnCount(getCount.result, 200, true, "Successful")
+    }
+
     async getCustomerNotificationCount(userId) {
         let getCount = await this.getUnreadCustomerNotification(userId);
         if (getCount.error) return this.returnCount(0, 500, false, "An error occurred");

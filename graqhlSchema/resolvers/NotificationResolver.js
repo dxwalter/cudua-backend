@@ -46,6 +46,26 @@ module.exports = {
 
             let notification = new GetNotification();
             return notification.getCustomerNotificationCount(userId)
+        },
+        GetAdminNotificationCount (_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+
+            let notification = new GetNotification();
+            return notification.getAdminNotificationCount()
+        },
+        GetAdminNotification (_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+
+            let notification = new GetNotification();
+            return notification.getAdminNotification(args.page)
         }
     },
     Mutation: {
@@ -57,6 +77,15 @@ module.exports = {
             args = args.input
             let mark = new MarkNotification();
             return mark.MarkNotificationAsRead(args.notificationId, args.type);
+        },
+        MarkAdminNotificationAsRead(_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+
+            args = args.input
+            let mark = new MarkNotification();
+            return mark.MarkAdminNotificationAsRead(args.notificationId, args.type);
         }
     }
 }

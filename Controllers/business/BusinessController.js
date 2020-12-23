@@ -13,6 +13,15 @@ module.exports = class BusinessController extends FunctionRepo {
         super();
     }
 
+    async countAllBusinessesInCudua () {
+        try {
+            let countResult = await BusinessModel.countDocuments();
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
     async checkUsernameExists (username) {
         try {
             const findResult = await BusinessModel.countDocuments({username: username});   

@@ -25,4 +25,16 @@ module.exports = class MarkAsRead extends NotificationController {
 
     }
 
+    async MarkAdminNotificationAsRead (notificationId, type) {
+        
+        console.log(notificationId)
+
+        let mark = await this.MarkAdminAsAsRead(notificationId, {is_read: 1}, type);
+
+        if (mark.error) return this.returnMethod(500, false, "An error occurred while marking your notification as read")
+
+        if (mark.result) return this.returnMethod(202, true, "Notification successfully marked as read")
+
+    }
+
 }

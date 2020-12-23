@@ -9,6 +9,19 @@ module.exports = class OrderController extends FunctionRepo {
         super()
     }
 
+
+    async countAllTheOrdersOnCudua () {
+        try {
+            
+            let countOrders = await OrderModel.distinct('order_id');
+
+            return countOrders.length
+
+        } catch (error) {
+            return 0
+        }
+    }
+
     async checkIfOrderIdExists(orderId) {
         try {
 

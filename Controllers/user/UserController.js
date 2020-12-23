@@ -8,6 +8,16 @@ module.exports = class UserController extends FunctionRepo{
 
     constructor () { super(); }
 
+
+    async countAllCustomersInCudua () {
+        try {
+            let countResult = await UserModel.countDocuments();
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
     async findOneEmail(email) {
         try {
             let findResult = await UserModel.findOne({email: this.email})
