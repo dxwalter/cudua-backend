@@ -210,7 +210,8 @@ module.exports = class createSubScription extends subscriptionController {
                     let newDataupdate = {subscription_status: 0};
 
                     let newUpdateRecord = await this.businessController.findOneAndUpdate(businessId, newDataupdate)
-                    return
+                    
+                    return this.returnMethod(200, true, "Subscription activated")
                 }
             }
 
