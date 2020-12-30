@@ -180,9 +180,41 @@ module.exports = class createSubScription extends subscriptionController {
 
         let getBusinessDetails = await this.businessController.getBusinessData(businessId);
 
-        if (getBusinessDetails.error) return this.returnMethod(200, false, "An error occurred. Refresh the page and try again")
+        if (getBusinessDetails.error) return this.returnMethod(200, false, "An error occurred. Refresh the page and try again");
 
-        if (getBusinessDetails.result.subscription_status == 1) return this.returnMethod(200, true, "Subscription deactivated")
+        // if (getBusinessDetails.result.subscription_status == 1) return this.returnMethod(200, true, "Subscription deactivated")
+
+        // check if subscription is up for deactivation;
+        // get the last transaction_ref
+        let getTransactionRef = await this.getLastSubscriptionRef(businessId);
+
+        if (getTransactionRef.error) return this.returnMethod(200, false, "An error occurred. Refresh the page and try again");
+
+        let lastReferenceId = getTransactionRef.result.ref_id;
+
+        if (lastReferenceId.length > 0) {
+
+            // get subscription time
+            let lastSubscription = await this.getLastSubscription(businessId)
+            
+            if (lastSubscription.error) return this.returnMethod(200, false, "An error occurred. Refresh the page and try again");
+
+            let lastSubscriptionData = lastSubscription.result;
+
+            if (lastSubscriptionData.transaction_ref == lastReferenceId) {
+                
+                let endTime = Date.parse(lastSubscriptionData.expiry_date);
+                let now = Date.now();
+
+                if (now < endTime) {
+                    let newDataupdate = {subscription_status: 0};
+
+                    let newUpdateRecord = await this.businessController.findOneAndUpdate(businessId, newDataupdate)
+                    return
+                }
+            }
+
+        }
 
         // update business record and set subscription status to 1 which means expired
         let updateData = {subscription_status: 1};
@@ -225,7 +257,7 @@ module.exports = class createSubScription extends subscriptionController {
     async checkSubscriptionForbusiness (businessId) {
         let getLastSubscription = await this.getLastSubscription(businessId);
 
-        console.log(getLastSubscription)
+        // console.log(getLastSubscription)
     }
 
 }

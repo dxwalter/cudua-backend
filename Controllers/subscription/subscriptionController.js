@@ -9,6 +9,27 @@ module.exports = class SubscriptionController extends FunctionRepo {
         super()
     }
 
+    async getLastSubscriptionRef (businessId) {
+
+        try {
+            
+            let getRef = await SubscriptionReference.findOne({business_id: businessId})
+            .sort({_id: -1});
+
+            return {
+                result: getRef,
+                error: false
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
     async saveSubscription(newSubscription) {
 
         try {
