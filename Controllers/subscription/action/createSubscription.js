@@ -182,7 +182,7 @@ module.exports = class createSubScription extends subscriptionController {
 
         if (getBusinessDetails.error) return this.returnMethod(200, false, "An error occurred. Refresh the page and try again");
 
-        // if (getBusinessDetails.result.subscription_status == 1) return this.returnMethod(200, true, "Subscription deactivated")
+        if (getBusinessDetails.result.subscription_status == 1) return this.returnMethod(200, true, "Subscription deactivated")
 
         // check if subscription is up for deactivation;
         // get the last transaction_ref
