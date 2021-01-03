@@ -16,7 +16,7 @@ const NewSubcategorySchema = mongoose.Schema({
     },
     created : {
         type : Date,
-        default: Date.now()
+        default: Date.now
     }
 });
 

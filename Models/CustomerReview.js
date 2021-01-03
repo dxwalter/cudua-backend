@@ -15,7 +15,7 @@ const CustomerReview = mongoose.Schema({
     description: {type: String, trim: true, required: false},
     created : {
         type : Date,
-        default: Date.now()
+        default: Date.now
     }
 })
 

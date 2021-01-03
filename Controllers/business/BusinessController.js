@@ -536,9 +536,14 @@ module.exports = class BusinessController extends FunctionRepo {
     async businessSearchCount (keyword) {
         try {
             let countResult = await BusinessModel.countDocuments({
-                $or: [
-                    { businessname: { $regex: '.*' + keyword + '.*', $options: 'i'}},
-                    { username: { $regex: '.*' + keyword + '.*', $options: 'i'}}
+                $and: [
+                    {
+                        $or: [
+                            { businessname: { $regex: '.*' + keyword + '.*', $options: 'i'}},
+                            { username: { $regex: '.*' + keyword + '.*', $options: 'i'}}
+                        ],
+                        subscription_status: 0
+                    }
                 ]
             });
             return countResult
