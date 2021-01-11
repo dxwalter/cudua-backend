@@ -201,10 +201,6 @@ module.exports = class EditProduct extends ProductController {
         if (getProductDetails.result == null) return this.returnData(200, false, "This product does not exist");
 
         getProductDetails = getProductDetails.result;
- 
-        if (getProductDetails.description) {
-            return this.returnData(200, false, "Edit the product description and try again")
-        }
 
         if (getProductDetails.description == undefined || getProductDetails.description != description) {
             //update
