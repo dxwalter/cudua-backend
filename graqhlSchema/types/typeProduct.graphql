@@ -138,6 +138,23 @@ input createProduct {
     businessId: String!
 }
 
+input createFromInstagramInput {
+    # name of product and the length must be greater than 2 characters
+    name: String!
+    # the price must be greater that 0 and it is required
+    price: Int!
+    # the category id of the category the business chose
+    category: String!
+    # the subcategory id of the subcategory the business chose
+    subcategory: String!
+    # the primary image (Image that will show first) of the product
+    imagePath: String!
+    # the business ID of the business that is uploading the product
+    businessId: String!
+    # product description
+    description: String
+}
+
 
 input addDescription {
     # A description of the product
@@ -458,6 +475,9 @@ type Mutation {
     
     # create product
     CreateProduct(input: createProduct): createProductResponse
+
+    # create product from instagram
+    CreateProductFromInstagram(input: createFromInstagramInput): createProductResponse
 
     # edit basic details of a product like name, price, category and subcategory
     EditBasicDetails(input: editBasicDetails): DatalessResponse
