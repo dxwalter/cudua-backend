@@ -24,6 +24,7 @@ const HomePageResolver = require('./HomePageResolver');
 const AccountingResolver = require('./AccountingResolver');
 const EmailSubscribersResolver = require('./EmailSubscribersResolver');
 const AdminResolver = require('./administrators/AdminResolver');
+const CourseResolver = require('./CourseResolver');
 
 const resolvers = [
     UserResolver,
@@ -49,7 +50,8 @@ const resolvers = [
     HomePageResolver,
     AccountingResolver,
     AdminResolver,
-    EmailSubscribersResolver
+    EmailSubscribersResolver,
+    CourseResolver
 ];
 
 module.exports = mergeResolvers(resolvers);

@@ -62,27 +62,19 @@ module.exports = class RegularSearch {
             let newData = this.formatBusinessData(x)
 
             if (businessScore == 0) {
-                if (x.subscription_status == 0) {
-                    scoreZero.push(newData)
-                }
+                scoreZero.push(newData)
             }
 
             if (businessScore == 1) {
-                if (x.subscription_status == 0) {
-                    scoreOne.push(newData)
-                }
+                scoreOne.push(newData)
             }
 
             if (businessScore == 2) {
-                if (x.subscription_status == 0) {
                     scoreTwo.push(newData)
-                }
             }
 
             if (businessScore == 3) {
-                if (x.subscription_status == 0) {
-                    scoreThree.push(newData)
-                }
+                scoreThree.push(newData)
             }
 
             businessScore = 0
@@ -131,29 +123,26 @@ module.exports = class RegularSearch {
                 productScore = productScore + 1
             }
 
-            if (x.business_id.subscription_status == 0) {
+            let newData = this.formatProductData(x)
 
-                let newData = this.formatProductData(x)
+            if (productScore == 0) {
+                    scoreZero.push(newData)
+            }
 
-                if (productScore == 0) {
-                        scoreZero.push(newData)
-                }
+            if (productScore == 1) {
+                scoreOne.push(newData)
+            }
 
-                if (productScore == 1) {
-                    scoreOne.push(newData)
-                }
+            if (productScore == 2) {
+                scoreTwo.push(newData)
+            }
 
-                if (productScore == 2) {
-                    scoreTwo.push(newData)
-                }
+            if (productScore == 3) {
+                scoreThree.push(newData)
+            }
 
-                if (productScore == 3) {
-                    scoreThree.push(newData)
-                }
-
-                if (productScore == 4) {
-                    scoreFour.push(newData)
-                }
+            if (productScore == 4) {
+                scoreFour.push(newData)
             }
 
             productScore = 0

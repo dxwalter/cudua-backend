@@ -1,0 +1,50 @@
+    scalar Upload
+    
+    # response type
+    interface ResponseType {
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
+    type CourseCategory {
+        name: String!
+        displayPicture: String!
+        description: String!
+    }
+
+    type GetCourseCategoriesResponse implements ResponseType {
+        categories: [CourseCategory],
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+    type CreateCourseCategoryResponse implements ResponseType {
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+    input CreateCourseCategoryInput {
+        name: String!
+        image: Upload!
+        about: String!
+    }
+
+    type CourseType {
+        name: String!
+
+    }
+
+    type Mutation {
+        CreateCourseCategory(input: CreateCourseCategoryInput): CreateCourseCategoryResponse
+    }
+
+    # This is the query type that will handle get category 
+    type Query {
+        GetAllCourseCategories: GetCourseCategoriesResponse
+    }
