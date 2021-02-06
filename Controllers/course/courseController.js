@@ -2,6 +2,8 @@
 
 const FunctionRepository = require('../MainFunction');
 const CourseCategoryModel = require('../../Models/CourseCategoryModel');
+const CourseModel = require('../../Models/courseModel');
+const CourseContentModel = require('../../Models/courseContentModel');
 
 
 module.exports = class courseController extends FunctionRepository {
@@ -10,6 +12,24 @@ module.exports = class courseController extends FunctionRepository {
         super();
     }
 
+    async checkIfCourseExists (courseId) {
+        try {
+            
+            const findResult = await CourseModel.findOne({_id: courseId});
+
+            return {
+                error: false,
+                result: findResult
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+    
     async createNewCategoryForCourse (data) {
 
         try {
@@ -30,11 +50,115 @@ module.exports = class courseController extends FunctionRepository {
 
     }
 
+    async insertNewCourseContent (data) {
+
+        try {
+            
+            let create = await data.save()
+
+            return {
+                error: false,
+                result: true
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
+    async insertNewCourse (data) {
+
+        try {
+            
+            let create = await data.save()
+
+            return {
+                error: false,
+                result: true
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
+    }
+
+    async retrieveCourseContent(contentId) {
+        try {
+            
+            let getContent = await CourseContentModel.findOne({
+                _id: contentId
+            })
+
+            return {
+                error: false,
+                result: getContent
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+
+    async getCourseContentUsingId(courseId) {
+        try {
+            
+            let getContent = await CourseContentModel.find({
+                courseId: courseId
+            })
+
+            return {
+                error: false,
+                result: getContent
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+
+    async GetAllCourses() {
+        try {
+            
+            let getCourses = await CourseModel.find().populate('category')
+
+            return {
+                error: false,
+                result: getCourses
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+
     async getAllCourseCategory () {
 
         try {
             
-            let getAll = await CourseCategoryModel.find();
+            let getAll = await CourseCategoryModel.find().sort({_id: -1});
 
             return {
                 error: false,

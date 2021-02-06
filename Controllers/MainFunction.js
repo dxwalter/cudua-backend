@@ -98,6 +98,7 @@ module.exports = class FunctionRepo extends EmailClass{
     uploadImageFile = async ( stream, filename, filePath ) => {
         const uploadDir = filePath;
         const path = `${uploadDir}${filename}`;
+
         return new Promise((resolve, reject) =>
             stream
                 .on('error', error => {
@@ -150,7 +151,7 @@ module.exports = class FunctionRepo extends EmailClass{
                     overwrite: false
                 }, function (error, result) {
                     returnData = {
-                       error: error,
+                       error: false,
                        result: result
                    }
                 }

@@ -57,7 +57,7 @@ module.exports = class course extends CourseController {
         let moveToCloud = await this.moveToCloudinary(folder, imagePath, publicId, tag);
 
         let deleteFile = await this.deleteFileFromFolder(imagePath)
-        
+
         if (moveToCloud.error == true) {
             return this.returnMethod(500, false, `An error occurred moving your picture to the cloud`)
         }
@@ -90,6 +90,7 @@ module.exports = class course extends CourseController {
 
         categories.forEach(element => {
             formattedArray.push({
+                categoryId: element._id,
                 name: element.name,
                 displayPicture: element.displayPicture,
                 description: element.description
@@ -98,6 +99,10 @@ module.exports = class course extends CourseController {
 
         return this.returnCategories(formattedArray, 200, true, "Categories retrieved successfully")
 
+    }
+
+    async getCategoryById (categoryId) {
+        
     }
 
 }

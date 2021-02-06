@@ -14,10 +14,30 @@
         name: String!
         displayPicture: String!
         description: String!
+        categoryId: String!
+    }
+    type CourseContent {
+        keywords: String
+        title: String!
+        videoLink: String
+        materials: String
+        courseId: String!
+        displayPicture: String!
+        contentId: String!
+    }
+
+    type course {
+        courseId: String!
+        price: Int!
+        name: String!
+        description: String!
+        displayPicture: String!
+        category: CourseCategory!
+        courseContent: [CourseContent]
     }
 
     type GetCourseCategoriesResponse implements ResponseType {
-        categories: [CourseCategory],
+        categories: [CourseCategory]
         code: Int!
         success: Boolean!
         message: String!
@@ -40,11 +60,66 @@
 
     }
 
+    input CreateCourseInput {
+        name: String!
+        price: Int!
+        category: String!
+        avatar: Upload!
+        description: String!
+    }
+
+    type CreateNewCourseResponse {
+        courseId: String
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+
+    type createCourseContentRespose {
+        contentId: String
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+    
+
+    input CreateCourseContentInput {
+        courseId: String!
+        title: String!
+        videoLink: String
+        avatar: Upload!
+        courseMaterial: String
+    }
+
+    type GetCourseContentResponse {
+        courseContent: CourseContent
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+    type GetAllCourseResponse {
+        courses: [course]
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
+    input GetCourseContentInput {
+        contentId: String!
+    }
+
     type Mutation {
         CreateCourseCategory(input: CreateCourseCategoryInput): CreateCourseCategoryResponse
+        CreateNewCourse(input: CreateCourseInput): CreateNewCourseResponse
+        CreateCourseContent(input: CreateCourseContentInput): createCourseContentRespose
     }
 
     # This is the query type that will handle get category 
     type Query {
         GetAllCourseCategories: GetCourseCategoriesResponse
+        GetCourseContent(input: GetCourseContentInput): GetCourseContentResponse
+        GetAllCourses: GetCourseContentResponse
     }
