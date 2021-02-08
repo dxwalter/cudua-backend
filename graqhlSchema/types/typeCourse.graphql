@@ -28,6 +28,7 @@
 
     type course {
         courseId: String!
+        publish: Boolean!
         price: Int!
         name: String!
         description: String!
@@ -94,32 +95,55 @@
     }
 
     type GetCourseContentResponse {
-        courseContent: CourseContent
+        courseDetails: course
+        courseContent: [CourseContent]
         code: Int!
         success: Boolean!
         message: String!
     }
 
     type GetAllCourseResponse {
+        courseDetails: course
         courses: [course]
         code: Int!
         success: Boolean!
         message: String!
     }
 
+    type GetCourseDetails {
+        course: course
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
     input GetCourseContentInput {
+        courseId: String!
+    }
+
+    input GetContentVideoInput {
         contentId: String!
     }
 
-    type Mutation {
-        CreateCourseCategory(input: CreateCourseCategoryInput): CreateCourseCategoryResponse
-        CreateNewCourse(input: CreateCourseInput): CreateNewCourseResponse
-        CreateCourseContent(input: CreateCourseContentInput): createCourseContentRespose
+    type GetContentVideoResponse {
+        videoContent: CourseContent
+        code: Int!
+        success: Boolean!
+        message: String!
     }
+
 
     # This is the query type that will handle get category 
     type Query {
         GetAllCourseCategories: GetCourseCategoriesResponse
         GetCourseContent(input: GetCourseContentInput): GetCourseContentResponse
-        GetAllCourses: GetCourseContentResponse
+        GetAllCourses: GetAllCourseResponse
+        GetContentVideo(input: GetContentVideoInput): GetContentVideoResponse
+    }
+
+    
+    type Mutation {
+        CreateCourseCategory(input: CreateCourseCategoryInput): CreateCourseCategoryResponse
+        CreateNewCourse(input: CreateCourseInput): CreateNewCourseResponse
+        CreateCourseContent(input: CreateCourseContentInput): createCourseContentRespose
     }

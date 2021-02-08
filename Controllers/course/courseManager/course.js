@@ -20,12 +20,6 @@ module.exports = class courseManager extends CourseController {
         }
     }
 
-    getCourseContentResponse (courseContent, code, success, message) {
-        return {
-            courseContent, code, success, message
-        }
-    }
-
     async createNewCourse (name, price, category, avatar, description) {
 
         var { filename, mimetype, createReadStream } = await avatar;
@@ -163,40 +157,15 @@ module.exports = class courseManager extends CourseController {
         
     }
 
-    async GetCourseContent (contentId) {
-
-        if (contentId.length == 0) {
-            return this.getCourseContentResponse(null, 500, false, "An error occurred with the content,")
-        }
-
-        let getContent = await this.retrieveCourseContent(contentId);
-
-        if (getContent.error) return this.getCourseContentResponse(null, 500, false, "A system error occurred. Kinldy try again");
-
-        let data = getContent.result;
-
-        let contentData = {
-            keywords: data.keywords,
-            title: data.title,
-            videoLink: data.videoLink,
-            materials: data.materials,
-            courseId: data.courseId,
-            displayPicture: data.displayPicture,
-            contentId: data._id
-        }
-
-        return this.getCourseContentResponse (contentData, 200, true, "Course content retrieved")
-
-    }
-
-    getAllCoursesResponse (courses, code, success, error) {
+    getCourseContentResponse (courseContent, code, success, message, courseDetails = null) {
         return {
-            courses, code, success, error
+            courseContent, code, success, message, courseDetails
         }
     }
 
     async getCourseContentById (courseId) {
 
+        
         if (courseId.length == 0) return this.getCourseContentResponse([], 500, false, "No course ID was provided");
 
         let getCourseContent = await this.getCourseContentUsingId(courseId);
@@ -204,8 +173,6 @@ module.exports = class courseManager extends CourseController {
         if (getCourseContent.error) return this.getCourseContentResponse([], 500, false, "An error occurred  retrieving course content");
 
         let courseContentArray = [];
-
-        if (getCourseContent.result.length == 0) return this.getCourseContentResponse([], 500, false, "No content was found for this course");
 
         getCourseContent.result.forEach(element => {
             courseContentArray.push({
@@ -215,13 +182,69 @@ module.exports = class courseManager extends CourseController {
                 materials: element.materials,
                 courseId: element.courseId,
                 displayPicture: element.displayPicture,
-                contentId: element.courseId
+                contentId: element._id
             })
         });
 
-        return this.getCourseContentResponse(courseContentArray, 200, true, "Content retrieved");
+
+        let getCourseDetails = await this.getCourseDetails(courseId);
+
+        let courseDetails = null
+
+        if (getCourseDetails.success == true) {
+            if (getCourseDetails.course != null) {
+                courseDetails = getCourseDetails.course
+            }
+        }
+
+
+
+        return this.getCourseContentResponse(courseContentArray, 200, true, "Content retrieved", courseDetails);
 
     }
+
+
+    getCoursesDetailsResponse (course, code, success, message) {
+        return {course, code, success, message}
+    }
+
+    async getCourseDetails (courseId) {
+
+        let getCourseDetails = await this.GetCourseById(courseId);
+
+        if (getCourseDetails.error) return this.getCoursesDetailsResponse(null, 200, false, "An error occurred retrieving the courses")
+
+        let courses = getCourseDetails.result
+
+        if (courses.length == 0) this.getCoursesDetailsResponse(null, 200, false, "No course has been added");
+
+
+        let courseObject = {
+            courseId: courses._id,
+            price: courses.price,
+            name: courses.name,
+            description: courses.description,
+            displayPicture: courses.displayPicture,
+            publish: courses.publish == 0 ? false : true,
+            category: {
+                name: courses.category.name,
+                displayPicture: courses.category.displayPicture,
+                description: courses.category.description,
+                categoryId: courses.category._id,
+            },
+        }
+
+
+        return this.getCoursesDetailsResponse(courseObject, 200, true, "Course retrieved");
+
+    }
+
+    getAllCoursesResponse (courses, code, success, message) {
+        return {
+            courses, code, success, message
+        }
+    }
+
 
     async GetAllCourseListing () {
         
@@ -242,13 +265,14 @@ module.exports = class courseManager extends CourseController {
                 name: element.name,
                 description: element.description,
                 displayPicture: element.displayPicture,
+                publish: element.publish == 0 ? false : true,
                 category: {
                     name: element.category.name,
                     displayPicture: element.category.displayPicture,
                     description: element.category.description,
                     categoryId: element.category._id,
-                    courseContent: []
                 },
+                courseContent: []
             })
             let getCourseContent = await this.getCourseContentById(element._id)
             coursesArray[index].courseContent = getCourseContent.courseContent
@@ -256,7 +280,37 @@ module.exports = class courseManager extends CourseController {
         }
 
 
+
         return this.getAllCoursesResponse(coursesArray, 200, true, "Course retrieved");
+
+        
+    }
+
+    GetCourseVideoContentResponse (videoContent, code, success, message) {
+        return {videoContent, code, success, message}
+    }
+
+    async GetCourseVideoContent (contentId) {
+        
+        let getContentVideo = await this.GetContentVideo(contentId);
+
+        if (getContentVideo.error) return this.GetCourseVideoContentResponse(null, 200, false, "An error occurred getting this course content. Please try again")
+
+        let courseContent = getContentVideo.result
+
+        if (courseContent == null) return this.GetCourseVideoContentResponse(null, 500, false, "This course content does not exist")
+
+        let contentObject = {
+            keywords: courseContent.keywords,
+            videoLink: courseContent.videoLink,
+            title: courseContent.title,
+            materials: courseContent.materials,
+            courseId: courseContent.courseId,
+            displayPicture: courseContent.displayPicture,
+            contentId: courseContent._id
+        }
+
+        return this.GetCourseVideoContentResponse(contentObject, 200, true, "Course retrieved");
 
         
     }

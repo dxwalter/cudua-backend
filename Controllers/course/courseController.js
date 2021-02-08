@@ -134,10 +134,52 @@ module.exports = class courseController extends FunctionRepository {
         }
     }
 
+    async GetContentVideo(contentId) {
+        try {
+            
+            let getContent = await CourseContentModel.findOne({
+                _id: contentId
+            })
+
+            return {
+                error: false,
+                result: getContent
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+
     async GetAllCourses() {
         try {
             
-            let getCourses = await CourseModel.find().populate('category')
+            let getCourses = await CourseModel.find().populate('category').sort({_id: -1});
+
+            return {
+                error: false,
+                result: getCourses
+            }
+
+        } catch (error) {
+            
+            return {
+                error: true,
+                message: error.message
+            }
+
+        }
+    }
+
+    async GetCourseById(courseId) {
+        try {
+            
+            let getCourses = await CourseModel.findOne({_id: courseId}).populate('category')
 
             return {
                 error: false,

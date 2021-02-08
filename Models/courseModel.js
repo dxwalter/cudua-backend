@@ -18,6 +18,10 @@ const CourseCategory = mongoose.Schema({
         ref: "course-category",
         required: true
     },
+    publish: {
+        type: Number,
+        default: 0
+    },
     price: {
         type: Number,
         default: 0,

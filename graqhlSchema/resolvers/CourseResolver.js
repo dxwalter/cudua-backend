@@ -25,20 +25,31 @@ module.exports = {
             userId = userId.message;
 
             let input = args.input
-            
+
             let getCourseContent = new CourseManager();
-            return getCourseContent.GetCourseContent(input.contentId)
+            return getCourseContent.getCourseContentById(input.courseId)
         },
         GetAllCourses (_, args, context) {
+            let accessToken = context.accessToken;
+
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+            
+            let getCourseContent = new CourseManager();
+            return getCourseContent.GetAllCourseListing()
+        },
+        GetContentVideo (_, args, context) {
             // let accessToken = context.accessToken;
 
             // let userId = context.authFunction(accessToken);
             // if (userId.error == true) return userId
             // userId = userId.message;
+
+            let input = args.input
             
             let getCourseContent = new CourseManager();
-            return getCourseContent.GetAllCourseListing()
-
+            return getCourseContent.GetCourseVideoContent(input.contentId)
         }
     },
     Mutation: {
