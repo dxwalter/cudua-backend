@@ -90,6 +90,42 @@ module.exports = {
 
             let create = new CourseManager();
             return create.createNewCourseContent(input.courseId, input.title, input.videoLink, input.avatar, input.courseMaterial)
-        }
+        },
+        PublishCourse (_, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+
+            let input = args.input
+
+            let publish = new CourseManager();
+            return publish.changeCoursePublishState(input.courseId, input.state)
+
+        },
+        EditCourseDetails (_, args, context) {
+
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+
+            let input = args.input
+
+            let create = new CourseManager();
+            return create.editCourseDetails(input.courseId, input.name, input.price, input.category, input.avatar, input.description, input.funnelPage)
+        },
+        EditCourseContent (_, args, context) {
+
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+
+            let input = args.input
+
+            let create = new CourseManager();
+            return create.editCourseContent(input.courseId, input.title, input.videoLink, input.avatar, input.courseMaterial, input.contentId)
+        },
     }
 }

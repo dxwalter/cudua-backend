@@ -1,11 +1,43 @@
 
 const CourseController = require('../courseController');
 const CourseModel = require('../../../Models/courseModel')
-const CourseContentModel = require('../../../Models/courseContentModel')
+const CourseContentModel = require('../../../Models/courseContentModel');
+const { NoFragmentCyclesRule } = require('graphql');
 
 module.exports = class courseManager extends CourseController {
     constructor () {
         super()
+    }
+
+    returnMethod (code, success, message) {
+        return {
+            code, success, message
+        }
+    }
+
+    createFunnelPage (name) {
+        
+        let nameArray = name.trim().split(" ")
+
+        let funnelName = ""
+        
+        if (nameArray.length > 3) {
+
+            for (let [index, name] of nameArray.entries()) {
+                if (index == 2) {
+                    funnelName += `${name}`
+                    break
+                } else {
+                    funnelName += `${name}-`
+                }
+            }
+
+        } else {
+            funnelName = `${nameArray[0]}-${nameArray[1]}-${nameArray[2]}`
+        }
+
+        return funnelName.toLowerCase();
+
     }
 
     createCourseResponse (courseId, code, success, message) {
@@ -71,9 +103,16 @@ module.exports = class courseManager extends CourseController {
             displayPicture: newFileName,
             category: category,
             price: price,
+            funnelPage: ""
         });
 
+
+
         let courseId = courseData._id
+
+        let funnelPage = await this.createFunnelPage(name);
+
+        courseData.funnelPage = funnelPage;
 
         let data = await this.insertNewCourse(courseData);
 
@@ -100,7 +139,7 @@ module.exports = class courseManager extends CourseController {
 
         title = this.MakeFirstLetterUpperCase(title);
 
-        if (videoLink.length == 0) return this.createCourseContentResponse(null, 500, false, "Enter the link to your video content");
+        // if (videoLink.length == 0) return this.createCourseContentResponse(null, 500, false, "Enter the link to your video content");
 
         var { filename, mimetype, createReadStream } = await avatar;
 
@@ -157,6 +196,86 @@ module.exports = class courseManager extends CourseController {
         
     }
 
+
+    async editCourseContent (courseId, title, videoLink, avatar, courseMaterial, contentId) {
+
+        if (courseId.length == 0) return this.returnMethod(500, false, "An error occured. Refresh page and try again")
+        if (contentId.length == 0) return this.returnMethod(500, false, "An error occured. Refresh page and try again")
+
+        // check if course exist
+        let courseCheck = await this.checkIfCourseExists(courseId);
+
+        if (courseCheck.result == null || courseCheck.error == true) {
+            return this.returnMethod(500, false, "An error occured. This course does not exist")
+        }
+
+        if (title.length == 0) return this.returnMethod(500, false, "Enter this content title.");
+
+        title = this.MakeFirstLetterUpperCase(title);
+
+        // if (videoLink.length == 0) return this.returnMethod(500, false, "Enter the link to your video content");
+
+        var { filename, mimetype, createReadStream } = await avatar;
+
+        let newFileName = ""
+
+        if (filename != undefined){
+         
+            // upload image file
+            let encryptedName = this.encryptFileName(filename);
+
+            newFileName = encryptedName + "." + mimetype.split('/')[1];
+
+            const stream = createReadStream();
+
+            let path = 'uploads/courseCategoryImage/';
+            const pathObj = await this.uploadImageFile(stream, newFileName, path);
+            
+            if (pathObj.error == true) {
+                return this.returnMethod(500, false, "An error occurred uploading the image")
+            }
+
+            //upload to cloudinary
+
+            let folder = process.env.CLOUDINARY_FOLDER+"/cudua-course/";
+            let publicId = encryptedName;
+            let tag = 'Course image';
+            let imagePath = pathObj.path;
+
+            let moveToCloud = await this.moveToCloudinary(folder, imagePath, publicId, tag);
+
+            let deleteFile = await this.deleteFileFromFolder(imagePath)
+            
+            if (moveToCloud.error == true) {
+                return this.returnMethod(500, false, `An error occurred moving your picture to the cloud`)
+            }
+            
+        }
+
+
+        let courseContentData = {
+            title: title,
+            videoLink: videoLink,
+            materials: courseMaterial,
+            courseId: courseId
+        };
+
+        if (newFileName.length > 0 && filename != undefined) {
+            courseContentData.displayPicture = newFileName
+        }
+
+        let data = await this.findOneAndUpdateContent(contentId, courseContentData);
+
+        
+        if (data.error == true) {
+            return this.returnMethod(500, false, `An error occurred updated your course content`);
+        }
+
+        return this.returnMethod(200, true, "Your course content was updated successfully")
+        
+    }
+
+
     getCourseContentResponse (courseContent, code, success, message, courseDetails = null) {
         return {
             courseContent, code, success, message, courseDetails
@@ -182,7 +301,7 @@ module.exports = class courseManager extends CourseController {
                 materials: element.materials,
                 courseId: element.courseId,
                 displayPicture: element.displayPicture,
-                contentId: element._id
+                contentId: element._id,
             })
         });
 
@@ -202,7 +321,6 @@ module.exports = class courseManager extends CourseController {
         return this.getCourseContentResponse(courseContentArray, 200, true, "Content retrieved", courseDetails);
 
     }
-
 
     getCoursesDetailsResponse (course, code, success, message) {
         return {course, code, success, message}
@@ -225,6 +343,7 @@ module.exports = class courseManager extends CourseController {
             name: courses.name,
             description: courses.description,
             displayPicture: courses.displayPicture,
+            funnelPage: courses.funnelPage == null ? "" : courses.funnelPage,
             publish: courses.publish == 0 ? false : true,
             category: {
                 name: courses.category.name,
@@ -315,4 +434,101 @@ module.exports = class courseManager extends CourseController {
         
     }
 
+    async changeCoursePublishState (courseId, state) {
+
+        if (courseId.length == 0) {
+            return this.returnMethod(500, false, "An error occurred. Refresh page and try again");
+        }
+
+        let changeState = await this.findOneAndUpdate(courseId, {publish: state});
+
+        if (changeState.error == false) {
+
+            if (state == false) {
+                return this.returnMethod(200, true, "This course was unpublished successfully");
+            } else{
+                return this.returnMethod(200, true, "This course was published successfully")
+            }
+
+        } else {
+            return this.returnMethod(500, false, "An error occurred. Refresh page and try again");
+        }
+        
+    }
+
+    async editCourseDetails (courseId, name, price = 0, category, avatar, description, funnelPage) {
+
+        var { filename, mimetype, createReadStream } = await avatar;
+
+        if (name.length == 0) return this.returnMethod(500, false, "What is the name of the course?");
+
+        if (category.length == 0) return this.returnMethod(500, false, "Select a category for this course");
+
+        if (description.length == 0) return this.returnMethod(500, false, "Write a description of this course?");
+
+        if (funnelPage.length == 0) {
+            return this.returnMethod(500, false, "What is the name of the funnel page you want to use?");
+        }
+
+        
+        let newFunnelPage = this.createFunnelPage(funnelPage)
+
+        let newFileName = ""
+
+        if (filename != undefined) {
+            // encrypt file name
+            let encryptedName = this.encryptFileName(filename);
+
+            name = await this.MakeFirstLetterUpperCase(name)
+
+
+            newFileName = encryptedName + "." + mimetype.split('/')[1];
+
+            const stream = createReadStream();
+    
+            let path = 'uploads/courseCategoryImage/';
+
+            const pathObj = await this.uploadImageFile(stream, newFileName, path);
+        
+            if (pathObj.error == true) {
+                return this.returnMethod(null, 500, false, "An error occurred uploading the image")
+            }
+
+            //upload to cloudinary
+
+            let folder = process.env.CLOUDINARY_FOLDER+"/cudua-course/";
+            let publicId = encryptedName;
+            let tag = 'Course image';
+            let imagePath = pathObj.path;
+
+            let moveToCloud = await this.moveToCloudinary(folder, imagePath, publicId, tag);
+
+            let deleteFile = await this.deleteFileFromFolder(imagePath)
+            
+            if (moveToCloud.error == true) {
+                return this.returnMethod(null, 500, false, `An error occurred moving your picture to the cloud`)
+            }
+
+        } 
+
+        let editedCoureObject = {
+            name: name,
+            description: description,
+            category: category,
+            price: price,
+            funnelPage: newFunnelPage
+        };
+
+        if (filename != undefined && newFileName.length > 0) {
+            editedCoureObject.displayPicture = newFileName
+        }
+
+        let data = await this.findOneAndUpdate(courseId, editedCoureObject);
+
+        if (data.error == true) {
+            return this.returnMethod(500, false, `An error occurred editing your course`);
+        }
+
+        return this.returnMethod(200, true, "Your course was edited successfully")
+    }
 }

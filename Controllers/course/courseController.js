@@ -4,6 +4,7 @@ const FunctionRepository = require('../MainFunction');
 const CourseCategoryModel = require('../../Models/CourseCategoryModel');
 const CourseModel = require('../../Models/courseModel');
 const CourseContentModel = require('../../Models/courseContentModel');
+const courseContentModel = require('../../Models/courseContentModel');
 
 
 module.exports = class courseController extends FunctionRepository {
@@ -48,6 +49,38 @@ module.exports = class courseController extends FunctionRepository {
             }
         }
 
+    }
+
+
+    async findOneAndUpdate(courseId, newDataObject) {
+        try {
+            let updateRecord = await CourseModel.findOneAndUpdate({_id: courseId}, { $set:newDataObject }, {new : true });
+            return {
+                error: false,
+                result: updateRecord
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+
+    async findOneAndUpdateContent(contentId, newDataObject) {
+        try {
+            let updateRecord = await courseContentModel.findOneAndUpdate({_id: contentId}, { $set:newDataObject }, {new : true });
+            return {
+                error: false,
+                result: updateRecord
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
     }
 
     async insertNewCourseContent (data) {

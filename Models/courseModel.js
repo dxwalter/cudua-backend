@@ -5,6 +5,10 @@ const CourseCategory = mongoose.Schema({
         type: String,
         required: true
     },
+    funnelPage: {
+        type: String,
+        required: false
+    },
     description: {
         type: String,
         required: true
@@ -19,8 +23,8 @@ const CourseCategory = mongoose.Schema({
         required: true
     },
     publish: {
-        type: Number,
-        default: 0
+        type: Boolean,
+        default: false
     },
     price: {
         type: Number,

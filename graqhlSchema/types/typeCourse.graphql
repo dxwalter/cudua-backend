@@ -16,6 +16,18 @@
         description: String!
         categoryId: String!
     }
+
+    # This is the response type that returns no data
+    type DatalessResponse implements ResponseType {
+        # Response status code
+        code: Int!
+        # This boolean value is used to check if an operation ran successfully
+        success: Boolean!
+        # This is the message sent by the server about an operation
+        message: String!
+    }
+
+
     type CourseContent {
         keywords: String
         title: String!
@@ -34,6 +46,7 @@
         description: String!
         displayPicture: String!
         category: CourseCategory!
+        funnelPage: String
         courseContent: [CourseContent]
     }
 
@@ -69,6 +82,16 @@
         description: String!
     }
 
+    input EditCourseDetailsInput {
+        courseId: String!
+        name: String!
+        price: Int!
+        category: String!
+        avatar: Upload
+        description: String!
+        funnelPage: String!
+    }
+
     type CreateNewCourseResponse {
         courseId: String
         code: Int!
@@ -92,6 +115,15 @@
         videoLink: String
         avatar: Upload!
         courseMaterial: String
+    }
+
+    input EditCourseContentInput {
+        courseId: String!
+        title: String!
+        videoLink: String
+        avatar: Upload!
+        contentId: String!
+        courseMaterial: String!
     }
 
     type GetCourseContentResponse {
@@ -125,6 +157,11 @@
         contentId: String!
     }
 
+    input courseStatusInput {
+        courseId: String!
+        state: Boolean!
+    }
+
     type GetContentVideoResponse {
         videoContent: CourseContent
         code: Int!
@@ -146,4 +183,7 @@
         CreateCourseCategory(input: CreateCourseCategoryInput): CreateCourseCategoryResponse
         CreateNewCourse(input: CreateCourseInput): CreateNewCourseResponse
         CreateCourseContent(input: CreateCourseContentInput): createCourseContentRespose
+        PublishCourse(input: courseStatusInput): DatalessResponse
+        EditCourseDetails(input: EditCourseDetailsInput): DatalessResponse
+        EditCourseContent(input: EditCourseContentInput): DatalessResponse
     }

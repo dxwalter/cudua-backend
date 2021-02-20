@@ -9,7 +9,7 @@ module.exports = {
       ignore_watch : ["./node_modules", "./uploads/*"],
       env: {
         "NODE_ENV": "production",
-        "PORT": 4444,
+        "PORT": 4000,
       }
   }],
 };

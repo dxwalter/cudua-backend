@@ -11,8 +11,6 @@ const cors = require('cors');
 
 let { MONGODB_URI, port } = require('./config');
 
-require('heroku-self-ping').default(`https://${process.env.HEROKU_APP_NAME}.herokuapp.com`);
-
 
 const app = express();
 
