@@ -1,8 +1,8 @@
 
-const CourseController = require('../courseController');
+const CourseController = require('./courseController');
 const CourseModel = require('../../../Models/courseModel')
+const EnrolledCourseModel = require('../../../Models/EnrolledCourseModel')
 const CourseContentModel = require('../../../Models/courseContentModel');
-const { NoFragmentCyclesRule } = require('graphql');
 
 module.exports = class courseManager extends CourseController {
     constructor () {
@@ -13,6 +13,28 @@ module.exports = class courseManager extends CourseController {
         return {
             code, success, message
         }
+    }
+
+    async enrollInCourse (userId, courseId, transactionRef) {
+
+        if (userId.length == 0 || courseId.length == 0 || transactionRef.length == 0) {
+            return this.returnMethod(500, false, "An error occurred with your entry. Kindly try again")
+        }
+
+        let saveData = new EnrolledCourseModel({
+            studentId: userId,
+            courseId: courseId,
+            transactionRefId: transactionRef
+        })
+
+        let enrollStudent = await this.saveEnrollmentIntoCourse(saveData);
+
+        console.log(enrollStudent)
+
+        if (enrollStudent.error == true) return this.returnMethod(500, false, "An error occurred enrolling you into this course.")
+
+        return this.returnMethod(200, true, "You have successfully enrolled into this course.")
+
     }
 
     createFunnelPage (name) {

@@ -45,9 +45,10 @@
         name: String!
         description: String!
         displayPicture: String!
-        category: CourseCategory!
+        category: CourseCategory
         funnelPage: String
         courseContent: [CourseContent]
+        enrolled: Boolean
     }
 
     type GetCourseCategoriesResponse implements ResponseType {
@@ -169,6 +170,12 @@
         message: String!
     }
 
+    type StudentGetAllCoursesResonse {
+        courses: [course],
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
 
     # This is the query type that will handle get category 
     type Query {
@@ -176,6 +183,7 @@
         GetCourseContent(input: GetCourseContentInput): GetCourseContentResponse
         GetAllCourses: GetAllCourseResponse
         GetContentVideo(input: GetContentVideoInput): GetContentVideoResponse
+        studentGetAllCourses: StudentGetAllCoursesResonse
     }
 
     

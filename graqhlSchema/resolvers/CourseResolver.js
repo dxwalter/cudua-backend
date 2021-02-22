@@ -1,6 +1,7 @@
 
-const CourseCategory = require('../../Controllers/course/courseManager/courseCategory');
+const CourseCategory = require('../../Controllers/course/courseManager/courseCategory');   
 const CourseManager = require('../../Controllers/course/courseManager/course');
+const StudentCourseManager = require('../../Controllers/course/students/studentCourseManager')
 
 const { GraphQLUpload } = require('apollo-upload-server');
 
@@ -40,16 +41,31 @@ module.exports = {
             return getCourseContent.GetAllCourseListing()
         },
         GetContentVideo (_, args, context) {
-            // let accessToken = context.accessToken;
+            let accessToken = context.accessToken;
 
-            // let userId = context.authFunction(accessToken);
-            // if (userId.error == true) return userId
-            // userId = userId.message;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
 
             let input = args.input
             
             let getCourseContent = new CourseManager();
             return getCourseContent.GetCourseVideoContent(input.contentId)
+        },
+        studentGetAllCourses (_, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+
+            let studentCourseManage = new StudentCourseManager();
+
+            if (userId.error == true) {
+                return studentCourseManage.GetAllCoursesForUnsignedUser();
+            } else {
+                userId = userId.message;
+                // return studentCourseManage.GetAllCoursesForUnsignedUser();
+            }
+
+
         }
     },
     Mutation: {

@@ -1,5 +1,5 @@
 
-const CourseController = require('../courseController');
+const CourseController = require('./courseController');
 const CourseCategoryModel = require('../../../Models/CourseCategoryModel');
 
 module.exports = class course extends CourseController {

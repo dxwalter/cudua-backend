@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-let whitelist = [process.env.FRONT_END, process.env.FRONT_END_ADMIN];
+let whitelist = [process.env.FRONT_END, process.env.FRONT_END_ADMIN, process.env.FRONT_END_KOEKO];
 
 let corsOptionsDelegate = function (req, callback) {
     let corsOptions;

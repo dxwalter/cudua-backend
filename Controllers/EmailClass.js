@@ -13,7 +13,11 @@ module.exports = class EmailRepo {
 
     }
 
-    emailMessageUi (subject, action = "", messageBody) {
+    emailMessageUi (subject, action = "", messageBody, logoUrl="") {
+
+    if (logoUrl.length == 0) {
+        logoUrl = "https://mcusercontent.com/717c089266bcaa5e8e9fda668/images/90332bc4-550d-4351-a1b7-b0a6c3336303.png"
+    }
 
         let emailUI = `
         <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
@@ -420,7 +424,7 @@ module.exports = class EmailRepo {
                         <td class="mcnImageContent" valign="top" style="padding-right: 9px;padding-left: 9px;padding-top: 0;padding-bottom: 0;text-align: center;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
                             
                                 
-                                    <img align="center" alt="" src="https://mcusercontent.com/717c089266bcaa5e8e9fda668/images/90332bc4-550d-4351-a1b7-b0a6c3336303.png" width="250" style="max-width: 109px;padding-bottom: 0;display: inline !important;vertical-align: bottom;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;" class="mcnImage">
+                                    <img align="center" alt="" src="${logoUrl}" width="250" style="max-width: 109px;padding-bottom: 0;display: inline !important;vertical-align: bottom;border: 0;height: auto;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;" class="mcnImage">
                                 
                             
                         </td>

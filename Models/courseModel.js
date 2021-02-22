@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const CourseCategory = mongoose.Schema({
+const CourseSchema = mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -37,4 +37,4 @@ const CourseCategory = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('courses', CourseCategory);
+module.exports = mongoose.model('courses', CourseSchema);

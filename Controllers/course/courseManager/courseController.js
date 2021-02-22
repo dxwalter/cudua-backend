@@ -1,16 +1,35 @@
 'use-strict'
 
-const FunctionRepository = require('../MainFunction');
-const CourseCategoryModel = require('../../Models/CourseCategoryModel');
-const CourseModel = require('../../Models/courseModel');
-const CourseContentModel = require('../../Models/courseContentModel');
-const courseContentModel = require('../../Models/courseContentModel');
+const FunctionRepository = require('../../MainFunction');
+const CourseCategoryModel = require('../../../Models/CourseCategoryModel');
+const CourseModel = require('../../../Models/courseModel');
+const EnrolledCourseModel = require('../../../Models/EnrolledCourseModel');
+const CourseContentModel = require('../../../Models/courseContentModel');
+const courseContentModel = require('../../../Models/courseContentModel');
 
 
 module.exports = class courseController extends FunctionRepository {
 
     constructor () {
         super();
+    }
+
+    async saveEnrollmentIntoCourse(data) {
+        try {
+            
+            let create = await data.save()
+
+            return {
+                error: false,
+                result: true
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
     }
 
     async checkIfCourseExists (courseId) {
@@ -247,6 +266,33 @@ module.exports = class courseController extends FunctionRepository {
             }
         }
 
+    }
+
+
+    async studentGetPublishedCoursesAnonymous () {
+        try {
+            let getCourses = await CourseModel.find({$and: [
+                    {
+                        publish: true,
+                        price: {
+                            $gt: 0
+                        }
+                    }
+                ]
+            })
+            .sort({_id: -1})
+
+            return {
+                error: false,
+                result: getCourses
+            }
+            
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
     }
 
 }

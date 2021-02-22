@@ -1,0 +1,55 @@
+scalar Upload
+
+# response type
+interface ResponseType {
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+
+type Student {
+    id: String!
+    name: String!
+    email: String!
+    gender: String
+    instagramId: String
+    phoneNumber: String
+    profilePhoto: String
+    accessToken: String!
+}
+
+input CreateStudentInput {
+    name: String!
+    email: String!
+    password: String!
+    courseId: String!
+    transactionReferenceId: String!
+}
+
+type CreateStudentResponse {
+    studentData: Student
+    # Api http status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+input loginStudentInput {
+    email: String!
+    password: String!
+}
+
+type Query {
+    LoginStudent(input: loginStudentInput): CreateStudentResponse
+}
+
+type Mutation {
+    CreateStudent(input: CreateStudentInput): CreateStudentResponse
+}
