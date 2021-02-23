@@ -29,8 +29,6 @@ module.exports = class courseManager extends CourseController {
 
         let enrollStudent = await this.saveEnrollmentIntoCourse(saveData);
 
-        console.log(enrollStudent)
-
         if (enrollStudent.error == true) return this.returnMethod(500, false, "An error occurred enrolling you into this course.")
 
         return this.returnMethod(200, true, "You have successfully enrolled into this course.")
@@ -344,6 +342,66 @@ module.exports = class courseManager extends CourseController {
 
     }
 
+    async checkIfCourseItemHasBeenCompleted (userId, courseId, contentId) {
+
+        let arr = [true, false];
+        return arr[Math.floor(Math.random() * Math.floor(2))]
+
+        let checkIfContentStatus = await this.getCompletedContent(userId, courseId, contentId)
+
+        if (checkIfContentStatus.error) return false
+
+        if (checkIfContentStatus.error == false && checkIfContentStatus.result == null) return false
+
+        return true;
+
+    }
+
+    async studentGetCourseContentById (userId, courseId) {
+        
+        if (courseId.length == 0) return this.getCourseContentResponse([], 500, false, "No course ID was provided");
+
+        let checkIfEnrolled = await this.checkIfEnrolled(userId, courseId)
+
+        if (checkIfEnrolled.error == true) return this.getCourseContentResponse([], 500, false, "An error occurred  retrieving course content");
+        if (checkIfEnrolled.result == null) return this.getCourseContentResponse([], 500, false, "You are not enrolled into this course.");
+
+        let getCourseContent = await this.getCourseContentUsingId(courseId);
+
+        if (getCourseContent.error) return this.getCourseContentResponse([], 500, false, "An error occurred  retrieving course content");
+
+        let courseContentArray = [];
+
+        for (let element of getCourseContent.result) {
+            courseContentArray.push({
+                keywords: element.keywords,
+                title: element.title,
+                videoLink: element.videoLink,
+                materials: element.materials,
+                courseId: element.courseId,
+                displayPicture: element.displayPicture,
+                contentId: element._id,
+                isCompleted: await this.checkIfCourseItemHasBeenCompleted(userId, courseId, element._id)
+            })
+        }
+
+
+        let getCourseDetails = await this.getCourseDetails(courseId);
+
+        let courseDetails = null
+
+        if (getCourseDetails.success == true) {
+            if (getCourseDetails.course != null) {
+                courseDetails = getCourseDetails.course
+            }
+        }
+
+
+
+        return this.getCourseContentResponse(courseContentArray, 200, true, "Content retrieved", courseDetails);
+
+    }
+
     getCoursesDetailsResponse (course, code, success, message) {
         return {course, code, success, message}
     }
@@ -367,6 +425,8 @@ module.exports = class courseManager extends CourseController {
             displayPicture: courses.displayPicture,
             funnelPage: courses.funnelPage == null ? "" : courses.funnelPage,
             publish: courses.publish == 0 ? false : true,
+            reviewScore: courses.reviewScore,
+            enrolledCount: await this.getCourseEnrollmentCount(courseId),
             category: {
                 name: courses.category.name,
                 displayPicture: courses.category.displayPicture,

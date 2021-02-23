@@ -36,6 +36,7 @@
         courseId: String!
         displayPicture: String!
         contentId: String!
+        isCompleted: Boolean
     }
 
     type course {
@@ -48,7 +49,9 @@
         category: CourseCategory
         funnelPage: String
         courseContent: [CourseContent]
-        enrolled: Boolean
+        enrolled: Boolean,
+        reviewScore: Float!
+        enrolledCount: Float!
     }
 
     type GetCourseCategoriesResponse implements ResponseType {
@@ -177,6 +180,11 @@
         message: String!
     }
 
+    input EnrollCourseInput {
+        courseId: String!
+        transactionRef: String!
+    }
+
     # This is the query type that will handle get category 
     type Query {
         GetAllCourseCategories: GetCourseCategoriesResponse
@@ -184,6 +192,8 @@
         GetAllCourses: GetAllCourseResponse
         GetContentVideo(input: GetContentVideoInput): GetContentVideoResponse
         studentGetAllCourses: StudentGetAllCoursesResonse
+        StudentGetEnrolledCourses: StudentGetAllCoursesResonse
+        StudentGetCourseContent(input: GetCourseContentInput): GetCourseContentResponse
     }
 
     
@@ -194,4 +204,5 @@
         PublishCourse(input: courseStatusInput): DatalessResponse
         EditCourseDetails(input: EditCourseDetailsInput): DatalessResponse
         EditCourseContent(input: EditCourseContentInput): DatalessResponse
+        StudentEnrollCourse(input: EnrollCourseInput): DatalessResponse
     }

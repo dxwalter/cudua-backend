@@ -5,13 +5,95 @@ const CourseCategoryModel = require('../../../Models/CourseCategoryModel');
 const CourseModel = require('../../../Models/courseModel');
 const EnrolledCourseModel = require('../../../Models/EnrolledCourseModel');
 const CourseContentModel = require('../../../Models/courseContentModel');
-const courseContentModel = require('../../../Models/courseContentModel');
+const CompletedCourseContent = require('../../../Models/completedCourseContent');
 
 
 module.exports = class courseController extends FunctionRepository {
 
     constructor () {
         super();
+    }
+
+    async getCompletedContent(userId, courseId, contentId) {
+        try {
+                let getCompleted = await CompletedCourseContent.findOne({
+                    $and: [
+                        {
+                            studentId: userId, 
+                            courseId: courseId,
+                            contentId: contentId
+                        }
+                    ]
+                })
+                .populate('courses')
+                .populate('enrolled-courses')
+                .populate('students');
+
+                return {
+                    error: false,
+                    result: getCompleted
+                }
+
+        } catch (error) {
+                return {
+                    error: true,
+                    message: error.message
+                }
+        }
+    }
+
+    async getCourseEnrollmentCount (courseId) {
+        try {
+            let countResult = await EnrolledCourseModel.countDocuments({courseId: courseId});
+            return countResult
+        } catch (error) {
+            return 0;
+        }
+    }
+
+    async getAllCoursesEnrolledByStudent (userId) {
+
+        try {
+            
+            let find = await EnrolledCourseModel.find({studentId: userId})
+            .populate('courseId')
+            .sort({_id: -1});
+
+            return {
+                result: find,
+                error: false
+            }
+
+        } catch (error) {
+            return {
+                message: error.message,
+                error: true
+            }
+        }
+    }
+
+    async checkIfEnrolled (userId, courseId) {
+        try {
+            
+            let find = await EnrolledCourseModel.findOne({$and: [
+                    {
+                        studentId: userId,
+                        courseId: courseId
+                    }
+                ]
+            });
+
+            return {
+                result: find,
+                error: false
+            }
+
+        } catch (error) {
+            return {
+                message: error.message,
+                error: true
+            }
+        }
     }
 
     async saveEnrollmentIntoCourse(data) {
@@ -70,7 +152,6 @@ module.exports = class courseController extends FunctionRepository {
 
     }
 
-
     async findOneAndUpdate(courseId, newDataObject) {
         try {
             let updateRecord = await CourseModel.findOneAndUpdate({_id: courseId}, { $set:newDataObject }, {new : true });
@@ -85,7 +166,6 @@ module.exports = class courseController extends FunctionRepository {
             }
         }
     }
-
 
     async findOneAndUpdateContent(contentId, newDataObject) {
         try {
@@ -268,7 +348,6 @@ module.exports = class courseController extends FunctionRepository {
 
     }
 
-
     async studentGetPublishedCoursesAnonymous () {
         try {
             let getCourses = await CourseModel.find({$and: [
@@ -280,6 +359,26 @@ module.exports = class courseController extends FunctionRepository {
                     }
                 ]
             })
+
+            .sort({_id: -1})
+
+            return {
+                error: false,
+                result: getCourses
+            }
+            
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+    async studentGetPublishedCoursesSigned () {
+        try {
+
+            let getCourses = await CourseModel.find({publish: true})
             .sort({_id: -1})
 
             return {

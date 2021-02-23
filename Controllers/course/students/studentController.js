@@ -43,4 +43,19 @@ module.exports = class StudentController extends CourseController {
         }
     }
 
+    async findOneStudentAndUpdate(userId, newDataObject) {
+        try {
+            let updateRecord = await StudentModel.findOneAndUpdate({_id: userId}, { $set:newDataObject }, {new : true });
+            return {
+                error: false,
+                result: updateRecord
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
 }

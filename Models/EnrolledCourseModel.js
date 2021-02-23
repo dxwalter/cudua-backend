@@ -15,7 +15,7 @@ const EnrolledCourseSchema = mongoose.Schema({
         type: String, required: true, trim: true
     },
     completedStatus: {
-        type: Number, default: 0
+        type: Boolean, default: false
     },
     created : {
         type : Date,

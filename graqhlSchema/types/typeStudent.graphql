@@ -11,6 +11,18 @@ interface ResponseType {
 }
 
 
+
+# This is the response type that returns no data
+type DatalessResponse implements ResponseType {
+    # Response status code
+    code: Int!
+    # This boolean value is used to check if an operation ran successfully
+    success: Boolean!
+    # This is the message sent by the server about an operation
+    message: String!
+}
+
+
 type Student {
     id: String!
     name: String!
@@ -46,10 +58,21 @@ input loginStudentInput {
     password: String!
 }
 
+input recoverPasswordInput {
+    email: String!
+}
+
+input CreateNewPasswordInput {
+    email: String!
+    password: String!
+}
+
 type Query {
     LoginStudent(input: loginStudentInput): CreateStudentResponse
+    RecoverStudentPassword(input: recoverPasswordInput): DatalessResponse
 }
 
 type Mutation {
     CreateStudent(input: CreateStudentInput): CreateStudentResponse
+    CreateNewStudentPassword(input: CreateNewPasswordInput): DatalessResponse
 }

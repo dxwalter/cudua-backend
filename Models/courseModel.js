@@ -26,6 +26,10 @@ const CourseSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+    reviewScore: {
+        type: Number,
+        default: 0
+    },
     price: {
         type: Number,
         default: 0,

@@ -9,6 +9,11 @@ const CourseCategory = mongoose.Schema({
         type: String,
         required: false
     },
+    isComplete: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
     materials: {
         type: String,
         required: true

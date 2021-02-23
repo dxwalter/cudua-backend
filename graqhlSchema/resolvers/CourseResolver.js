@@ -62,10 +62,31 @@ module.exports = {
                 return studentCourseManage.GetAllCoursesForUnsignedUser();
             } else {
                 userId = userId.message;
-                // return studentCourseManage.GetAllCoursesForUnsignedUser();
+                return studentCourseManage.GetAllCoursesForSignedUser(userId);
             }
+        },
+        StudentGetEnrolledCourses (_, args, context) {
+            let accessToken = context.accessToken;
 
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
 
+            let getEnrolledCourses = new StudentCourseManager();
+            return getEnrolledCourses.StudentGetEnrolledCourses(userId)
+
+        },
+        StudentGetCourseContent (_, args, context) {
+            let accessToken = context.accessToken;
+
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+
+            let input = args.input
+
+            let getCourseContent = new CourseManager();
+            return getCourseContent.studentGetCourseContentById(userId, input.courseId)
         }
     },
     Mutation: {
@@ -143,5 +164,17 @@ module.exports = {
             let create = new CourseManager();
             return create.editCourseContent(input.courseId, input.title, input.videoLink, input.avatar, input.courseMaterial, input.contentId)
         },
+        StudentEnrollCourse (_, args, context) {
+
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+
+            let input = args.input
+
+            let enrollStudent = new CourseManager();
+            return enrollStudent.enrollInCourse(userId, input.courseId, input.transactionRef)
+        }
     }
 }
