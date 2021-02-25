@@ -51,6 +51,28 @@ module.exports = class courseController extends FunctionRepository {
         }
     }
 
+    async findEnrolledCourseAndUpdate (userId, courseId, newDataObject) {
+        try {
+            let updateRecord = await EnrolledCourseModel.findOneAndUpdate({
+                $and: [
+                    {
+                        studentId: userId,
+                        courseId: courseId
+                    }
+                ]
+            }, { $set:newDataObject }, {new : true });
+            return {
+                error: false,
+                result: updateRecord
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async getAllCoursesEnrolledByStudent (userId) {
 
         try {
@@ -394,4 +416,21 @@ module.exports = class courseController extends FunctionRepository {
         }
     }
 
+    async SaveCompletedCourseContent (data) {
+        try {
+
+            let saveData = await data.save();
+
+            return {
+                error: false,
+                result: true
+            }
+
+        } catch (error) {
+            return {
+                error: false,
+                message: error.message
+            }
+        }
+    }
 }

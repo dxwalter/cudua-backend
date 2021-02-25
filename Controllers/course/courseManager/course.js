@@ -3,6 +3,7 @@ const CourseController = require('./courseController');
 const CourseModel = require('../../../Models/courseModel')
 const EnrolledCourseModel = require('../../../Models/EnrolledCourseModel')
 const CourseContentModel = require('../../../Models/courseContentModel');
+const CompletedCourseContent = require('../../../Models/completedCourseContent');
 
 module.exports = class courseManager extends CourseController {
     constructor () {
@@ -344,9 +345,6 @@ module.exports = class courseManager extends CourseController {
 
     async checkIfCourseItemHasBeenCompleted (userId, courseId, contentId) {
 
-        let arr = [true, false];
-        return arr[Math.floor(Math.random() * Math.floor(2))]
-
         let checkIfContentStatus = await this.getCompletedContent(userId, courseId, contentId)
 
         if (checkIfContentStatus.error) return false
@@ -613,4 +611,66 @@ module.exports = class courseManager extends CourseController {
 
         return this.returnMethod(200, true, "Your course was edited successfully")
     }
+
+    async studentGetCourseVideo (userId, courseId, contentId) {
+        
+        if (courseId.length == 0 || contentId.length == 0) return this.GetCourseVideoContentResponse(null, 500, false, "An error occurred. You do not have the credentials required to view this content.");
+
+        // check if enrolled
+        let checkIfEnrolled = await this.checkIfEnrolled(userId, courseId)
+
+        if (checkIfEnrolled.error == true) return this.GetCourseVideoContentResponse([], 500, false, "An error occurred  retrieving course content");
+        if (checkIfEnrolled.result == null) return this.GetCourseVideoContentResponse([], 500, false, "You are not enrolled into this course.");
+
+
+        let getContentVideo = await this.GetContentVideo(contentId);
+
+        if (getContentVideo.error) return this.GetCourseVideoContentResponse(null, 200, false, "An error occurred getting this course content. Please try again")
+
+        let courseContent = getContentVideo.result
+
+        if (courseContent == null) return this.GetCourseVideoContentResponse(null, 500, false, "This course content does not exist")
+
+        let contentObject = {
+            keywords: courseContent.keywords,
+            videoLink: courseContent.videoLink,
+            title: courseContent.title,
+            materials: courseContent.materials,
+            courseId: courseContent.courseId,
+            displayPicture: courseContent.displayPicture,
+            contentId: courseContent._id
+        }
+
+        return this.GetCourseVideoContentResponse(contentObject, 200, true, "Content retrieved");
+
+    }
+
+    async MarkContentAsComplete (userId, courseId, contentId) {
+
+        if (courseId.length == 0 || contentId.length == 0) return this.returnMethod(500, false, "An error occurred. Kindly refresh and try again");
+
+        let markContentAsComplete = new CompletedCourseContent({
+            courseId: courseId,
+            contentId: contentId,
+            studentId: userId
+        });
+
+        let saveData = await this.SaveCompletedCourseContent(markContentAsComplete);
+
+        if (saveData.error) return this.returnMethod(500, false, "An error occurred. Kindly try again");
+
+        return this.returnMethod(200, true, "You have successfully completed this tutorial")
+    }
+
+    async MarkCourseAsComplete (userId, courseId) {
+        
+        if (userId.length == 0 || courseId.length == 0) return this.returnMethod(500, false, "An error occurred. Kindly refresh this page");
+
+        let updateRecord = await this.findEnrolledCourseAndUpdate(userId, courseId, {completedStatus: true});
+
+        if (updateRecord.error) return this.returnMethod(500, false, "An error occurred. Kindly try again");
+
+        return this.returnMethod(200, true, "Course marked as completed")
+    }
+
 }

@@ -87,9 +87,34 @@ module.exports = {
 
             let getCourseContent = new CourseManager();
             return getCourseContent.studentGetCourseContentById(userId, input.courseId)
+        },
+        StudentGetCourseVideo (_, args, context) {
+            let accessToken = context.accessToken;
+
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+
+            let input = args.input
+
+            let getCourseContent = new CourseManager();
+            return getCourseContent.studentGetCourseVideo(userId, input.courseId, input.contentId)
         }
     },
     Mutation: {
+        async StudentMarkContentAsComplete (_, args, context) {
+
+            let accessToken = context.accessToken;
+
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+
+            let input = args.input;
+
+            let getCourseContent = new CourseManager();
+            return getCourseContent.MarkContentAsComplete(userId, input.courseId, input.contentId)
+        },
         async CreateCourseCategory (_, args, context) {
 
             let accessToken = context.accessToken;
@@ -175,6 +200,17 @@ module.exports = {
 
             let enrollStudent = new CourseManager();
             return enrollStudent.enrollInCourse(userId, input.courseId, input.transactionRef)
+        },
+        StudentMarkCourseAsComplete (_, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+
+            let input = args.input
+
+            let markCourseAsComplete = new CourseManager();
+            return markCourseAsComplete.MarkCourseAsComplete(userId, input.courseId);
         }
     }
 }

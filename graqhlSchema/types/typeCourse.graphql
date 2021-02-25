@@ -185,6 +185,11 @@
         transactionRef: String!
     }
 
+    input StudentGetCourseVideo {
+        courseId: String!
+        contentId: String!
+    }
+
     # This is the query type that will handle get category 
     type Query {
         GetAllCourseCategories: GetCourseCategoriesResponse
@@ -194,6 +199,7 @@
         studentGetAllCourses: StudentGetAllCoursesResonse
         StudentGetEnrolledCourses: StudentGetAllCoursesResonse
         StudentGetCourseContent(input: GetCourseContentInput): GetCourseContentResponse
+        StudentGetCourseVideo(input: StudentGetCourseVideo): GetContentVideoResponse
     }
 
     
@@ -205,4 +211,6 @@
         EditCourseDetails(input: EditCourseDetailsInput): DatalessResponse
         EditCourseContent(input: EditCourseContentInput): DatalessResponse
         StudentEnrollCourse(input: EnrollCourseInput): DatalessResponse
+        StudentMarkContentAsComplete(input: StudentGetCourseVideo): DatalessResponse
+        StudentMarkCourseAsComplete(input: GetCourseContentInput): DatalessResponse
     }
