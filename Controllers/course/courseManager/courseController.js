@@ -5,6 +5,7 @@ const CourseCategoryModel = require('../../../Models/CourseCategoryModel');
 const CourseModel = require('../../../Models/courseModel');
 const EnrolledCourseModel = require('../../../Models/EnrolledCourseModel');
 const CourseContentModel = require('../../../Models/courseContentModel');
+const CourseReview = require('../../../Models/CourseReview');
 const CompletedCourseContent = require('../../../Models/completedCourseContent');
 
 
@@ -14,7 +15,77 @@ module.exports = class courseController extends FunctionRepository {
         super();
     }
 
-    async getCompletedContent(userId, courseId, contentId) {
+    async courseEnrollmentCount (courseId) {
+        let getCount = await this.getCourseEnrollmentCount(courseId);
+        return getCount;
+    }
+
+
+    async GetAllCourseReviews () {
+        try {
+            
+            let reviews = await CourseReview.find().populate('student')
+            .sort({_id: -1})
+            .limit(24);
+            
+            return {
+                result: reviews,
+                error: false
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
+
+    async getCompletedContent(userId, courseId) {
+        try {
+                let getCompleted = await CourseReview.findOne({
+                    $and: [
+                        {
+                            studentId: userId, 
+                            courseId: courseId
+                        }
+                    ]
+                })
+            } catch (error) {
+                return {
+                    error: true,
+                    message: error.message
+                }
+        }
+    }
+
+    async checkIfReviewExists(userId, courseId) {
+        try {
+                let checkReview = await CourseReview.findOne({
+                    $and: [
+                        {
+                            student: userId, 
+                            courseId: courseId
+                        }
+                    ]
+                });
+
+                return {
+                    error: false,
+                    result: checkReview
+                }
+            } catch (error) {
+                return {
+                    error: true,
+                    message: error.message
+                }
+        }
+    }
+
+
+
+    async getCompletedContent (userId, courseId, contentId) {
         try {
                 let getCompleted = await CompletedCourseContent.findOne({
                     $and: [
@@ -50,6 +121,26 @@ module.exports = class courseController extends FunctionRepository {
             return 0;
         }
     }
+
+    async GetReviewScore(courseId) {
+
+        try {
+            const findScores = await CourseReview.find({courseId: courseId}).select('rating');
+
+            return {
+                error: false,
+                result: findScores
+            }
+
+        } catch (error) {
+            return {
+                error: true, 
+                message: error.message
+            }
+        }
+    }
+
+
 
     async findEnrolledCourseAndUpdate (userId, courseId, newDataObject) {
         try {
@@ -174,6 +265,21 @@ module.exports = class courseController extends FunctionRepository {
 
     }
 
+    async findOneReviewAndUpdate(reviewId, newData) {
+        try {
+            let updateRecord = await CourseReview.findOneAndUpdate({_id: reviewId}, { $set:newData }, {new : true });
+            return {
+                error: false,
+                result: updateRecord
+            }
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+    }
+
     async findOneAndUpdate(courseId, newDataObject) {
         try {
             let updateRecord = await CourseModel.findOneAndUpdate({_id: courseId}, { $set:newDataObject }, {new : true });
@@ -202,6 +308,26 @@ module.exports = class courseController extends FunctionRepository {
                 message: error.message
             }
         }
+    }
+
+    async createCourseReview(data) {
+
+        try {
+            
+            let create = await data.save()
+
+            return {
+                error: false,
+                result: true
+            }
+
+        } catch (error) {
+            return {
+                error: true,
+                message: error.message
+            }
+        }
+
     }
 
     async insertNewCourseContent (data) {

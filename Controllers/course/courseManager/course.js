@@ -4,6 +4,7 @@ const CourseModel = require('../../../Models/courseModel')
 const EnrolledCourseModel = require('../../../Models/EnrolledCourseModel')
 const CourseContentModel = require('../../../Models/courseContentModel');
 const CompletedCourseContent = require('../../../Models/completedCourseContent');
+const CourseReview = require('../../../Models/CourseReview');
 
 module.exports = class courseManager extends CourseController {
     constructor () {
@@ -14,6 +15,38 @@ module.exports = class courseManager extends CourseController {
         return {
             code, success, message
         }
+    }
+
+    returnCourseReviews (reviews, code, success, message) {
+        return {
+            reviews, code, success, message
+        }
+    }
+
+    async GetAllReviews () {
+
+        let getReviews = await this.GetAllCourseReviews();
+
+        if (getReviews.error) return this.returnCourseReviews(null, 500, false, "An error occurred get reviews");
+
+        if (getReviews.result.length == 0) {
+            return this.returnCourseReviews(null, 200, false, "No review has been added to this website")
+        }
+
+        let reviewArray = [];
+
+        for (let review of getReviews.result) {
+            reviewArray.push({
+                author: review.student.fullname,
+                displayPicture: review.student.profilePicture,
+                reviewScore: review.rating,
+                description: review.description
+            })
+        }
+
+
+        return this.returnCourseReviews(reviewArray, 200, true, "Reviews retrieved")
+
     }
 
     async enrollInCourse (userId, courseId, transactionRef) {
@@ -145,7 +178,7 @@ module.exports = class courseManager extends CourseController {
 
     }
 
-    async createNewCourseContent (courseId, title, videoLink, avatar, courseMaterial) {
+    async createNewCourseContent (courseId, title, videoLink, avatar, courseMaterial, tutorialDescription) {
 
         if (courseId.length == 0) return this.createCourseContentResponse(null, 500, false, "An error occured. Refresh page and try again")
 
@@ -157,6 +190,8 @@ module.exports = class courseManager extends CourseController {
         }
 
         if (title.length == 0) return this.createCourseContentResponse(null, 500, false, "Enter this content title.");
+
+        if (tutorialDescription.length == 0) return this.createCourseContentResponse(null, 500, false, "Enter a short description for this tutorial");
 
         title = this.MakeFirstLetterUpperCase(title);
 
@@ -201,7 +236,8 @@ module.exports = class courseManager extends CourseController {
             videoLink: videoLink,
             materials: courseMaterial,
             courseId: courseId,
-            displayPicture: newFileName
+            displayPicture: newFileName,
+            description: tutorialDescription
         });
 
         let contentId = courseContentData._id
@@ -278,7 +314,7 @@ module.exports = class courseManager extends CourseController {
             title: title,
             videoLink: videoLink,
             materials: courseMaterial,
-            courseId: courseId
+            courseId: courseId,
         };
 
         if (newFileName.length > 0 && filename != undefined) {
@@ -322,10 +358,10 @@ module.exports = class courseManager extends CourseController {
                 materials: element.materials,
                 courseId: element.courseId,
                 displayPicture: element.displayPicture,
+                description: element.description,
                 contentId: element._id,
             })
         });
-
 
         let getCourseDetails = await this.getCourseDetails(courseId);
 
@@ -371,18 +407,19 @@ module.exports = class courseManager extends CourseController {
         let courseContentArray = [];
 
         for (let element of getCourseContent.result) {
+
             courseContentArray.push({
-                keywords: element.keywords,
+                keywords: "",
                 title: element.title,
                 videoLink: element.videoLink,
                 materials: element.materials,
                 courseId: element.courseId,
                 displayPicture: element.displayPicture,
                 contentId: element._id,
+                description: element.description,
                 isCompleted: await this.checkIfCourseItemHasBeenCompleted(userId, courseId, element._id)
             })
         }
-
 
         let getCourseDetails = await this.getCourseDetails(courseId);
 
@@ -458,6 +495,9 @@ module.exports = class courseManager extends CourseController {
         let coursesArray = [];
 
         for (let [index, element] of courses.entries()) {
+            
+            let enrollCourseCount = await this.getCourseEnrollmentCount(element._id);
+
             coursesArray.push({
                 courseId: element._id,
                 price: element.price,
@@ -471,14 +511,15 @@ module.exports = class courseManager extends CourseController {
                     description: element.category.description,
                     categoryId: element.category._id,
                 },
-                courseContent: []
+                courseContent: [],
+                enrolledCount: enrollCourseCount,
+                reviewScore: 0
             })
+
             let getCourseContent = await this.getCourseContentById(element._id)
             coursesArray[index].courseContent = getCourseContent.courseContent
             
         }
-
-
 
         return this.getAllCoursesResponse(coursesArray, 200, true, "Course retrieved");
 
@@ -638,6 +679,7 @@ module.exports = class courseManager extends CourseController {
             materials: courseContent.materials,
             courseId: courseContent.courseId,
             displayPicture: courseContent.displayPicture,
+            description: courseContent.description,
             contentId: courseContent._id
         }
 
@@ -671,6 +713,76 @@ module.exports = class courseManager extends CourseController {
         if (updateRecord.error) return this.returnMethod(500, false, "An error occurred. Kindly try again");
 
         return this.returnMethod(200, true, "Course marked as completed")
+    }
+
+    async updateReviewScore (courseId) {
+
+        let getAllReviews = await this.GetReviewScore(courseId);
+        
+        if (getAllReviews.error) return this.returnMethod(200, true, "Your review was submitted successfully.")
+
+        let reviewCount = getAllReviews.result.length;
+        let addedScores = 0;
+
+        for (let reviewScore of getAllReviews.result) {
+            addedScores = addedScores + parseInt(reviewScore.rating, 10);
+        }
+
+        let courseReviewScore = addedScores / reviewCount;
+
+        // update in course model
+        await this.findOneAndUpdate(courseId, {'reviewScore': courseReviewScore.toFixed(1)})
+    }
+
+    async CreateCourseReview (courseId, studentId, reviewScore = 1, description) {
+
+        if (courseId.length == 0 || studentId.length == 0) {
+            this.returnMethod(500, false, "An error occurred. Kindly refresh the page and try again")
+        }
+
+
+        // check if student has written before
+        let checkReview = await this.checkIfReviewExists(studentId, courseId);
+
+
+        if (checkReview.error == true) return this.returnMethod(500, false, "An error occurred. Kindly try again");
+
+        if (checkReview.result != null) {
+            // update review
+
+            let reviewId = checkReview.result._id;  
+            let newData = {
+                rating: reviewScore,
+                description: description
+            }
+
+            let update = await this.findOneReviewAndUpdate(reviewId, newData);
+            if (update.error) return this.returnMethod(500, false, `An error occurred while updating your review`);
+
+            this.updateReviewScore(courseId)
+
+            return this.returnMethod(200, true, "Your review was submitted successfully.");
+
+        }
+
+
+        // create review
+
+        const create = new CourseReview({
+            student: studentId,
+            courseId: courseId,
+            rating: reviewScore,
+            description: description
+        });
+
+        let saveRecord = await this.createCourseReview(create);
+
+        if (saveRecord.error) return this.returnMethod(500, false, "An error occurred saving your review");
+
+        this.updateReviewScore(courseId)
+
+        return this.returnMethod(200, true, "Your review was submitted successfully.")
+
     }
 
 }

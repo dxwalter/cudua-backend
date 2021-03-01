@@ -8,6 +8,10 @@ const { GraphQLUpload } = require('apollo-upload-server');
 module.exports = {
     Upload: GraphQLUpload,
     Query: {
+        GetCourseReviews () {
+            let getReview = new CourseManager;
+            return getReview.GetAllReviews()
+        },
         GetAllCourseCategories (_, args, context) {
             let accessToken = context.accessToken;
 
@@ -151,7 +155,7 @@ module.exports = {
             let input = args.input
 
             let create = new CourseManager();
-            return create.createNewCourseContent(input.courseId, input.title, input.videoLink, input.avatar, input.courseMaterial)
+            return create.createNewCourseContent(input.courseId, input.title, input.videoLink, input.avatar, input.courseMaterial, input.tutorialDescription)
         },
         PublishCourse (_, args, context) {
             let accessToken = context.accessToken;
@@ -211,6 +215,17 @@ module.exports = {
 
             let markCourseAsComplete = new CourseManager();
             return markCourseAsComplete.MarkCourseAsComplete(userId, input.courseId);
+        },
+        CreateCourseReview (_, args, context) {
+            let accessToken = context.accessToken;
+            let userId = context.authFunction(accessToken);
+            if (userId.error == true) return userId
+            userId = userId.message;
+
+            let input = args.input
+
+            let createReview = new CourseManager();
+            return createReview.CreateCourseReview(input.courseId, userId, input.reviewScore, input.description);
         }
     }
 }

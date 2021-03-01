@@ -21,11 +21,6 @@ module.exports = class studentCourseManager extends CourseController {
         return true
 
     }
-
-    async courseEnrollmentCount (courseId) {
-        let getCount = await this.getCourseEnrollmentCount(courseId)
-        return getCount;
-    }
  
     async GetAllCoursesForUnsignedUser () {
         

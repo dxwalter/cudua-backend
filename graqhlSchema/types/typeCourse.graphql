@@ -17,6 +17,13 @@
         categoryId: String!
     }
 
+    type courseReview {
+        author: String!
+        displayPicture: String
+        reviewScore: Float!
+        description: String
+    }
+
     # This is the response type that returns no data
     type DatalessResponse implements ResponseType {
         # Response status code
@@ -37,6 +44,7 @@
         displayPicture: String!
         contentId: String!
         isCompleted: Boolean
+        description: String
     }
 
     type course {
@@ -49,9 +57,9 @@
         category: CourseCategory
         funnelPage: String
         courseContent: [CourseContent]
-        enrolled: Boolean,
-        reviewScore: Float!
-        enrolledCount: Float!
+        enrolled: Boolean
+        reviewScore: Float
+        enrolledCount: Int
     }
 
     type GetCourseCategoriesResponse implements ResponseType {
@@ -104,6 +112,7 @@
     }
 
 
+
     type createCourseContentRespose {
         contentId: String
         code: Int!
@@ -115,6 +124,7 @@
 
     input CreateCourseContentInput {
         courseId: String!
+        tutorialDescription: String!
         title: String!
         videoLink: String
         avatar: Upload!
@@ -190,6 +200,19 @@
         contentId: String!
     }
 
+    input createCourseReviewInput {
+        courseId: String!
+        description: String
+        reviewScore: Float!
+    }
+
+    type getReviewsResponse {
+        reviews: [courseReview]
+        code: Int!
+        success: Boolean!
+        message: String!
+    }
+
     # This is the query type that will handle get category 
     type Query {
         GetAllCourseCategories: GetCourseCategoriesResponse
@@ -200,6 +223,9 @@
         StudentGetEnrolledCourses: StudentGetAllCoursesResonse
         StudentGetCourseContent(input: GetCourseContentInput): GetCourseContentResponse
         StudentGetCourseVideo(input: StudentGetCourseVideo): GetContentVideoResponse
+
+        # get course reviews
+        GetCourseReviews: getReviewsResponse
     }
 
     
@@ -213,4 +239,7 @@
         StudentEnrollCourse(input: EnrollCourseInput): DatalessResponse
         StudentMarkContentAsComplete(input: StudentGetCourseVideo): DatalessResponse
         StudentMarkCourseAsComplete(input: GetCourseContentInput): DatalessResponse
+
+        # for course review
+        CreateCourseReview(input: createCourseReviewInput): DatalessResponse
     }

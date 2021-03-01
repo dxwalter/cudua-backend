@@ -27,6 +27,11 @@ const CourseCategory = mongoose.Schema({
         type: String,
         required: true
     },
+    description: {
+        type: String,
+        required: true,
+        default: ""
+    },
     courseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "courses",
