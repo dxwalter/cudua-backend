@@ -741,29 +741,29 @@ module.exports = class courseManager extends CourseController {
         }
 
 
-        // check if student has written before
-        let checkReview = await this.checkIfReviewExists(studentId, courseId);
+        // // check if student has written before
+        // let checkReview = await this.checkIfReviewExists(studentId, courseId);
 
 
-        if (checkReview.error == true) return this.returnMethod(500, false, "An error occurred. Kindly try again");
+        // if (checkReview.error == true) return this.returnMethod(500, false, "An error occurred. Kindly try again");
 
-        if (checkReview.result != null) {
-            // update review
+        // if (checkReview.result != null) {
+        //     // update review
 
-            let reviewId = checkReview.result._id;  
-            let newData = {
-                rating: reviewScore,
-                description: description
-            }
+        //     let reviewId = checkReview.result._id;  
+        //     let newData = {
+        //         rating: reviewScore,
+        //         description: description
+        //     }
 
-            let update = await this.findOneReviewAndUpdate(reviewId, newData);
-            if (update.error) return this.returnMethod(500, false, `An error occurred while updating your review`);
+        //     let update = await this.findOneReviewAndUpdate(reviewId, newData);
+        //     if (update.error) return this.returnMethod(500, false, `An error occurred while updating your review`);
 
-            this.updateReviewScore(courseId)
+        //     this.updateReviewScore(courseId)
 
-            return this.returnMethod(200, true, "Your review was submitted successfully.");
+        //     return this.returnMethod(200, true, "Your review was submitted successfully.");
 
-        }
+        // }
 
 
         // create review

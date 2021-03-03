@@ -19,6 +19,12 @@ module.exports = class StudentActions extends StudentController {
         }
     }
 
+    returnMethodForDp (url, code, success, message) {
+        return {
+            url, code, success, message
+        }
+    }
+
     async recoverStudentPassword(email) {
 
         if (email.length < 5 || this.validateEmailAddress(email) == false) {
@@ -82,6 +88,104 @@ module.exports = class StudentActions extends StudentController {
         }
 
         return this.returnMethod(200, true, "Your password was changed successfully")
+
+    }
+
+    async EditStudentLogo (file, userId) {
+
+        const { filename, mimetype, createReadStream } = await file;
+
+        if (filename.length < 1) return this.returnMethodForDp(null, 200, false, "Choose a profile display picture");
+
+        // encrypt file name
+        let encryptedName = this.encryptFileName(filename)
+
+        let newFileName = encryptedName + "." + mimetype.split('/')[1];
+
+        const stream = createReadStream();
+
+        let path = 'uploads/courseCategoryImage/';
+
+        const pathObj = await this.uploadImageFile(stream, newFileName, path);
+        
+        if (pathObj.error == true) {
+            return this.returnMethodForDp(null, 500, false, "An error occurred uploading your profile picture")
+        }
+
+        let folder = process.env.CLOUDINARY_FOLDER+"/cudua-course/";
+        let publicId = encryptedName;
+        let tag = 'profile picture';
+        let imagePath = pathObj.path;
+
+        let moveToCloud = await this.moveToCloudinary(folder, imagePath, publicId, tag);
+
+        let deleteFile = await this.deleteFileFromFolder(imagePath)
+
+        if (moveToCloud.error == true) {
+            return this.returnMethodForDp(null, 500, false, `An error occurred uploading your profile picture`)
+        }
+
+
+        // update new file name
+        
+        newFileName = moveToCloud.result.secure_url;
+
+        let profilePicture = {'profilePicture': newFileName}
+
+        let updateLogo = await this.findOneStudentAndUpdate(userId, profilePicture)
+        
+        if (updateLogo.error == false) {
+            return this.returnMethodForDp(newFileName, 202, true, "Your profile picture was updated successfully", newFileName)
+        } else {
+            return this.returnMethodForDp(null, 500, false, "An error occurred updating your profile pictre")
+        }
+
+
+    }
+
+    async EditProfileDetails (fullName, email, phone, instagram, gender, userId) {
+        
+        if (fullName.length < 3) {
+            return this.returnMethod(500, false, "Your fullname must be greater than 2 characters");
+        }
+
+        fullName = this.formatFullname(fullName);
+
+        if (email.length < 5 || this.validateEmailAddress(email) == false) {
+            return this.returnMethod(500, false, "Enter a valid email address.")
+        }
+
+        // check if email exists
+        let checkEmail = await this.emailExists(email);
+        if (checkEmail.error) return this.returnMethod(500, false, "An error occurred. Kindly contact us")
+        if (checkEmail.result != null && checkEmail.result._id != userId) return this.returnMethod(500, false, "This email address already exists. Kindly contact us")
+
+        if (phone.length < 4) return this.returnMethod(200, false, "Enter a valid phone number")
+
+        if (instagram.length < 4) {
+            return this.returnMethod(500, false, "Your instagram handle is not valid")
+        }
+
+        if (gender.length == 0) {
+            return this.returnMethod(500, false, "Choose your gender")
+        }
+
+
+        let newData = {
+            fullname: fullName,
+            email: email,
+            phone: phone,
+            gender: gender,
+            instagramId: instagram
+        }
+
+        let updateProfile = await this.findOneStudentAndUpdate(userId, newData);
+
+        if (updateProfile.error) {
+            return this.returnMethod(500, false, updateProfile.message)
+        }
+
+        return this.returnMethod(200, true, "Your profile was updated successfully")
 
     }
 }

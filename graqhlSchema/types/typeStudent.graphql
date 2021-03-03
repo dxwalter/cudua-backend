@@ -67,6 +67,25 @@ input CreateNewPasswordInput {
     password: String!
 }
 
+input editProfileLogo {
+    file: Upload!
+}
+
+type editLogoResponse {
+    url: String
+    code: Int!
+    success: Boolean!,
+    message: String!
+}
+
+input editStudentProfileInput {
+    fullname: String!
+    email: String!
+    phoneNumber: String!
+    instagramHandle: String!
+    gender: String!
+}
+
 type Query {
     LoginStudent(input: loginStudentInput): CreateStudentResponse
     RecoverStudentPassword(input: recoverPasswordInput): DatalessResponse
@@ -75,4 +94,6 @@ type Query {
 type Mutation {
     CreateStudent(input: CreateStudentInput): CreateStudentResponse
     CreateNewStudentPassword(input: CreateNewPasswordInput): DatalessResponse
+    EditStudentProfileImage(input: editProfileLogo): editLogoResponse
+    EditStudentProfileDetails(input: editStudentProfileInput): DatalessResponse
 }

@@ -25,6 +25,27 @@ module.exports = {
             let data = args.input
             let changePassword = new StudentActions();
             return changePassword.createNewPassword(data.email, data.password);
+        },
+        async EditStudentProfileImage (_, args, context) {
+
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+            args = args.input;
+
+            const { filename, mimetype, createReadStream } = await args.file;
+
+            let edit = new StudentActions();
+            return edit.EditStudentLogo(args.file, userId)
+        },
+        async EditStudentProfileDetails (_, args, context) {
+            let userId = context.authFunction(context.accessToken);
+            if (userId.error === true) return userId
+            userId = userId.message
+            args = args.input;
+
+            let editProfile = new StudentActions();
+            return editProfile.EditProfileDetails(args.fullname, args.email, args.phoneNumber, args.instagramHandle, args.gender, userId )
         }
     }
 }
