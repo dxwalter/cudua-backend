@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-let whitelist = ['https://cudua-ui.herokuapp.com/', 'http://localhost:3333/', process.env.FRONT_END_KOEKO];
+let whitelist = [process.env.LIVE_APP, process.env.FRONT_END_ADMIN, process.env.LOCAL_FRONT_END, process.env.FRONT_END_KOEKO];
 
 let corsOptionsDelegate = function (req, callback) {
     let corsOptions;
