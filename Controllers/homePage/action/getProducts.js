@@ -38,7 +38,7 @@ module.exports = class HomePageGetProducts extends ProductController {
                 if (productData.business_id.subscription_status == 0) {
                     // if subscription_status == 0, subscription active
                     let contact = productData.business_id.contact == null ? [] : productData.business_id.contact.phone
-                    if (contact.length > 0) {
+                    // if (contact.length > 0) {
                         this.certifiedProducts.push({
                             image: productData.primary_image,
                             productId: productData.id,
@@ -46,7 +46,7 @@ module.exports = class HomePageGetProducts extends ProductController {
                             name: productData.name,
                             price: productData.price
                         })
-                    }
+                    // }
                 }
             }
         }
