@@ -39,7 +39,7 @@
     "express-validator": "^6.4.0",
     "graphql": "^15.0.0",
     "graphql-iso-date": "^3.6.1",
-    "graphql-tools": "^6.0.1",
+    "graphql-tools": "^6.2.6",
     "graphql-upload": "^11.0.0",
     "heroku-self-ping": "^2.0.1",
     "image-size": "^0.8.3",
@@ -53,7 +53,7 @@
     "onesignal-node": "^3.2.0",
     "reflect-metadata": "^0.1.13",
     "resize-optimize-images": "^1.1.0",
-    "serverless": "^1.74.1",
+    "serverless": "^3.25.1",
     "shortid": "^2.2.15"
   },
   "devDependencies": {
