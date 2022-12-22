@@ -43,7 +43,7 @@
     "graphql-upload": "^11.0.0",
     "heroku-self-ping": "^2.0.1",
     "image-size": "^0.8.3",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mocha": "^7.1.1",
     "mongodb": "^3.5.5",
     "mongoose": "^5.9.16",
